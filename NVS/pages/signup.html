@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -17,38 +18,61 @@
     .form-group input.valid {
       border-color: #22c55e;
     }
+
     .form-group input.invalid {
       border-color: #ef4444;
     }
+
     .password-hint {
       font-size: 0.8125rem;
       color: var(--text-muted);
       margin-top: 8px;
     }
+
     .password-strength {
       margin-top: 12px;
     }
+
     .password-strength-label {
       font-size: 0.8125rem;
       color: var(--text-muted);
       margin-bottom: 6px;
     }
+
     .password-strength-bar {
       height: 4px;
       background: #e5e7eb;
       border-radius: 2px;
       overflow: hidden;
     }
+
     .password-strength-fill {
       height: 100%;
       width: 0;
       border-radius: 2px;
       transition: width 0.3s, background 0.3s;
     }
-    .password-strength-fill.weak { width: 25%; background: #ef4444; }
-    .password-strength-fill.fair { width: 50%; background: #f59e0b; }
-    .password-strength-fill.good { width: 75%; background: #22c55e; }
-    .password-strength-fill.strong { width: 100%; background: #10b981; }
+
+    .password-strength-fill.weak {
+      width: 25%;
+      background: #ef4444;
+    }
+
+    .password-strength-fill.fair {
+      width: 50%;
+      background: #f59e0b;
+    }
+
+    .password-strength-fill.good {
+      width: 75%;
+      background: #22c55e;
+    }
+
+    .password-strength-fill.strong {
+      width: 100%;
+      background: #10b981;
+    }
+
     .field-error-message {
       font-size: 0.8125rem;
       color: #ef4444;
@@ -56,6 +80,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="auth-logo">
@@ -63,8 +88,7 @@
         <svg class="logo-icon" viewBox="0 0 64 64" aria-hidden="true">
           <path
             d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z"
-            fill="currentColor"
-          />
+            fill="currentColor" />
         </svg>
         <span class="logo-name">NovelShare</span>
       </div>
@@ -84,21 +108,22 @@
         <div class="form-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" placeholder="Enter your username" required
-                 autocomplete="new-password" spellcheck="false">
-          <div id="username-hint" class="password-hint" style="display: none;">Username must be at least 3 characters long</div>
+            autocomplete="new-password" spellcheck="false">
+          <div id="username-hint" class="password-hint" style="display: none;">Username must be at least 3 characters
+            long</div>
         </div>
 
         <div class="form-group">
           <label for="email">Email</label>
           <input type="email" id="email" name="email" placeholder="Enter your email" required
-                 autocomplete="new-password" spellcheck="false">
+            autocomplete="new-password" spellcheck="false">
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
           <div class="password-input-container">
             <input type="password" id="password" name="password" placeholder="Enter your password" required
-                   autocomplete="new-password" spellcheck="false">
+              autocomplete="new-password" spellcheck="false">
             <button type="button" class="password-toggle" aria-label="Show password">
               <img src="../assets/images/icons/hide.png" alt="" class="eye-icon" aria-hidden="true">
             </button>
@@ -115,8 +140,8 @@
         <div class="form-group">
           <label for="confirmPassword">Confirm password</label>
           <div class="password-input-container">
-            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required
-                   autocomplete="new-password" spellcheck="false">
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password"
+              required autocomplete="new-password" spellcheck="false">
             <button type="button" class="password-toggle" aria-label="Show password">
               <img src="../assets/images/icons/hide.png" alt="" class="eye-icon" aria-hidden="true">
             </button>
@@ -132,8 +157,8 @@
 
         <button type="button" class="guest-btn" id="guestBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
           </svg>
           <span>Continue as Guest</span>
         </button>
@@ -217,7 +242,7 @@
       // Disable submit button while processing
       const submitBtn = document.querySelector('.create-account-btn');
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Creating Account...';
+      submitBtn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Creating Account';
 
       try {
         // Try Supabase signup
@@ -248,7 +273,7 @@
         localStorage.setItem('novelshare_profile', JSON.stringify(userProfile));
         localStorage.setItem('user_novelshare_profile', JSON.stringify(userProfile));
 
-        showToast('Account created successfully! Please check your email to verify your account.');
+        showToast('Account created successfully');
         setTimeout(() => {
           window.location.href = 'home.html';
         }, 1500);
@@ -302,4 +327,5 @@
     });
   </script>
 </body>
+
 </html>
