@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,8 +8,14 @@
   <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
   <link rel="stylesheet" href="../assets/css/common.css">
   <style>
-    body { background: #f7f9fc; }
-    .page { padding: 0 var(--page-pad) 48px; }
+    body {
+      background: #f7f9fc;
+    }
+
+    .page {
+      padding: 0 var(--page-pad) 48px;
+    }
+
     .work-header {
       background: #fff;
       border-radius: 18px;
@@ -20,17 +27,20 @@
       gap: 20px;
       align-items: center;
     }
+
     .cover-frame {
       width: 160px;
       height: 220px;
       border-radius: 14px;
-      background: linear-gradient(135deg, #5b8def, #4664c7);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       box-shadow: var(--shadow-card);
     }
+
     .work-meta {
       display: grid;
       gap: 12px;
     }
+
     .breadcrumbs {
       display: flex;
       gap: 10px;
@@ -38,6 +48,7 @@
       color: var(--text-muted);
       font-weight: 600;
     }
+
     .title-row {
       display: flex;
       justify-content: space-between;
@@ -45,18 +56,21 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+
     .work-title {
       font-size: 1.8rem;
       font-weight: 800;
       margin: 0;
       color: var(--text-primary);
     }
+
     .tag-row {
       display: flex;
       gap: 8px;
       align-items: center;
       flex-wrap: wrap;
     }
+
     .tag {
       padding: 6px 10px;
       border-radius: 10px;
@@ -66,11 +80,33 @@
       background: #e0e7ff;
       color: #4338ca;
     }
-    .tag.status-completed { background: #ecf0ff; color: #4c51bf; }
-    .tag.status-ongoing { background: #dcfce7; color: #15803d; }
-    .tag.status-draft { background: #fff7ed; color: #c2410c; }
-    .author-line { color: var(--text-secondary); font-weight: 600; }
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .tag.status-completed {
+      background: #ecf0ff;
+      color: #4c51bf;
+    }
+
+    .tag.status-ongoing {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .tag.status-draft {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .author-line {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     .cta-btn {
       padding: 12px 16px;
       border-radius: 10px;
@@ -82,13 +118,20 @@
       align-items: center;
       gap: 6px;
     }
-    .cta-btn.primary { background: var(--primary); color: #fff; border-color: transparent; }
+
+    .cta-btn.primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: transparent;
+    }
+
     .info-grid {
       margin-top: 18px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
     }
+
     .info-card {
       padding: 14px;
       border-radius: 12px;
@@ -96,8 +139,19 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
     }
-    .info-label { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
-    .info-value { font-weight: 800; font-size: 1.1rem; color: var(--text-primary); }
+
+    .info-label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .info-value {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
     .detail-card {
       background: #fff;
       border-radius: 18px;
@@ -105,7 +159,14 @@
       box-shadow: var(--shadow-sm);
       padding: 18px;
     }
-    .tabs { display: flex; gap: 18px; margin-top: 20px; border-bottom: 1px solid var(--border); }
+
+    .tabs {
+      display: flex;
+      gap: 18px;
+      margin-top: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
     .tabs button {
       border: none;
       background: none;
@@ -115,7 +176,11 @@
       cursor: pointer;
       position: relative;
     }
-    .tabs button.active { color: var(--primary); }
+
+    .tabs button.active {
+      color: var(--primary);
+    }
+
     .tabs button.active::after {
       content: '';
       position: absolute;
@@ -126,8 +191,16 @@
       border-radius: 999px;
       background: var(--primary-gradient);
     }
-    .tab-panel { display: none; padding: 16px 0; }
-    .tab-panel.active { display: block; }
+
+    .tab-panel {
+      display: none;
+      padding: 16px 0;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
     .list-item {
       padding: 12px 14px;
       border-radius: 12px;
@@ -135,8 +208,17 @@
       margin-bottom: 10px;
       background: #f8fafc;
     }
-    .list-item h4 { margin: 0 0 6px; color: var(--text-primary); }
-    .list-item p { margin: 0; color: var(--text-muted); }
+
+    .list-item h4 {
+      margin: 0 0 6px;
+      color: var(--text-primary);
+    }
+
+    .list-item p {
+      margin: 0;
+      color: var(--text-muted);
+    }
+
     .chapter-row {
       display: flex;
       align-items: center;
@@ -144,7 +226,11 @@
       gap: 12px;
       position: relative;
     }
-    .chapter-row .chapter-text { flex: 1; }
+
+    .chapter-row .chapter-text {
+      flex: 1;
+    }
+
     .chapter-delete {
       opacity: 0;
       transition: opacity 0.15s ease, color 0.15s ease;
@@ -154,26 +240,46 @@
       font-weight: 700;
       cursor: pointer;
     }
+
     .chapter-delete.confirm {
       color: #dc2626;
       text-decoration: underline;
     }
-    .chapter-row:hover .chapter-delete { opacity: 1; }
+
+    .chapter-row:hover .chapter-delete {
+      opacity: 1;
+    }
+
     @media (max-width: 900px) {
-      .work-header { grid-template-columns: 1fr; }
-      .title-row { align-items: flex-start; }
-      .actions { width: 100%; }
-      .actions .cta-btn { flex: 1; justify-content: center; }
+      .work-header {
+        grid-template-columns: 1fr;
+      }
+
+      .title-row {
+        align-items: flex-start;
+      }
+
+      .actions {
+        width: 100%;
+      }
+
+      .actions .cta-btn {
+        flex: 1;
+        justify-content: center;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="page">
     <header class="top-bar">
       <a class="logo" href="home.html" aria-label="NovelShare Home">
         <div class="logo-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+            <path
+              d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z"
+              fill="currentColor" />
           </svg>
         </div>
         <div class="logo-text">
@@ -186,8 +292,8 @@
         <a class="pill" href="library.html">
           <span class="pill-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" />
             </svg>
           </span>
           Library
@@ -195,8 +301,8 @@
         <a class="pill" href="browse.html">
           <span class="pill-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.35-4.35"/>
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
           Browse
@@ -206,8 +312,8 @@
       <div class="profile-actions">
         <button class="bell-btn" aria-label="Notifications">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
         </button>
         <div class="profile-wrapper">
@@ -224,20 +330,20 @@
             <div class="profile-dropdown-menu">
               <a href="profile.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="8" r="4"/>
-                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
                 </svg>
                 My Profile
               </a>
               <a href="author-dashboard.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
                 My Works
               </a>
               <a href="login.html" class="logout">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                 </svg>
                 Log Out
               </a>
@@ -430,12 +536,14 @@
       document.title = `${work.title} | NovelShare`;
       const coverEl = document.getElementById('workCover');
       if (work.cover) {
-        coverEl.style.backgroundImage = `url('${work.cover}')`;
-        coverEl.style.backgroundSize = 'cover';
-        coverEl.style.backgroundPosition = 'center';
+        coverEl.innerHTML = `<img src="${work.cover}" alt="${work.title}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.onerror=null;this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)';this.parentElement.innerHTML='<span style=\\'color:white;font-size:4rem;font-weight:800;\\'>${(work.title || 'U').charAt(0).toUpperCase()}</span>'">`;
       } else {
-        coverEl.style.background = 'linear-gradient(135deg, #5b8def, #4664c7)';
+        coverEl.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        coverEl.innerHTML = `<span style="color:white; font-size:4rem; font-weight:800;">${(work.title || 'U').charAt(0).toUpperCase()}</span>`;
       }
+      coverEl.style.display = 'flex';
+      coverEl.style.alignItems = 'center';
+      coverEl.style.justifyContent = 'center';
       document.getElementById('workTitle').textContent = work.title;
       document.getElementById('statusTag').textContent = work.status.charAt(0).toUpperCase() + work.status.slice(1);
       document.getElementById('statusTag').className = `tag status-${work.status === 'completed' ? 'completed' : work.status === 'draft' ? 'draft' : 'ongoing'}`;
@@ -657,4 +765,5 @@
     });
   </script>
 </body>
+
 </html>

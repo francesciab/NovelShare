@@ -429,6 +429,7 @@
             line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 1;
+            line-clamp: 1;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -1034,10 +1035,19 @@
                 const popularity = Number(card.popularity) || (reads ? reads : 1);
                 const updatedTs = card.updatedAt ? new Date(card.updatedAt).getTime() : Date.now();
                 const publishedTs = card.publishedAt ? new Date(card.publishedAt).getTime() : updatedTs;
-                const coverStyle = cover
-                    ? `style="background-image: url('${cover.replace(/'/g, "\\'")}');"`
-                    : `style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.8rem;"`;
-                const coverFallback = cover ? '' : escapeHtml(title.charAt(0).toUpperCase() || 'N');
+                const coverHtml = cover
+                    ? `<img src="${cover.replace(/'/g, "\\'")}" alt="${escapeHtml(title)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
+                    : '';
+
+                const fallbackDisplay = cover ? 'none' : 'flex';
+                // Escape only the first char for display
+                const firstChar = escapeHtml((title || 'N').charAt(0).toUpperCase());
+
+                const fallbackHtml = `
+                    <div class="fallback-cover" style="width:100%;height:100%;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);display:${fallbackDisplay};align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.8rem;border-radius:inherit;">
+                        ${firstChar}
+                    </div>
+                `;
 
                 return `
                     <article class="card user-card" data-genre="${genreSlug}" data-status="${statusLower}" data-rating="${ratingValue || 0}" data-title="${escapeHtml(title)}" data-novel-id="${escapeHtml(id)}" data-chapters="${chapters}" data-author="${escapeHtml(author)}" data-author-id="${escapeHtml(authorId)}" data-popularity="${popularity}" data-updated="${updatedTs}" data-published="${publishedTs}">
@@ -1054,13 +1064,14 @@
                             </svg>
                         </button>
                         <a class="card-link" href="novel.html?id=${encodeURIComponent(id)}">
-                            <div class="card-cover" ${coverStyle}>
+                            <div class="card-cover">
                                 <span class="status-badge ${statusClass}">${statusLabel}</span>
                                 <div class="rating-badge">
                                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.2 6.8.6-5.2 4.8 1.5 6.7L12 16.9l-6 3.4 1.5-6.7-5.2-4.8 6.8-.6z"/></svg>
                                     <span>${ratingDisplay}</span>
                                 </div>
-                                ${cover ? '' : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">${coverFallback}</div>`}
+                                ${coverHtml}
+                                ${fallbackHtml}
                             </div>
                             <div class="card-body">
                                 <div class="tags"><span class="tag">${escapeHtml(genreLabel)}</span></div>

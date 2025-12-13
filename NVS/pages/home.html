@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -355,8 +356,13 @@
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
         }
 
         .continue-card .continue-btn {
@@ -450,6 +456,7 @@
             line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -521,6 +528,7 @@
             line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -591,12 +599,14 @@
             .novel-grid {
                 grid-template-columns: repeat(4, 1fr);
             }
+
             .newly-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
         }
 
         @media (max-width: 900px) {
+
             .banner h1,
             .banner h2 {
                 font-size: 36px;
@@ -652,6 +662,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="page">
         <!-- Header -->
@@ -659,7 +670,9 @@
             <a class="logo" href="home.html" aria-label="NovelShare Home">
                 <div class="logo-icon">
                     <svg viewBox="0 0 64 64" aria-hidden="true">
-                        <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+                        <path
+                            d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z"
+                            fill="currentColor" />
                     </svg>
                 </div>
                 <div class="logo-text">
@@ -672,8 +685,8 @@
                 <a class="pill" href="library.html">
                     <span class="pill-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" />
                         </svg>
                     </span>
                     Library
@@ -681,8 +694,8 @@
                 <a class="pill" href="browse.html">
                     <span class="pill-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.35-4.35" />
                         </svg>
                     </span>
                     Browse
@@ -692,8 +705,8 @@
             <div class="profile-actions">
                 <button class="bell-btn" aria-label="Notifications">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                     </svg>
                 </button>
                 <div class="profile-wrapper">
@@ -710,20 +723,20 @@
                         <div class="profile-dropdown-menu">
                             <a href="profile.html">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="8" r="4"/>
-                                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                                    <circle cx="12" cy="8" r="4" />
+                                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
                                 </svg>
                                 My Profile
                             </a>
                             <a href="author-dashboard.html">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                    <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                                 </svg>
                                 My Works
                             </a>
                             <a href="login.html" class="logout">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                                 </svg>
                                 Log Out
                             </a>
@@ -737,7 +750,8 @@
         <section class="banner">
             <h1>Discover Your Next</h1>
             <h2>Great Read</h2>
-            <p>Dive into worlds of endless imagination. Explore thousands of captivating novels and find your perfect story today.</p>
+            <p>Dive into worlds of endless imagination. Explore thousands of captivating novels and find your perfect
+                story today.</p>
 
             <div class="banner-buttons">
                 <a href="browse.html" class="btn btn-primary">Explore Novels</a>
@@ -771,8 +785,11 @@
 
             <div class="novel-grid" id="popularNovelsGrid">
                 <!-- Dynamically loaded from Supabase -->
-                <div class="loading-placeholder" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
-                    <div style="width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>
+                <div class="loading-placeholder"
+                    style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+                    <div
+                        style="width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;">
+                    </div>
                     Loading novels...
                 </div>
             </div>
@@ -790,8 +807,11 @@
 
             <div class="newly-grid" id="newlyReleasedGrid">
                 <!-- Dynamically loaded from Supabase -->
-                <div class="loading-placeholder" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
-                    <div style="width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>
+                <div class="loading-placeholder"
+                    style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+                    <div
+                        style="width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;">
+                    </div>
                     Loading novels...
                 </div>
             </div>
@@ -809,8 +829,11 @@
 
             <div class="updated-grid" id="recentlyUpdatedGrid">
                 <!-- Dynamically loaded from Supabase -->
-                <div class="loading-placeholder" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
-                    <div style="width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>
+                <div class="loading-placeholder"
+                    style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+                    <div
+                        style="width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;">
+                    </div>
                     Loading novels...
                 </div>
             </div>
@@ -881,13 +904,19 @@
                 grid.innerHTML = popular.map(novel => {
                     const coverUrl = novel.cover_image || novel.cover || '';
                     const rating = novel.avg_rating || novel.rating || (Math.random() * 0.5 + 4.5).toFixed(1);
+
+                    const coverHtml = coverUrl
+                        ? `<img src="${coverUrl}" alt="${novel.title || 'Untitled'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
+                        : '';
+
+                    const fallbackDisplay = coverUrl ? 'none' : 'flex';
+                    const firstChar = (novel.title || 'N').charAt(0).toUpperCase();
+
                     return `
                         <a class="novel-card" href="novel.html?id=${novel.id}" data-novel-id="${novel.id}">
                             <div class="cover">
-                                ${coverUrl
-                                    ? `<img src="${coverUrl}" alt="${novel.title}">`
-                                    : `<div style="width:100%;height:100%;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.5rem;">${(novel.title || 'N').charAt(0)}</div>`
-                                }
+                                ${coverHtml}
+                                <div class="fallback" style="width:100%;height:100%;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);display:${fallbackDisplay};align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.5rem;">${firstChar}</div>
                             </div>
                             <h4>${novel.title || 'Untitled'}</h4>
                             <p class="author">by ${novel.author || 'Unknown'}</p>
@@ -913,13 +942,19 @@
 
                 grid.innerHTML = sorted.map(novel => {
                     const coverUrl = novel.cover_image || novel.cover || '';
+
+                    const coverHtml = coverUrl
+                        ? `<img src="${coverUrl}" alt="${novel.title || 'Untitled'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
+                        : '';
+
+                    const fallbackDisplay = coverUrl ? 'none' : 'flex';
+                    const firstChar = (novel.title || 'N').charAt(0).toUpperCase();
+
                     return `
                         <a class="newly-card" href="novel.html?id=${novel.id}">
                             <div class="cover">
-                                ${coverUrl
-                                    ? `<img src="${coverUrl}" alt="${novel.title}">`
-                                    : `<div style="width:100%;height:100%;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;">${(novel.title || 'N').charAt(0)}</div>`
-                                }
+                                ${coverHtml}
+                                <div class="fallback" style="width:100%;height:100%;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);display:${fallbackDisplay};align-items:center;justify-content:center;color:#fff;font-weight:600;">${firstChar}</div>
                             </div>
                             <div class="info">
                                 <h4>${novel.title || 'Untitled'}</h4>
@@ -944,13 +979,19 @@
                 grid.innerHTML = sorted.map(novel => {
                     const coverUrl = novel.cover_image || novel.cover || '';
                     const chapterNum = novel.total_chapters || novel.chapters || 0;
+
+                    const coverHtml = coverUrl
+                        ? `<img src="${coverUrl}" alt="${novel.title || 'Untitled'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
+                        : '';
+
+                    const fallbackDisplay = coverUrl ? 'none' : 'flex';
+                    const firstChar = (novel.title || 'N').charAt(0).toUpperCase();
+
                     return `
                         <a class="updated-card" href="novel.html?id=${novel.id}">
                             <div class="cover">
-                                ${coverUrl
-                                    ? `<img src="${coverUrl}" alt="${novel.title}">`
-                                    : `<div style="width:100%;height:100%;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;">${(novel.title || 'N').charAt(0)}</div>`
-                                }
+                                ${coverHtml}
+                                <div class="fallback" style="width:100%;height:100%;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);display:${fallbackDisplay};align-items:center;justify-content:center;color:#fff;font-weight:600;">${firstChar}</div>
                             </div>
                             <div class="info">
                                 <h4>${novel.title || 'Untitled'}</h4>
@@ -981,18 +1022,18 @@
                     ]);
 
                     const history = (cloudHistory || [])
-                      .filter(entry => entry && !deleted.has(entry.novel_id))
-                      .map(entry => {
-                        const timestamp = entry.read_at ? new Date(entry.read_at).getTime() : Date.now();
-                        return {
-                          novelId: entry.novel_id,
-                          chapterId: entry.chapter_id,
-                          novelTitle: entry.novels?.title || 'Unknown',
-                          chapterTitle: entry.chapter_title,
-                          coverImage: entry.novels?.cover_image || null,
-                          timestamp
-                        };
-                    });
+                        .filter(entry => entry && !deleted.has(entry.novel_id))
+                        .map(entry => {
+                            const timestamp = entry.read_at ? new Date(entry.read_at).getTime() : Date.now();
+                            return {
+                                novelId: entry.novel_id,
+                                chapterId: entry.chapter_id,
+                                novelTitle: entry.novels?.title || 'Unknown',
+                                chapterTitle: entry.chapter_title,
+                                coverImage: entry.novels?.cover_image || null,
+                                timestamp
+                            };
+                        });
 
                     const historyLookup = new Map(history.map(item => [item.novelId, item.timestamp]));
 
@@ -1146,8 +1187,8 @@
                         <a class="continue-card" href="reader.html?novel=${novelId}&chapter=${item.currentChapter}">
                             <div class="cover">
                                 ${item.coverImage
-                                    ? `<img src="${item.coverImage}" alt="${item.title}">`
-                                    : `<div class="placeholder">${item.title.charAt(0)}</div>`}
+                            ? `<img src="${item.coverImage}" alt="${item.title}">`
+                            : `<div class="placeholder">${item.title.charAt(0)}</div>`}
                                 <div class="play-overlay">
                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                         <polygon points="5 3 19 12 5 21 5 3"/>
@@ -1235,4 +1276,5 @@
         });
     </script>
 </body>
+
 </html>
