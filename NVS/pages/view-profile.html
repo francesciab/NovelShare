@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jane Writer | NovelShare</title>
   <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="../assets/css/common.css" />
   <style>
     /* Profile Page Styles */
@@ -632,14 +634,14 @@
       background: #fff;
       border-radius: 50%;
       transition: all var(--transition-normal);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    .toggle-switch input:checked + .toggle-slider {
+    .toggle-switch input:checked+.toggle-slider {
       background: var(--primary);
     }
 
-    .toggle-switch input:checked + .toggle-slider::before {
+    .toggle-switch input:checked+.toggle-slider::before {
       transform: translateX(22px);
     }
 
@@ -1065,8 +1067,31 @@
         right: -100px;
       }
     }
+
+    /* Skeleton Loading Animation */
+    @keyframes pulse {
+      0% {
+        opacity: 0.6;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+
+      100% {
+        opacity: 0.6;
+      }
+    }
+
+    .skeleton-text {
+      display: inline-block;
+      background: #e2e8f0;
+      border-radius: 4px;
+      animation: pulse 1.5s infinite;
+    }
   </style>
 </head>
+
 <body>
   <div class="page">
     <!-- Header -->
@@ -1074,7 +1099,9 @@
       <a href="home.html" class="logo">
         <div class="logo-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+            <path
+              d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z"
+              fill="currentColor" />
           </svg>
         </div>
         <div class="logo-text">
@@ -1087,8 +1114,8 @@
         <a class="pill" href="library.html">
           <span class="pill-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" />
             </svg>
           </span>
           Library
@@ -1096,7 +1123,8 @@
         <a class="pill" href="browse.html">
           <span class="pill-icon">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M11 5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm6.7 11.3L21 19.6" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round"/>
+              <path d="M11 5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm6.7 11.3L21 19.6" stroke-width="2" fill="none"
+                stroke="currentColor" stroke-linecap="round" />
             </svg>
           </span>
           Browse
@@ -1107,8 +1135,10 @@
         <div class="notification-wrapper">
           <button class="bell-btn" id="notificationBtn" aria-label="Notifications">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" />
             </svg>
             <span class="notification-badge" id="notifBadge">3</span>
           </button>
@@ -1148,20 +1178,20 @@
             <div class="profile-dropdown-menu">
               <a href="profile.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="8" r="4"/>
-                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
                 </svg>
                 My Profile
               </a>
               <a href="author-dashboard.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
                 My Works
               </a>
               <a href="login.html" class="logout">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                 </svg>
                 Log Out
               </a>
@@ -1179,30 +1209,43 @@
 
         <div class="profile-info-section">
           <div class="profile-avatar-wrapper">
-            <div class="profile-avatar-large" id="profileAvatarLarge">J</div>
+            <div class="profile-avatar-large" id="profileAvatarLarge">
+              <!-- Loading skeleton for avatar -->
+              <div
+                style="width: 100%; height: 100%; border-radius: 50%; background: #e2e8f0; animation: pulse 1.5s infinite;">
+              </div>
+            </div>
           </div>
 
           <div class="profile-details" style="width: 100%;">
             <div class="profile-name-row" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-              <h1 class="profile-name" id="displayName">Jane Writer</h1>
-              <p class="profile-username" id="displayUsername" style="margin: 0;">@janewriter</p>
+              <h1 class="profile-name" id="displayName">
+                <span class="skeleton-text" style="width: 200px; height: 32px;"></span>
+              </h1>
+              <p class="profile-username" id="displayUsername" style="margin: 0;">
+                <span class="skeleton-text" style="width: 120px; height: 16px;"></span>
+              </p>
             </div>
-            <p class="profile-bio" id="displayBio" style="max-width: 640px;">Passionate storyteller who loves crafting fantasy worlds and romance tales. Writing has been my escape and joy for over 5 years. Always open to feedback and connecting with fellow book lovers!</p>
-            <div class="profile-actions-row" style="justify-content: flex-start; gap: 12px; padding-top: 0;">
+            <p class="profile-bio" id="displayBio" style="max-width: 640px;">
+              <span class="skeleton-text" style="width: 100%; height: 16px; margin-bottom: 8px;"></span>
+              <span class="skeleton-text" style="width: 80%; height: 16px;"></span>
+            </p>
+            <div class="profile-actions-row" id="profileActions"
+              style="justify-content: flex-start; gap: 12px; padding-top: 0; visibility: hidden;">
               <button class="btn-edit-profile" id="editProfileBtn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
                 Edit Profile
               </button>
               <button class="btn-share-profile">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="18" cy="5" r="3"/>
-                  <circle cx="6" cy="12" r="3"/>
-                  <circle cx="18" cy="19" r="3"/>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                  <circle cx="18" cy="5" r="3" />
+                  <circle cx="6" cy="12" r="3" />
+                  <circle cx="18" cy="19" r="3" />
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
                 </svg>
                 Share
               </button>
@@ -1226,43 +1269,36 @@
               <h3>Personal Info</h3>
               <div class="about-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
                 </svg>
                 <span class="about-item-label">Name</span>
-                <span class="about-item-value" id="aboutName">Jane Writer</span>
+                <span class="about-item-value" id="aboutName">--</span>
               </div>
+
               <div class="about-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
-                <span class="about-item-label">Email</span>
-                <span class="about-item-value" id="aboutEmail">jane@example.com</span>
-              </div>
-              <div class="about-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/>
-                  <line x1="3" y1="10" x2="21" y2="10"/>
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
                 <span class="about-item-label">Joined</span>
-                <span class="about-item-value">January 2024</span>
+                <span class="about-item-value" id="aboutJoined">--</span>
               </div>
               <div class="about-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
                 </svg>
                 <span class="about-item-label">Location</span>
-                <span class="about-item-value" id="aboutLocation">New York, USA</span>
+                <span class="about-item-value" id="aboutLocation">--</span>
               </div>
             </div>
 
             <div class="about-section">
               <h3>Favorite Genres</h3>
-              <div class="favorite-genres">
+              <div class="favorite-genres" id="aboutGenres">
                 <span class="genre-tag">Fantasy</span>
                 <span class="genre-tag">Romance</span>
                 <span class="genre-tag">Mystery</span>
@@ -1279,41 +1315,11 @@
             <h3>Published Works</h3>
           </div>
 
-          <div class="works-grid">
-            <div class="work-card">
-              <div class="work-cover"></div>
-              <div class="work-info">
-                <h4 class="work-title">Twin Sisters</h4>
-                <span class="work-status ongoing">Ongoing</span>
-                <div class="work-meta">
-                  <span>12 chapters</span>
-                  <span>15.2K reads</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="work-card">
-              <div class="work-cover"></div>
-              <div class="work-info">
-                <h4 class="work-title">The Last Dragon</h4>
-                <span class="work-status completed">Completed</span>
-                <div class="work-meta">
-                  <span>24 chapters</span>
-                  <span>28.5K reads</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="work-card">
-              <div class="work-cover"></div>
-              <div class="work-info">
-                <h4 class="work-title">Midnight Romance</h4>
-                <span class="work-status draft">Draft</span>
-                <div class="work-meta">
-                  <span>3 chapters</span>
-                  <span>Draft</span>
-                </div>
-              </div>
+          <div class="works-grid" id="worksGrid">
+            <!-- Dynamically populated -->
+            <div class="loading-placeholder"
+              style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+              Loading works...
             </div>
           </div>
         </div>
@@ -1324,54 +1330,8 @@
             <h3>Currently Reading</h3>
           </div>
 
-          <div class="reading-list-grid">
-            <div class="reading-card">
-              <div class="reading-cover"></div>
-              <h4 class="reading-title">The Hidden Kingdom</h4>
-              <p class="reading-author">by AuthorX</p>
-              <div class="reading-progress">
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: 65%"></div>
-                </div>
-                <p class="progress-text">Chapter 13 of 20</p>
-              </div>
-            </div>
-
-            <div class="reading-card">
-              <div class="reading-cover"></div>
-              <h4 class="reading-title">Love in Paris</h4>
-              <p class="reading-author">by RomanceWriter</p>
-              <div class="reading-progress">
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: 30%"></div>
-                </div>
-                <p class="progress-text">Chapter 6 of 18</p>
-              </div>
-            </div>
-
-            <div class="reading-card">
-              <div class="reading-cover"></div>
-              <h4 class="reading-title">Space Odyssey</h4>
-              <p class="reading-author">by SciFiMaster</p>
-              <div class="reading-progress">
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: 90%"></div>
-                </div>
-                <p class="progress-text">Chapter 27 of 30</p>
-              </div>
-            </div>
-
-            <div class="reading-card">
-              <div class="reading-cover"></div>
-              <h4 class="reading-title">Mystery Manor</h4>
-              <p class="reading-author">by DetectiveJoe</p>
-              <div class="reading-progress">
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: 10%"></div>
-                </div>
-                <p class="progress-text">Chapter 2 of 15</p>
-              </div>
-            </div>
+          <div class="reading-list-grid" id="readingGrid">
+            <!-- Dynamically populated -->
           </div>
         </div>
 
@@ -1474,8 +1434,8 @@
         <h2>Edit Profile</h2>
         <button class="modal-close" id="closeModal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -1500,7 +1460,8 @@
         </div>
         <div class="form-group">
           <label for="editBio">Bio</label>
-          <textarea id="editBio" maxlength="250">Passionate storyteller who loves crafting fantasy worlds and romance tales. Writing has been my escape and joy for over 5 years. Always open to feedback and connecting with fellow book lovers!</textarea>
+          <textarea id="editBio"
+            maxlength="250">Passionate storyteller who loves crafting fantasy worlds and romance tales. Writing has been my escape and joy for over 5 years. Always open to feedback and connecting with fellow book lovers!</textarea>
           <div class="char-count"><span id="bioCount">186</span>/250</div>
         </div>
       </div>
@@ -1617,7 +1578,6 @@
       document.getElementById('displayUsername').textContent = '@' + username;
       document.getElementById('displayBio').textContent = bio;
       document.getElementById('aboutName').textContent = name;
-      document.getElementById('aboutEmail').textContent = email;
       document.getElementById('aboutLocation').textContent = location;
       document.getElementById('profileAvatarLarge').textContent = name.charAt(0).toUpperCase();
 
@@ -1635,6 +1595,17 @@
       showToast('Profile updated successfully!');
     });
 
+    function formatJoined(dateStr) {
+      try {
+        const d = new Date(dateStr);
+        if (isNaN(d)) throw new Error('invalid');
+        return d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+      } catch {
+        const now = new Date();
+        return now.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+      }
+    }
+
     // Load profile - either from Supabase (other user) or localStorage (own)
     async function loadProfile() {
       // Check if we're viewing someone else's profile
@@ -1647,9 +1618,10 @@
               viewedProfile = {
                 name: dbProfile.display_name || dbProfile.username || 'Unknown',
                 username: dbProfile.username || viewProfileId.substring(0, 8),
-                email: '', // Don't show other user's email
+                // email removed from view
                 location: dbProfile.location || '',
-                bio: dbProfile.bio || 'No bio yet.'
+                bio: dbProfile.bio || 'No bio yet.',
+                joinedAt: dbProfile.created_at
               };
             }
           }
@@ -1712,8 +1684,8 @@
       document.getElementById('displayUsername').textContent = '@' + (profile.username || 'user');
       document.getElementById('displayBio').textContent = profile.bio || 'No bio yet.';
       document.getElementById('aboutName').textContent = profile.name || 'Unknown';
-      document.getElementById('aboutEmail').textContent = profile.email || '';
       document.getElementById('aboutLocation').textContent = profile.location || 'Not specified';
+      document.getElementById('aboutJoined').textContent = formatJoined(profile.joinedAt || profile.created_at || new Date());
       document.getElementById('profileAvatarLarge').textContent = (profile.name || 'U').charAt(0).toUpperCase();
 
       // Header
@@ -2006,4 +1978,5 @@
     window.addEventListener('hashchange', openTabFromLocation);
   </script>
 </body>
+
 </html>
