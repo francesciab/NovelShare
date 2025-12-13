@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jane Writer | NovelShare</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="../assets/css/common.css" />
+  <style>
+    /* Profile Page Styles */
+    .profile-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Profile Header Card */
+    .profile-header-card {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-medium);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .profile-cover {
+      height: 160px;
+      background: var(--primary-gradient);
+      position: relative;
+    }
+
+    .profile-cover-edit {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-normal);
+    }
+
+    .profile-cover-edit:hover {
+      background: #fff;
+      box-shadow: var(--shadow-light);
+    }
+
+    .profile-cover-edit svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .profile-info-section {
+      padding: 0 32px 32px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .profile-avatar-wrapper {
+      margin-top: -50px;
+      position: relative;
+    }
+
+    .profile-avatar-large {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      border: 4px solid var(--bg-primary);
+      box-shadow: var(--shadow-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .profile-avatar-edit {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-primary);
+      border: 2px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-normal);
+    }
+
+    .profile-avatar-edit:hover {
+      background: #f0f4ff;
+      border-color: var(--primary);
+    }
+
+    .profile-avatar-edit svg {
+      width: 14px;
+      height: 14px;
+      color: var(--text-secondary);
+    }
+
+    .profile-details {
+      flex: 1;
+      padding-top: 16px;
+    }
+
+    .profile-name-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .profile-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .profile-badge {
+      padding: 4px 10px;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #92400e;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      border-radius: var(--radius-full);
+    }
+
+    .profile-badge.author {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      color: #1e40af;
+    }
+
+    .profile-username {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .profile-bio {
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      max-width: 500px;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 24px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .stat-label {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .profile-actions-row {
+      display: flex;
+      gap: 12px;
+      padding-top: 16px;
+    }
+
+    .btn-edit-profile {
+      padding: 10px 20px;
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--transition-normal);
+    }
+
+    .btn-edit-profile:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+
+    .btn-edit-profile svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-share-profile {
+      padding: 10px 20px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--transition-normal);
+    }
+
+    .btn-share-profile:hover {
+      background: #f5f7fb;
+      border-color: var(--primary);
+    }
+
+    .btn-share-profile svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Profile Tabs Section */
+    .profile-tabs-section {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .profile-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      overflow: hidden;
+    }
+
+    .profile-tab {
+      padding: 16px 20px;
+      background: none;
+      border: none;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: color var(--transition-normal);
+    }
+
+    .profile-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .profile-tab.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .profile-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary-gradient);
+      border-radius: var(--radius-full) var(--radius-full) 0 0;
+    }
+
+    .profile-tab-content {
+      padding: 24px;
+      display: none;
+    }
+
+    .profile-tab-content.active {
+      display: block;
+    }
+
+    /* About Tab */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .about-section {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .about-section h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 16px;
+    }
+
+    .about-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .about-item:last-child {
+      border-bottom: none;
+    }
+
+    .about-item svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .about-item-label {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      min-width: 80px;
+    }
+
+    .about-item-value {
+      font-size: 0.9375rem;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .favorite-genres {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .genre-tag {
+      padding: 6px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      transition: all var(--transition-normal);
+    }
+
+    .genre-tag:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #f0f4ff;
+    }
+
+    /* Works Tab */
+    .works-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .works-header h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .btn-new-work {
+      padding: 10px 16px;
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-normal);
+    }
+
+    .btn-new-work:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+
+    .btn-new-work svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .work-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      transition: all var(--transition-normal);
+    }
+
+    .work-card:hover {
+      background: #f0f4ff;
+      transform: translateY(-2px);
+    }
+
+    .work-cover {
+      width: 80px;
+      height: 110px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-gradient);
+      flex-shrink: 0;
+    }
+
+    .work-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .work-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 4px;
+    }
+
+    .work-status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+      width: fit-content;
+      margin-bottom: 8px;
+    }
+
+    .work-status.ongoing {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .work-status.completed {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .work-status.draft {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .work-meta {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+
+    .work-meta span {
+      margin-right: 12px;
+    }
+
+    /* Reading List Tab */
+    .reading-list-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+    }
+
+    .reading-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      text-align: center;
+      padding: 16px;
+      transition: all var(--transition-normal);
+      cursor: pointer;
+    }
+
+    .reading-card:hover {
+      background: #f0f4ff;
+      transform: translateY(-2px);
+    }
+
+    .reading-cover {
+      width: 100%;
+      height: 180px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-gradient);
+      margin-bottom: 12px;
+    }
+
+    .reading-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .reading-author {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .reading-progress {
+      margin-top: 10px;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary-gradient);
+      border-radius: var(--radius-full);
+    }
+
+    .progress-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Settings Tab */
+    .settings-section {
+      margin-bottom: 32px;
+    }
+
+    .settings-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .settings-section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-row:last-child {
+      border-bottom: none;
+    }
+
+    .settings-label {
+      font-size: 0.9375rem;
+      color: var(--text-primary);
+    }
+
+    .settings-label small {
+      display: block;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--border);
+      border-radius: var(--radius-full);
+      transition: all var(--transition-normal);
+    }
+
+    .toggle-slider::before {
+      position: absolute;
+      content: '';
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: all var(--transition-normal);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: var(--primary);
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(22px);
+    }
+
+    .btn-danger {
+      padding: 10px 20px;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .btn-danger:hover {
+      background: #fee2e2;
+      border-color: #f87171;
+    }
+
+    /* Edit Profile Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-normal);
+    }
+
+    .modal-close:hover {
+      background: #f0f4ff;
+    }
+
+    .modal-close svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-secondary);
+    }
+
+    .modal-body {
+      padding: 20px 24px 8px;
+      overflow-y: auto;
+      max-height: calc(90vh - 160px);
+      scrollbar-width: none;
+    }
+
+    .modal-body::-webkit-scrollbar {
+      display: none;
+    }
+
+    .modal-footer {
+      padding: 16px 24px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Modal buttons - match primary/secondary CTA style */
+    .modal-footer .btn-primary {
+      background: linear-gradient(135deg, #2f7dfc, #1851c6);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      box-shadow: 0 10px 18px rgba(13, 123, 255, 0.25);
+      border: none;
+      outline: none;
+    }
+
+    .modal-footer .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 22px rgba(13, 123, 255, 0.32);
+    }
+
+    .modal-footer .btn-secondary {
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid rgba(45, 114, 233, 0.35);
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .modal-footer .btn-secondary:hover {
+      background: #f5f8ff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(45, 114, 233, 0.12);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9375rem;
+      font-family: inherit;
+      transition: all var(--transition-normal);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 111, 225, 0.1);
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .char-count {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    /* Notification Dropdown */
+    .notification-wrapper {
+      position: relative;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 18px;
+      height: 18px;
+      background: #ef4444;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: scale(0.95);
+      transform-origin: center;
+    }
+
+    .notification-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 320px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-heavy);
+      display: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .notification-dropdown.open {
+      display: block;
+    }
+
+    .notification-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notification-header h4 {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .notification-header button {
+      font-size: 0.8125rem;
+      color: var(--primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background var(--transition-normal);
+    }
+
+    .notification-item:hover {
+      background: var(--bg-secondary);
+    }
+
+    .notification-item.unread {
+      background: #f0f7ff;
+    }
+
+    .notification-item .notif-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .notification-item .notif-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Profile Dropdown */
+    .profile-wrapper {
+      position: relative;
+    }
+
+    .profile {
+      cursor: pointer;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 200px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-heavy);
+      display: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .profile-dropdown.open {
+      display: block;
+    }
+
+    .profile-dropdown-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .profile-dropdown-header .avatar-lg {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin: 0 auto 8px;
+    }
+
+    .profile-dropdown-header .name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .profile-dropdown-header .email {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .profile-dropdown-menu {
+      padding: 8px 0;
+    }
+
+    .profile-dropdown-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background var(--transition-normal);
+    }
+
+    .profile-dropdown-menu a:hover {
+      background: var(--bg-secondary);
+    }
+
+    .profile-dropdown-menu a svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+    }
+
+    .profile-dropdown-menu .logout {
+      color: #dc2626;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      padding-top: 16px;
+    }
+
+    .profile-dropdown-menu .logout svg {
+      color: #dc2626;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .profile-info-section {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 0 20px 24px;
+      }
+
+      .profile-avatar-wrapper {
+        margin-top: -60px;
+      }
+
+      .profile-details {
+        padding-top: 0;
+      }
+
+      .profile-name-row {
+        justify-content: center;
+      }
+
+      .profile-bio {
+        max-width: 100%;
+      }
+
+      .profile-stats {
+        justify-content: center;
+      }
+
+      .profile-actions-row {
+        margin-left: 0;
+        justify-content: center;
+        width: 100%;
+        padding-top: 16px;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .works-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .work-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .notification-dropdown {
+        width: 280px;
+        right: -100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="top-bar">
+      <a href="home.html" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">NovelShare</span>
+          <span class="logo-tagline">READ • WRITE • SHARE</span>
+        </div>
+      </a>
+
+      <nav class="nav-pills">
+        <a class="pill" href="library.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+            </svg>
+          </span>
+          Library
+        </a>
+        <a class="pill" href="browse.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M11 5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm6.7 11.3L21 19.6" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Browse
+        </a>
+      </nav>
+
+      <div class="profile-actions">
+        <div class="notification-wrapper">
+          <button class="bell-btn" id="notificationBtn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="notification-badge" id="notifBadge">3</span>
+          </button>
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-header">
+              <h4>Notifications</h4>
+              <button id="markAllRead">Mark all read</button>
+            </div>
+            <div class="notification-list">
+              <div class="notification-item unread" data-id="1">
+                <div class="notif-title">New follower: BookLover22</div>
+                <div class="notif-time">5 minutes ago</div>
+              </div>
+              <div class="notification-item unread" data-id="2">
+                <div class="notif-title">Your novel received a new review</div>
+                <div class="notif-time">1 hour ago</div>
+              </div>
+              <div class="notification-item unread" data-id="3">
+                <div class="notif-title">Chapter published successfully</div>
+                <div class="notif-time">2 hours ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-wrapper">
+          <div class="profile" id="profileBtn">
+            <div class="avatar">J</div>
+            <span class="username">JaneWriter</span>
+          </div>
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar-lg">J</div>
+              <div class="name">Jane Writer</div>
+              <div class="email">jane@example.com</div>
+            </div>
+            <div class="profile-dropdown-menu">
+              <a href="profile.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                </svg>
+                My Profile
+              </a>
+              <a href="author-dashboard.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                My Works
+              </a>
+              <a href="login.html" class="logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Log Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Profile Content -->
+    <main class="profile-content">
+      <!-- Profile Header Card -->
+      <div class="profile-header-card">
+        <div class="profile-cover"></div>
+
+        <div class="profile-info-section">
+          <div class="profile-avatar-wrapper">
+            <div class="profile-avatar-large" id="profileAvatarLarge">J</div>
+          </div>
+
+          <div class="profile-details" style="width: 100%;">
+            <div class="profile-name-row" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <h1 class="profile-name" id="displayName">Jane Writer</h1>
+              <p class="profile-username" id="displayUsername" style="margin: 0;">@janewriter</p>
+            </div>
+            <p class="profile-bio" id="displayBio" style="max-width: 640px;">Passionate storyteller who loves crafting fantasy worlds and romance tales. Writing has been my escape and joy for over 5 years. Always open to feedback and connecting with fellow book lovers!</p>
+            <div class="profile-actions-row" style="justify-content: flex-start; gap: 12px; padding-top: 0;">
+              <button class="btn-edit-profile" id="editProfileBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Edit Profile
+              </button>
+              <button class="btn-share-profile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="18" cy="5" r="3"/>
+                  <circle cx="6" cy="12" r="3"/>
+                  <circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+                Share
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Profile Tabs Section -->
+      <div class="profile-tabs-section">
+        <div class="profile-tabs">
+          <button class="profile-tab active" data-tab="about">About</button>
+          <button class="profile-tab" data-tab="works">My Works</button>
+        </div>
+
+        <!-- About Tab -->
+        <div class="profile-tab-content active" id="tab-about">
+          <div class="about-grid">
+            <div class="about-section">
+              <h3>Personal Info</h3>
+              <div class="about-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span class="about-item-label">Name</span>
+                <span class="about-item-value" id="aboutName">Jane Writer</span>
+              </div>
+              <div class="about-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <span class="about-item-label">Email</span>
+                <span class="about-item-value" id="aboutEmail">jane@example.com</span>
+              </div>
+              <div class="about-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span class="about-item-label">Joined</span>
+                <span class="about-item-value">January 2024</span>
+              </div>
+              <div class="about-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span class="about-item-label">Location</span>
+                <span class="about-item-value" id="aboutLocation">New York, USA</span>
+              </div>
+            </div>
+
+            <div class="about-section">
+              <h3>Favorite Genres</h3>
+              <div class="favorite-genres">
+                <span class="genre-tag">Fantasy</span>
+                <span class="genre-tag">Romance</span>
+                <span class="genre-tag">Mystery</span>
+                <span class="genre-tag">Sci-Fi</span>
+                <span class="genre-tag">Historical</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Works Tab -->
+        <div class="profile-tab-content" id="tab-works">
+          <div class="works-header">
+            <h3>Published Works</h3>
+          </div>
+
+          <div class="works-grid">
+            <div class="work-card">
+              <div class="work-cover"></div>
+              <div class="work-info">
+                <h4 class="work-title">Twin Sisters</h4>
+                <span class="work-status ongoing">Ongoing</span>
+                <div class="work-meta">
+                  <span>12 chapters</span>
+                  <span>15.2K reads</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="work-card">
+              <div class="work-cover"></div>
+              <div class="work-info">
+                <h4 class="work-title">The Last Dragon</h4>
+                <span class="work-status completed">Completed</span>
+                <div class="work-meta">
+                  <span>24 chapters</span>
+                  <span>28.5K reads</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="work-card">
+              <div class="work-cover"></div>
+              <div class="work-info">
+                <h4 class="work-title">Midnight Romance</h4>
+                <span class="work-status draft">Draft</span>
+                <div class="work-meta">
+                  <span>3 chapters</span>
+                  <span>Draft</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reading List Tab -->
+        <div class="profile-tab-content" id="tab-reading">
+          <div class="works-header">
+            <h3>Currently Reading</h3>
+          </div>
+
+          <div class="reading-list-grid">
+            <div class="reading-card">
+              <div class="reading-cover"></div>
+              <h4 class="reading-title">The Hidden Kingdom</h4>
+              <p class="reading-author">by AuthorX</p>
+              <div class="reading-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 65%"></div>
+                </div>
+                <p class="progress-text">Chapter 13 of 20</p>
+              </div>
+            </div>
+
+            <div class="reading-card">
+              <div class="reading-cover"></div>
+              <h4 class="reading-title">Love in Paris</h4>
+              <p class="reading-author">by RomanceWriter</p>
+              <div class="reading-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 30%"></div>
+                </div>
+                <p class="progress-text">Chapter 6 of 18</p>
+              </div>
+            </div>
+
+            <div class="reading-card">
+              <div class="reading-cover"></div>
+              <h4 class="reading-title">Space Odyssey</h4>
+              <p class="reading-author">by SciFiMaster</p>
+              <div class="reading-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 90%"></div>
+                </div>
+                <p class="progress-text">Chapter 27 of 30</p>
+              </div>
+            </div>
+
+            <div class="reading-card">
+              <div class="reading-cover"></div>
+              <h4 class="reading-title">Mystery Manor</h4>
+              <p class="reading-author">by DetectiveJoe</p>
+              <div class="reading-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 10%"></div>
+                </div>
+                <p class="progress-text">Chapter 2 of 15</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="profile-tab-content" id="tab-settings">
+          <div class="settings-section">
+            <h3>Notifications</h3>
+            <div class="settings-row">
+              <div class="settings-label">
+                Email Notifications
+                <small>Receive updates about your novels and followers</small>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">
+                New Chapter Alerts
+                <small>Get notified when authors you follow publish</small>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">
+                Comment Notifications
+                <small>Get notified when someone comments on your work</small>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Privacy</h3>
+            <div class="settings-row">
+              <div class="settings-label">
+                Public Profile
+                <small>Allow others to see your profile</small>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">
+                Show Reading List
+                <small>Let others see what you're reading</small>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Account</h3>
+            <div class="settings-row">
+              <div class="settings-label">
+                Change Password
+                <small>Update your password</small>
+              </div>
+              <button class="btn-secondary" style="padding: 8px 16px; font-size: 0.875rem;">Change</button>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">
+                Delete Account
+                <small>Permanently delete your account and all data</small>
+              </div>
+              <button class="btn-danger">Delete Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2025 NovelShare. All Rights Reserved.</p>
+      <div class="footer-links">
+        <a href="javascript:void(0)" onclick="showToast('Contact page coming soon')">Contact Us</a>
+        <a href="javascript:void(0)" onclick="showToast('Privacy Policy coming soon')">Privacy Policy</a>
+        <a href="javascript:void(0)" onclick="showToast('Terms of Service coming soon')">Terms of Service</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div class="modal-overlay" id="editProfileModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Edit Profile</h2>
+        <button class="modal-close" id="closeModal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="editName">Display Name</label>
+          <input type="text" id="editName" value="Jane Writer" maxlength="50">
+          <div class="char-count"><span id="nameCount">11</span>/50</div>
+        </div>
+        <div class="form-group">
+          <label for="editUsername">Username</label>
+          <input type="text" id="editUsername" value="janewriter" maxlength="30">
+          <div class="char-count"><span id="usernameCount">10</span>/30</div>
+        </div>
+        <div class="form-group">
+          <label for="editEmail">Email</label>
+          <input type="email" id="editEmail" value="jane@example.com">
+        </div>
+        <div class="form-group">
+          <label for="editLocation">Location</label>
+          <input type="text" id="editLocation" value="New York, USA">
+        </div>
+        <div class="form-group">
+          <label for="editBio">Bio</label>
+          <textarea id="editBio" maxlength="250">Passionate storyteller who loves crafting fantasy worlds and romance tales. Writing has been my escape and joy for over 5 years. Always open to feedback and connecting with fellow book lovers!</textarea>
+          <div class="char-count"><span id="bioCount">186</span>/250</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelEdit">Cancel</button>
+        <button class="btn-primary" id="saveProfile">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Supabase SDK + app scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    // Get profile ID from URL (if viewing someone else's profile)
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewProfileId = urlParams.get('id');
+    let isOwnProfile = false;
+    let viewedProfile = null;
+
+    // Tab switching
+    const tabs = document.querySelectorAll('.profile-tab');
+    const tabContents = document.querySelectorAll('.profile-tab-content');
+
+    function switchTab(tabId) {
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        switchTab(tab.dataset.tab);
+      });
+    });
+
+    function openTabFromLocation() {
+      const hash = window.location.hash.replace('#', '');
+      const urlTab = new URLSearchParams(window.location.search).get('tab');
+      const tabId = hash || urlTab;
+      if (tabId && document.querySelector(`[data-tab="${tabId}"]`)) {
+        switchTab(tabId);
+      }
+    }
+
+    // Edit Profile Modal
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const editProfileModal = document.getElementById('editProfileModal');
+    const closeModal = document.getElementById('closeModal');
+    const cancelEdit = document.getElementById('cancelEdit');
+    const saveProfile = document.getElementById('saveProfile');
+
+    editProfileBtn.addEventListener('click', () => {
+      editProfileModal.classList.add('open');
+    });
+
+    closeModal.addEventListener('click', () => {
+      editProfileModal.classList.remove('open');
+    });
+
+    cancelEdit.addEventListener('click', () => {
+      editProfileModal.classList.remove('open');
+    });
+
+    editProfileModal.addEventListener('click', (e) => {
+      if (e.target === editProfileModal) {
+        editProfileModal.classList.remove('open');
+      }
+    });
+
+    // Character count
+    const editName = document.getElementById('editName');
+    const editUsername = document.getElementById('editUsername');
+    const editBio = document.getElementById('editBio');
+
+    editName.addEventListener('input', () => {
+      document.getElementById('nameCount').textContent = editName.value.length;
+    });
+
+    editUsername.addEventListener('input', () => {
+      document.getElementById('usernameCount').textContent = editUsername.value.length;
+    });
+
+    editBio.addEventListener('input', () => {
+      document.getElementById('bioCount').textContent = editBio.value.length;
+    });
+
+    // Save Profile
+    saveProfile.addEventListener('click', () => {
+      const name = editName.value.trim();
+      const username = editUsername.value.trim();
+      const email = document.getElementById('editEmail').value.trim();
+      const location = document.getElementById('editLocation').value.trim();
+      const bio = editBio.value.trim();
+
+      if (!name) {
+        showToast('Please enter a display name');
+        return;
+      }
+
+      if (!username) {
+        showToast('Please enter a username');
+        return;
+      }
+
+      // Update profile display
+      document.getElementById('displayName').textContent = name;
+      document.getElementById('displayUsername').textContent = '@' + username;
+      document.getElementById('displayBio').textContent = bio;
+      document.getElementById('aboutName').textContent = name;
+      document.getElementById('aboutEmail').textContent = email;
+      document.getElementById('aboutLocation').textContent = location;
+      document.getElementById('profileAvatarLarge').textContent = name.charAt(0).toUpperCase();
+
+      // Update header profile
+      document.querySelector('.profile .avatar').textContent = name.charAt(0).toUpperCase();
+      document.querySelector('.profile .username').textContent = username;
+      document.querySelector('.profile-dropdown-header .avatar-lg').textContent = name.charAt(0).toUpperCase();
+      document.querySelector('.profile-dropdown-header .name').textContent = name;
+      document.querySelector('.profile-dropdown-header .email').textContent = email;
+
+      // Save to localStorage
+      localStorage.setItem('novelshare_profile', JSON.stringify({ name, username, email, location, bio }));
+
+      editProfileModal.classList.remove('open');
+      showToast('Profile updated successfully!');
+    });
+
+    // Load profile - either from Supabase (other user) or localStorage (own)
+    async function loadProfile() {
+      // Check if we're viewing someone else's profile
+      if (viewProfileId) {
+        // Try to get the viewed profile from Supabase
+        try {
+          if (typeof SupabaseDB !== 'undefined' && SupabaseDB.getProfile) {
+            const dbProfile = await SupabaseDB.getProfile(viewProfileId);
+            if (dbProfile) {
+              viewedProfile = {
+                name: dbProfile.display_name || dbProfile.username || 'Unknown',
+                username: dbProfile.username || viewProfileId.substring(0, 8),
+                email: '', // Don't show other user's email
+                location: dbProfile.location || '',
+                bio: dbProfile.bio || 'No bio yet.'
+              };
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to load profile from Supabase:', err);
+        }
+
+        // Check if this is our own profile
+        const currentUser = typeof SupabaseAuth !== 'undefined' ? await SupabaseAuth.getCurrentUser() : null;
+        isOwnProfile = currentUser && currentUser.id === viewProfileId;
+
+        if (!isOwnProfile) {
+          // Hide edit buttons when viewing someone else's profile
+          const editBtn = document.getElementById('editProfileBtn');
+          if (editBtn) editBtn.style.display = 'none';
+          const coverEditBtn = document.querySelector('.profile-cover-edit');
+          if (coverEditBtn) coverEditBtn.style.display = 'none';
+          const avatarEditBtn = document.querySelector('.profile-avatar-edit');
+          if (avatarEditBtn) avatarEditBtn.style.display = 'none';
+          // Hide settings tab
+          const settingsTab = document.querySelector('[data-tab="settings"]');
+          if (settingsTab) settingsTab.style.display = 'none';
+          // Hide email in about section
+          const emailRow = document.getElementById('aboutEmail')?.closest('.about-item');
+          if (emailRow) emailRow.style.display = 'none';
+        }
+
+        // Display the viewed profile
+        if (viewedProfile) {
+          applyProfileToUI(viewedProfile);
+          document.title = `${viewedProfile.name} | NovelShare`;
+          return;
+        }
+      }
+
+      // Load own profile from localStorage (no viewProfileId means viewing own profile)
+      isOwnProfile = true;
+      const saved = localStorage.getItem('novelshare_profile');
+      if (saved) {
+        const profile = JSON.parse(saved);
+        isOwnProfile = true;
+        applyProfileToUI(profile);
+
+        // Edit form
+        editName.value = profile.name;
+        editUsername.value = profile.username;
+        document.getElementById('editEmail').value = profile.email;
+        document.getElementById('editLocation').value = profile.location;
+        editBio.value = profile.bio;
+
+        // Update counts
+        document.getElementById('nameCount').textContent = profile.name.length;
+        document.getElementById('usernameCount').textContent = profile.username.length;
+        document.getElementById('bioCount').textContent = profile.bio.length;
+      }
+    }
+
+    function applyProfileToUI(profile) {
+      document.getElementById('displayName').textContent = profile.name || 'Unknown';
+      document.getElementById('displayUsername').textContent = '@' + (profile.username || 'user');
+      document.getElementById('displayBio').textContent = profile.bio || 'No bio yet.';
+      document.getElementById('aboutName').textContent = profile.name || 'Unknown';
+      document.getElementById('aboutEmail').textContent = profile.email || '';
+      document.getElementById('aboutLocation').textContent = profile.location || 'Not specified';
+      document.getElementById('profileAvatarLarge').textContent = (profile.name || 'U').charAt(0).toUpperCase();
+
+      // Header
+      const headerAvatar = document.querySelector('.profile .avatar');
+      const headerUsername = document.querySelector('.profile .username');
+      if (headerAvatar) headerAvatar.textContent = (profile.name || 'U').charAt(0).toUpperCase();
+      if (headerUsername) headerUsername.textContent = profile.username || 'user';
+    }
+
+    // Notification dropdown
+    const notifBtn = document.getElementById('notificationBtn');
+    const notifDropdown = document.getElementById('notificationDropdown');
+    const profileBtn = document.getElementById('profileBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    if (notifBtn && notifDropdown) {
+      notifBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notifDropdown.classList.toggle('open');
+        if (profileDropdown) profileDropdown.classList.remove('open');
+      });
+      notifDropdown.addEventListener('click', (e) => e.stopPropagation());
+      const markAll = document.getElementById('markAllRead');
+      if (markAll) {
+        markAll.addEventListener('click', () => {
+          document.querySelectorAll('.notification-item.unread').forEach(item => item.classList.remove('unread'));
+          const badge = document.getElementById('notifBadge');
+          if (badge) badge.style.display = 'none';
+          showToast('All notifications marked as read');
+        });
+      }
+    }
+
+    if (profileBtn && profileDropdown) {
+      profileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('open');
+        if (notifDropdown) notifDropdown.classList.remove('open');
+      });
+      profileDropdown.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    document.addEventListener('click', () => {
+      if (notifDropdown) notifDropdown.classList.remove('open');
+      if (profileDropdown) profileDropdown.classList.remove('open');
+    });
+
+    // Share profile
+    const shareBtn = document.querySelector('.btn-share-profile');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        if (navigator.share) {
+          navigator.share({
+            title: 'Check out this profile on NovelShare',
+            url: window.location.href
+          });
+        } else {
+          navigator.clipboard.writeText(window.location.href);
+          showToast('Profile link copied to clipboard!');
+        }
+      });
+    }
+
+    // Close modal on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        editProfileModal.classList.remove('open');
+        notifDropdown.classList.remove('open');
+        profileDropdown.classList.remove('open');
+      }
+    });
+
+    // Render reading list from LibrarySystem (guarded for missing tab)
+    function renderReadingList() {
+      const container = document.querySelector('.reading-list-grid');
+      if (!container) return;
+      const library = LibrarySystem.getLibrary();
+      const header = document.querySelector('#tab-reading .works-header h3');
+      const fallbackCover = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='450'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop stop-color='%233b82f6' offset='0%25'/%3E%3Cstop stop-color='%231b4aa9' offset='100%25'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='450' rx='24' ry='24' fill='url(%23g)'/%3E%3C/svg%3E";
+
+      if (header) {
+        header.textContent = 'Currently Reading';
+      }
+
+      if (library.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>No novels in your reading list yet.</p>
+            <a href="browse.html" style="color: var(--primary);">Browse novels to add some!</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = library.map(novel => {
+        const id = novel.novelId || novel.id;
+        const coverImgRaw = (novel.coverImage || novel.cover || '').trim();
+        const coverImg = coverImgRaw || fallbackCover;
+        const totalChapters = novel.totalChapters || novel.chapters || 0;
+        const currentChapter = Number.isFinite(novel.currentChapter) ? novel.currentChapter : 0;
+        const progress = totalChapters > 0
+          ? Math.round((currentChapter / totalChapters) * 100)
+          : 0;
+
+        return `
+          <a class="reading-card" href="novel.html?id=${id}" style="text-decoration: none;">
+            <div class="reading-cover" style="background-image: url('${coverImg}'); background-size: cover; background-position: center;">
+              ${coverImgRaw ? '' : `<div style="width:100%;height:100%;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-size:2rem;font-weight:700;">${(novel.title || 'N').charAt(0)}</div>`}
+            </div>
+            <h4 class="reading-title">${novel.title}</h4>
+            <p class="reading-author">by ${novel.author || 'Unknown'}</p>
+            <div class="reading-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${progress}%"></div>
+              </div>
+              <p class="progress-text">Chapter ${currentChapter} of ${totalChapters}</p>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    function getMyWorks() {
+      try {
+        const works = JSON.parse(localStorage.getItem('novelshare_my_works') || '[]');
+        works.forEach(work => {
+          if (!work.id) {
+            work.id = `work-${Date.now()}-${Math.random()}`;
+          }
+        });
+        localStorage.setItem('novelshare_my_works', JSON.stringify(works));
+        return works;
+      } catch {
+        return [];
+      }
+    }
+
+    async function renderMyWorks() {
+      const grid = document.querySelector('#tab-works .works-grid');
+      if (!grid) return;
+
+      let works = [];
+
+      // If viewing another user's profile, fetch their public works from Supabase
+      if (viewProfileId && !isOwnProfile) {
+        try {
+          if (typeof SupabaseDB !== 'undefined' && SupabaseDB.getNovelsByAuthor) {
+            const authorWorks = await SupabaseDB.getNovelsByAuthor(viewProfileId);
+            works = (authorWorks || []).filter(w => w.status !== 'draft'); // Only show published/ongoing
+          }
+        } catch (err) {
+          console.warn('Failed to fetch author works:', err);
+        }
+      } else {
+        // Own profile - merge local and cloud works
+        const localWorks = getMyWorks();
+        let cloudWorks = [];
+        try {
+          const user = await SupabaseAuth.getCurrentUser();
+          if (user && typeof SupabaseDB !== 'undefined' && SupabaseDB.getNovelsByAuthor) {
+            cloudWorks = await SupabaseDB.getNovelsByAuthor(user.id);
+          }
+        } catch (err) {
+          console.warn('Failed to fetch cloud works:', err);
+        }
+        // Merge: prefer local for drafts, but include all
+        const merged = [...cloudWorks];
+        localWorks.forEach(local => {
+          const exists = merged.find(c => c.id === local.id);
+          if (!exists) merged.push(local);
+        });
+        works = merged;
+      }
+
+      if (!works.length) {
+        const emptyMessage = isOwnProfile
+          ? `<p>No works published yet.</p><a href="add-novel.html" style="color: var(--primary); font-weight: 600;">Add your first novel</a>`
+          : `<p>This author hasn't published any works yet.</p>`;
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 32px; color: var(--text-muted);">
+            ${emptyMessage}
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = works.map(work => {
+        const statusLabel = work.status || 'Ongoing';
+        const statusClass = statusLabel.toLowerCase() === 'completed'
+          ? 'completed'
+          : statusLabel.toLowerCase() === 'draft'
+            ? 'draft'
+            : 'ongoing';
+        const coverStyle = work.cover
+          ? `background-image: url('${work.cover}'); background-size: cover; background-position: center;`
+          : `background: var(--primary-gradient); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem;`;
+        const coverFallback = work.cover ? '' : (work.title || 'N').charAt(0).toUpperCase();
+        const chapters = Number.isFinite(work.chapters) ? work.chapters : 0;
+        const reads = Number.isFinite(work.reads) ? `${work.reads.toLocaleString()} reads` : 'Just published';
+
+        return `
+          <a href="novel.html?id=${work.id}" class="work-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+            <div class="work-cover" style="${coverStyle}">${coverFallback}</div>
+            <div class="work-info">
+              <h4 class="work-title">${work.title || 'Untitled'}</h4>
+              <span class="work-status ${statusClass}">${statusLabel}</span>
+              <div class="work-meta">
+                <span>${chapters} chapters</span>
+                <span>${reads}</span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    // Render ratings given
+    function renderUserRatings() {
+      const ratings = RatingSystem.getAllRatings();
+      const ratingCount = Object.keys(ratings).length;
+
+      // Update stats if needed (disabled since reviews stat removed)
+      // const statsHtml = document.querySelector('.profile-stats');
+      // if (statsHtml && !statsHtml.querySelector('.stat-ratings')) {
+      //   const ratingsStat = document.createElement('div');
+      //   ratingsStat.className = 'stat-item stat-ratings';
+      //   ratingsStat.innerHTML = `
+      //     <div class="stat-value">${ratingCount}</div>
+      //     <div class="stat-label">Reviews</div>
+      //   `;
+      //   statsHtml.appendChild(ratingsStat);
+      // }
+    }
+
+    // Render following list
+    function renderFollowing() {
+      const following = FollowingSystem.getFollowing();
+      const followingStat = document.querySelector('.profile-stats .stat-item:nth-child(3) .stat-value');
+      if (followingStat) {
+        followingStat.textContent = following.length || '89';
+      }
+    }
+
+    // Initialize mock data
+    function initMockData() {
+      // Initialize profile if not exists
+      if (!localStorage.getItem('novelshare_profile')) {
+        const mockProfile = {
+          name: 'Jane Writer',
+          username: 'janewriter',
+          email: 'jane@example.com',
+          location: 'New York, USA',
+          bio: 'Passionate storyteller who loves crafting fantasy worlds and romance tales. Writing has been my escape and joy for over 5 years. Always open to feedback and connecting with fellow book lovers!'
+        };
+        localStorage.setItem('novelshare_profile', JSON.stringify(mockProfile));
+      }
+
+      // Initialize following if not exists
+      if (FollowingSystem.getFollowing().length === 0) {
+        const mockFollowing = [
+          { id: 'guiltythree', name: 'Guiltythree', followedAt: Date.now() - 86400000 * 30 },
+          { id: 'cuttlefish', name: 'Cuttlefish That Loves Diving', followedAt: Date.now() - 86400000 * 60 },
+          { id: 'chugong', name: 'Chugong', followedAt: Date.now() - 86400000 * 15 }
+        ];
+        localStorage.setItem('novelshare_following', JSON.stringify(mockFollowing));
+      }
+
+      // Initialize ratings if not exists
+      if (Object.keys(RatingSystem.getAllRatings()).length === 0) {
+        const mockRatings = {
+          'shadow-slave': { rating: 5, review: 'Best novel I have ever read!', timestamp: Date.now() - 86400000 * 10 },
+          'lord-of-mysteries': { rating: 5, review: 'Masterpiece of mystery and fantasy.', timestamp: Date.now() - 86400000 * 30 },
+          'solo-leveling': { rating: 4, review: 'Great action and progression.', timestamp: Date.now() - 86400000 * 5 }
+        };
+        localStorage.setItem('novelshare_ratings', JSON.stringify(mockRatings));
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      initMockData();
+      loadProfile();
+      renderMyWorks();
+      renderReadingList();
+      renderUserRatings();
+      renderFollowing();
+      openTabFromLocation();
+    });
+
+    window.addEventListener('hashchange', openTabFromLocation);
+  </script>
+</body>
+</html>

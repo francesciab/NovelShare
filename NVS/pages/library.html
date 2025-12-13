@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>NovelShare | My Library</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">   
+    <!-- Shared CSS (includes fonts) -->
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Page-specific styles - Modern Library Design */
+
+        /* Controls (search + tabs) */
+        .library-controls {
+            display: flex;
+            align-items: center;
+            gap: 350px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .library-controls .search-container {
+            flex: 1;
+            min-width: 260px;
+            margin-bottom: 0;
+            margin-left: auto; /* push search to the far right */
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px rgba(31, 111, 225, 0.15);
+        }
+
+        .search-bar svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            width: 100%;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Modern Tabs */
+        .tabs-container {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 6px;
+            margin-bottom: 0;
+            display: flex;
+            gap: 4px;
+            flex: 0;
+            justify-content: flex-start;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            border-radius: 12px;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-badge {
+            background: var(--primary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .tab.active .tab-badge {
+            background: rgba(31, 111, 225, 0.15);
+            color: var(--primary);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tab Header with Actions */
+        .tab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tab-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .clear-btn {
+            padding: 8px 16px;
+            background: rgba(239, 68, 68, 0.1);
+            border: none;
+            color: var(--danger);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .clear-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Library Grid - Modern Cards */
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* Library Card - Enhanced Design */
+        .library-card {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .library-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .library-card-inner {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .library-card-cover {
+            width: 90px;
+            height: 130px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .library-card-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .library-card:hover .library-card-cover img {
+            transform: scale(1.05);
+        }
+
+        .library-card-cover .placeholder-cover {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.25rem;
+            font-weight: 700;
+        }
+
+        /* Reading status badge */
+        .reading-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .reading-status.reading {
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+        }
+
+        .reading-status.completed {
+            background: rgba(99, 102, 241, 0.9);
+            color: white;
+        }
+
+        .reading-status.new {
+            background: rgba(245, 158, 11, 0.9);
+            color: white;
+        }
+
+        .library-card-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .library-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
+
+        .library-card-author {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .library-card-progress {
+            margin-top: auto;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .progress-percent {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #764ba2);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .library-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: linear-gradient(to right, rgba(102, 126, 234, 0.03), rgba(118, 75, 162, 0.03));
+        }
+
+        .continue-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary), #5a7ee0);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(31, 111, 225, 0.35);
+        }
+
+        .continue-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .remove-btn {
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .remove-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Download Button for Library Cards */
+        .download-btn {
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .download-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Download Modal */
+        .download-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .download-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .download-modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .download-modal-overlay.active .download-modal {
+            transform: translateY(0);
+        }
+
+        .download-modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .download-modal-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .download-modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .download-modal-close:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+        }
+
+        .download-modal-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .download-modal-body {
+            padding: 20px 24px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .download-range-section {
+            margin-bottom: 20px;
+        }
+
+        .download-range-section label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .range-inputs {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .range-inputs input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .range-inputs input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .range-inputs span {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .quick-select {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .quick-select-btn {
+            padding: 8px 14px;
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-select-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .download-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            background: rgba(16, 185, 129, 0.08);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .download-info svg {
+            width: 20px;
+            height: 20px;
+            color: var(--success);
+            flex-shrink: 0;
+        }
+
+        .download-info span {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .download-info strong {
+            color: var(--success);
+        }
+
+        .download-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .download-cancel-btn {
+            padding: 12px 20px;
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .download-cancel-btn:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .download-confirm-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .download-confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+        }
+
+        .download-confirm-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .download-confirm-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Download progress */
+        .download-progress {
+            margin-top: 16px;
+            display: none;
+        }
+
+        .download-progress.active {
+            display: block;
+        }
+
+        .download-progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .download-progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .download-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* History Card - Enhanced */
+        .history-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 16px;
+            transition: all 0.25s ease;
+        }
+
+        .history-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary);
+        }
+
+        .history-card-cover {
+            width: 56px;
+            height: 80px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        .history-card-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .history-card-cover .placeholder-cover {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .history-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .history-card-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        .history-card-chapter {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .history-card-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .history-card-time svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .history-card-action {
+            flex-shrink: 0;
+        }
+
+        /* Download Card - Enhanced */
+        .download-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 16px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #10b981, #059669);
+        }
+
+        .download-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+        }
+
+        .download-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #10b981;
+            flex-shrink: 0;
+        }
+
+        .download-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .download-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .download-card-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .download-card-chapter {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .download-card-size {
+            font-size: 0.75rem;
+            color: var(--success);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .download-card-action {
+            flex-shrink: 0;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* List Layout */
+        .list-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Empty State - Enhanced */
+        .empty-state {
+            text-align: center;
+            padding: 16px 20px 28px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .empty-state-icon svg {
+            width: 48px;
+            height: 48px;
+            color: var(--primary);
+            opacity: 0.7;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 8px;
+        }
+
+        .empty-state p {
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state .browse-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), #5a7ee0);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .empty-state .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(31, 111, 225, 0.35);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .library-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .library-controls .tabs-container {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .library-controls .search-container {
+                width: 100%;
+            }
+
+            .search-bar {
+                max-width: 100%;
+            }
+
+            .tabs-container {
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            .tab {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+
+            .tab svg {
+                display: none;
+            }
+
+            .library-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .library-card-cover {
+                width: 75px;
+                height: 110px;
+            }
+        }
+
+        /* Favorite Indicator on Cards */
+        .favorite-indicator {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .favorite-indicator svg {
+            width: 14px;
+            height: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="top-bar">
+            <a class="logo" href="home.html" aria-label="NovelShare Home">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 64 64" aria-hidden="true">
+                        <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-name">NovelShare</span>
+                    <span class="logo-tagline">READ • WRITE • SHARE</span>
+                </div>
+            </a>
+
+            <nav class="nav-pills" aria-label="Main navigation">
+                <a class="pill active" href="library.html" aria-current="page">
+                    <span class="pill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+                        </svg>
+                    </span>
+                    Library
+                </a>
+                <a class="pill" href="browse.html">
+                    <span class="pill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </span>
+                    Browse
+                </a>
+            </nav>
+
+            <div class="profile-actions">
+                <button class="bell-btn" aria-label="Notifications">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+                <div class="profile-wrapper">
+                    <a href="profile.html" class="profile" id="profileBtn">
+                        <div class="avatar">U</div>
+                        <span class="username">user</span>
+                    </a>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-dropdown-header">
+                            <div class="avatar-lg">U</div>
+                            <div class="name">User</div>
+                            <div class="email">user@example.com</div>
+                        </div>
+                        <div class="profile-dropdown-menu">
+                            <a href="profile.html">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="8" r="4"/>
+                                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                                </svg>
+                                My Profile
+                            </a>
+                            <a href="author-dashboard.html">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                </svg>
+                                My Works
+                            </a>
+                            <a href="login.html" class="logout">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                                </svg>
+                                Log Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <!-- Controls: Search + Tabs -->
+            <div class="library-controls">
+                <!-- Modern Tabs -->
+                <div class="tabs-container">
+                    <div class="tabs" role="tablist">
+                    <button class="tab active" data-tab="library" role="tab" aria-selected="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+                        </svg>
+                        Library
+                        <span class="tab-badge" id="libraryCount">0</span>
+                    </button>
+                    <button class="tab" data-tab="history" role="tab" aria-selected="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                        History
+                    </button>
+                    <button class="tab" data-tab="downloads" role="tab" aria-selected="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Downloads
+                    </button>
+                    <button class="tab" data-tab="favorites" role="tab" aria-selected="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        Favorites
+                        <span class="tab-badge" id="favoritesCount">0</span>
+                    </button>
+                </div>
+                </div>
+
+                <div class="search-container">
+                    <div class="search-bar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="Search your library..." aria-label="Search your library">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Library -->
+            <section class="tab-content active" id="library" role="tabpanel">
+                <div class="library-grid" id="libraryGrid">
+                    <!-- Dynamically populated -->
+                </div>
+                <div class="empty-state" id="libraryEmpty" style="display: none;">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+                        </svg>
+                    </div>
+                    <h3>Your library is empty</h3>
+                    <p>Start building your collection by adding novels you love</p>
+                    <a href="browse.html" class="browse-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        Browse Novels
+                    </a>
+                </div>
+            </section>
+
+            <!-- Tab Content: Reading History -->
+            <section class="tab-content" id="history" role="tabpanel">
+                <div class="tab-header">
+                    <h2>Recently Read</h2>
+                    <button class="clear-btn" id="clearHistoryBtn">Clear History</button>
+                </div>
+                <div class="list-grid" id="historyGrid">
+                    <!-- Dynamically populated -->
+                </div>
+                <div class="empty-state" id="historyEmpty" style="display: none;">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                    </div>
+                    <h3>No reading history</h3>
+                    <p>Your reading journey will be tracked here</p>
+                    <a href="browse.html" class="browse-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        Start Reading
+                    </a>
+                </div>
+            </section>
+
+            <!-- Tab Content: Downloads -->
+            <section class="tab-content" id="downloads" role="tabpanel">
+                <div class="list-grid" id="downloadsGrid">
+                    <!-- Dynamically populated -->
+                </div>
+                <div class="empty-state" id="downloadsEmpty" style="display: none;">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                    </div>
+                    <h3>No downloads yet</h3>
+                    <p>Download chapters to read offline anytime</p>
+                    <a href="browse.html" class="browse-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        Browse Novels
+                    </a>
+                </div>
+            </section>
+
+            <!-- Tab Content: Favorites -->
+            <section class="tab-content" id="favorites" role="tabpanel">
+                <div class="library-grid" id="favoritesGrid">
+                    <!-- Dynamically populated -->
+                </div>
+                <div class="empty-state" id="favoritesEmpty" style="display: none;">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </div>
+                    <h3>No favorites yet</h3>
+                    <p>Heart novels on the browse page to add them here</p>
+                    <a href="browse.html" class="browse-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        Browse Novels
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <!-- Download Modal -->
+        <div class="download-modal-overlay" id="downloadModal">
+            <div class="download-modal">
+                <div class="download-modal-header">
+                    <h3 id="downloadModalTitle">Download Chapters</h3>
+                    <button class="download-modal-close" id="closeDownloadModal" aria-label="Close modal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="download-modal-body">
+                    <div class="download-info">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <span>Select chapters to download for offline reading. Downloaded chapters will be available even without internet.</span>
+                    </div>
+                    <div class="download-range-section">
+                        <label>Chapter Range</label>
+                        <div class="range-inputs">
+                            <input type="number" id="downloadFrom" min="1" placeholder="From" value="1">
+                            <span>to</span>
+                            <input type="number" id="downloadTo" min="1" placeholder="To" value="10">
+                        </div>
+                        <div class="quick-select">
+                            <button class="quick-select-btn" data-range="next-10">Next 10</button>
+                            <button class="quick-select-btn" data-range="next-25">Next 25</button>
+                            <button class="quick-select-btn" data-range="next-50">Next 50</button>
+                            <button class="quick-select-btn" data-range="all">All</button>
+                        </div>
+                    </div>
+                    <div class="download-info" id="downloadSummary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span><strong id="chapterCount">10</strong> chapters will be downloaded</span>
+                    </div>
+                    <div class="download-progress" id="downloadProgress">
+                        <div class="download-progress-label">
+                            <span>Downloading...</span>
+                            <span id="downloadProgressPercent">0%</span>
+                        </div>
+                        <div class="download-progress-bar">
+                            <div class="download-progress-fill" id="downloadProgressFill"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="download-modal-footer">
+                    <button class="download-cancel-btn" id="cancelDownload">Cancel</button>
+                    <button class="download-confirm-btn" id="confirmDownload">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <span>&copy; 2025 NovelShare. All Rights Reserved.</span>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="javascript:void(0)" onclick="showToast('Contact page coming soon')">Contact Us</a>
+                <a href="javascript:void(0)" onclick="showToast('Privacy Policy coming soon')">Privacy Policy</a>
+                <a href="javascript:void(0)" onclick="showToast('Terms of Service coming soon')">Terms of Service</a>
+            </nav>
+        </footer>
+    </div>
+
+    <!-- Shared JavaScript -->
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../assets/js/common.js"></script>
+    <!-- Page-specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Redirect guests to login - library requires authentication
+            if (typeof GuestMode !== 'undefined' && GuestMode.isGuest()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Initialization will be called after all functions are defined
+            let initComplete = false;
+
+            async function initializeLibrary() {
+                if (initComplete) return;
+                initComplete = true;
+
+                // Try to sync with Supabase if user is logged in
+                const isGuest = GuestMode.isGuest();
+                let syncCompleted = false;
+                if (!isGuest) {
+                    try {
+                        const user = await SupabaseAuth.getCurrentUser();
+                        if (user) {
+                            console.log('Syncing library with Supabase...');
+                            await SupabaseSync.syncLibrary();
+                            await SupabaseSync.syncHistory();
+                            await SupabaseSync.syncChapters();
+
+                            // Refresh chapter counts from Supabase to ensure consistency
+                            await refreshLibraryChapterCounts();
+
+                            syncCompleted = true;
+                            // Render after sync completes
+                            renderLibrary();
+                            renderHistory();
+                            renderDownloads();
+                            renderFavorites();
+                        }
+                    } catch (error) {
+                        console.log('Supabase sync not available, using local data');
+                    }
+                }
+
+                // If sync didn't complete (guest or no user), render with local data
+                if (!syncCompleted) {
+                    // Still try to refresh chapter counts if Supabase is available
+                    if (typeof countChapters === 'function') {
+                        await refreshLibraryChapterCounts();
+                    }
+                    renderLibrary();
+                    renderHistory();
+                    renderDownloads();
+                    renderFavorites();
+                }
+            }
+
+            // Re-render when returning to page via browser back button (bfcache)
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted) {
+                    console.log('[library.html] Page restored from bfcache, re-rendering...');
+                    renderLibrary();
+                    renderHistory();
+                    renderDownloads();
+                    renderFavorites();
+                }
+            });
+
+            // Initialize tabs
+            const tabs = document.querySelectorAll('.tabs .tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetId = tab.dataset.tab;
+
+                    // Update tab states
+                    tabs.forEach(t => {
+                        t.classList.remove('active');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+                    tab.classList.add('active');
+                    tab.setAttribute('aria-selected', 'true');
+
+                    // Update content visibility
+                    tabContents.forEach(content => {
+                        if (content.id === targetId) {
+                            content.style.display = '';
+                            content.classList.add('active');
+                        } else {
+                            content.style.display = 'none';
+                            content.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            // Helper function to get time ago
+            function getTimeAgo(timestamp) {
+                const now = Date.now();
+                const diff = now - timestamp;
+                const minutes = Math.floor(diff / 60000);
+                const hours = Math.floor(diff / 3600000);
+                const days = Math.floor(diff / 86400000);
+
+                if (minutes < 1) return 'Just now';
+                if (minutes < 60) return `${minutes}m ago`;
+                if (hours < 24) return `${hours}h ago`;
+                if (days < 7) return `${days}d ago`;
+                return new Date(timestamp).toLocaleDateString();
+            }
+
+            // Update library stats in hero
+            const DELETED_KEY = 'novelshare_deleted_ids';
+            function getDeletedIds() {
+                try { return new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || '[]')); }
+                catch { return new Set(); }
+            }
+
+            function getProfileDisplayName() {
+                try {
+                    const profile = JSON.parse(localStorage.getItem('novelshare_profile') || '{}');
+                    return profile.display_name || profile.username || profile.name || profile.email || 'You';
+                } catch {
+                    return 'You';
+                }
+            }
+
+            function getAuthorDisplayName(rawAuthor) {
+                const profileName = getProfileDisplayName();
+                if (!rawAuthor) return profileName;
+                if (typeof rawAuthor === 'string' && rawAuthor.includes('@')) return profileName;
+                return rawAuthor;
+            }
+
+            async function resolveChapterId(novelId, hintedId) {
+                if (hintedId) return hintedId;
+
+                // Check ReadingHistory for last read chapter
+                if (typeof ReadingHistory !== 'undefined') {
+                    const lastRead = ReadingHistory.getLastRead(novelId);
+                    if (lastRead && lastRead.chapterId) return lastRead.chapterId;
+                }
+
+                // Check LibrarySystem for stored currentChapterId
+                if (typeof LibrarySystem !== 'undefined') {
+                    const progress = LibrarySystem.getProgress(novelId);
+                    if (progress && progress.currentChapterId) return progress.currentChapterId;
+                }
+
+                // Local cache - fallback to first chapter
+                try {
+                    const store = JSON.parse(localStorage.getItem('novelshare_chapters') || '{}');
+                    const list = Array.isArray(store[novelId]) ? store[novelId] : [];
+                    if (list.length) return list[0].id || '';
+                } catch {}
+                // Supabase
+                if (typeof SupabaseDB !== 'undefined' && SupabaseDB.getChapters) {
+                    try {
+                        const supa = await SupabaseDB.getChapters(novelId);
+                        if (Array.isArray(supa) && supa.length) {
+                            // cache it
+                            const store = (() => { try { return JSON.parse(localStorage.getItem('novelshare_chapters') || '{}'); } catch { return {}; } })();
+                            store[novelId] = supa.map(ch => ({
+                                id: ch.id,
+                                title: ch.title,
+                                content: ch.content,
+                                status: ch.status || 'published',
+                                number: ch.chapter_number || ch.number || ch.order,
+                                createdAt: ch.created_at || ch.updated_at
+                            }));
+                            localStorage.setItem('novelshare_chapters', JSON.stringify(store));
+                            return supa[0].id || '';
+                        }
+                    } catch (err) {
+                        console.warn('Supabase getChapters failed:', err);
+                    }
+                }
+                return '';
+            }
+
+            function attachContinueHandlers(scope) {
+                const buttons = (scope || document).querySelectorAll('.continue-btn');
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const href = e.currentTarget.getAttribute('href') || '';
+                        const url = new URL(href, window.location.origin);
+                        const novelId = url.searchParams.get('novelId') || url.searchParams.get('novel') || e.currentTarget.closest('[data-novel-id]')?.dataset.novelId;
+                        const hinted = url.searchParams.get('chapterId') || '';
+                        if (!novelId) return;
+                        e.preventDefault();
+                        const chapterId = await resolveChapterId(novelId, hinted);
+                        if (!chapterId) {
+                            // No chapters available - redirect to novel page instead
+                            window.location.href = `novel.html?id=${encodeURIComponent(novelId)}`;
+                            return;
+                        }
+                        window.location.href = `reader.html?novelId=${encodeURIComponent(novelId)}&chapterId=${encodeURIComponent(chapterId)}`;
+                    });
+                });
+            }
+
+            function updateLibraryStats() {
+                const deleted = getDeletedIds();
+                const library = LibrarySystem.getLibrary().filter(n => !deleted.has(n.id || n.novelId));
+                const total = library.length;
+                let completed = 0;
+                let inProgress = 0;
+
+                library.forEach(novel => {
+                    const progress = novel.totalChapters > 0 ? (novel.currentChapter / novel.totalChapters) * 100 : 0;
+                    if (progress >= 100) {
+                        completed++;
+                    } else if (novel.currentChapter > 0) {
+                        inProgress++;
+                    }
+                });
+
+                const totalEl = document.getElementById('totalNovels');
+                const inProgressEl = document.getElementById('inProgress');
+                const completedEl = document.getElementById('completedCount');
+                const libraryCountEl = document.getElementById('libraryCount');
+
+                if (totalEl) totalEl.textContent = total;
+                if (inProgressEl) inProgressEl.textContent = inProgress;
+                if (completedEl) completedEl.textContent = completed;
+                if (libraryCountEl) libraryCountEl.textContent = total;
+            }
+
+            // Escape HTML attributes to prevent XSS and template errors
+            function escapeAttr(str) {
+                if (!str) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/`/g, '&#96;');
+            }
+
+            // Get reading status for a novel
+            function getReadingStatus(novel) {
+                const progress = novel.totalChapters > 0 ? (novel.currentChapter / novel.totalChapters) * 100 : 0;
+                if (progress >= 100) return { class: 'completed', text: 'Completed' };
+                if (novel.currentChapter === 0) return { class: 'new', text: 'New' };
+                return { class: 'reading', text: 'Reading' };
+            }
+
+            // Refresh chapter counts from Supabase for library items
+            // Uses countPublishedChapters for consistency - only counts published chapters
+            async function refreshLibraryChapterCounts() {
+                if (typeof countPublishedChapters !== 'function') return;
+
+                try {
+                    const library = JSON.parse(localStorage.getItem('novelshare_library') || '[]');
+                    let updated = false;
+
+                    for (const novel of library) {
+                        const novelId = novel.novelId || novel.id;
+                        if (!novelId) continue;
+
+                        try {
+                            const liveCount = await countPublishedChapters(novelId);
+                            if (liveCount !== novel.totalChapters && liveCount !== novel.chapters) {
+                                novel.totalChapters = liveCount;
+                                novel.chapters = liveCount;
+                                updated = true;
+                            }
+                        } catch (err) {
+                            console.warn('Failed to refresh chapter count for', novelId, err);
+                        }
+                    }
+
+                    if (updated) {
+                        localStorage.setItem('novelshare_library', JSON.stringify(library));
+                    }
+                } catch (err) {
+                    console.warn('refreshLibraryChapterCounts failed:', err);
+                }
+            }
+
+            // Render Library
+            function renderLibrary() {
+                const grid = document.getElementById('libraryGrid');
+                const emptyState = document.getElementById('libraryEmpty');
+                const deleted = getDeletedIds();
+                const rawLibrary = LibrarySystem.getLibrary();
+                const cleanedLibrary = rawLibrary.filter(n => n && (n.id || n.novelId));
+                if (cleanedLibrary.length !== rawLibrary.length) {
+                    localStorage.setItem('novelshare_library', JSON.stringify(cleanedLibrary));
+                }
+                const library = cleanedLibrary.filter(n => !deleted.has(n.id || n.novelId));
+
+                const fallbackCover = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='450'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop stop-color='%233b82f6' offset='0%25'/%3E%3Cstop stop-color='%231b4aa9' offset='100%25'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='450' rx='24' ry='24' fill='url(%23g)'/%3E%3C/svg%3E";
+
+                updateLibraryStats();
+
+                if (library.length === 0) {
+                    grid.style.display = 'none';
+                    emptyState.style.display = '';
+                    return;
+                }
+
+                grid.style.display = '';
+                emptyState.style.display = 'none';
+
+                grid.innerHTML = library.map(novel => {
+                    const id = escapeAttr(novel.novelId || novel.id);
+                    const title = escapeAttr(novel.title || 'Untitled');
+                    const coverImgRaw = (novel.coverImage || novel.cover || '').trim();
+                    const coverImg = escapeAttr(coverImgRaw) || fallbackCover;
+                    const totalChapters = novel.totalChapters || novel.chapters || 0;
+                    const currentChapter = Number.isFinite(novel.currentChapter) ? novel.currentChapter : 0;
+                    const progress = totalChapters > 0
+                        ? Math.round((currentChapter / totalChapters) * 100)
+                        : 0;
+                    const status = getReadingStatus({ ...novel, totalChapters, currentChapter });
+                    const authorName = escapeAttr(getAuthorDisplayName(novel.author));
+
+                    return `
+                        <div class="library-card" data-novel-id="${id}" data-title="${title.toLowerCase()}">
+                            <span class="reading-status ${status.class}">${status.text}</span>
+                            <div class="library-card-inner">
+                                <div class="library-card-cover">
+                                    <img src="${coverImg}" alt="${title}" onerror="this.onerror=null;this.src='${fallbackCover}'">
+                                </div>
+                                <div class="library-card-info">
+                                    <h3 class="library-card-title">${title}</h3>
+                                    <p class="library-card-author">by ${authorName}</p>
+                                    <div class="library-card-progress">
+                                        <div class="progress-label">
+                                            <span>${totalChapters > 0 ? `Chapter ${currentChapter}/${totalChapters}` : 'No chapters yet'}</span>
+                                            <span class="progress-percent">${totalChapters > 0 ? `${progress}%` : ''}</span>
+                                        </div>
+                                        ${totalChapters > 0 ? `
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${progress}%"></div>
+                                        </div>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="library-card-footer">
+                                <a href="reader.html?novelId=${id}&chapterId=${escapeAttr(novel.currentChapterId || '')}" class="continue-btn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"/>
+                                    </svg>
+                                    ${currentChapter > 0 ? 'Continue' : 'Start Reading'}
+                                </a>
+                                <div style="display: flex; gap: 4px;">
+                                    <button class="download-btn" data-action="download-novel" data-novel-id="${id}" data-novel-title="${title}" data-total-chapters="${totalChapters}" aria-label="Download for offline">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="7,10 12,15 17,10"/>
+                                            <line x1="12" y1="15" x2="12" y2="3"/>
+                                        </svg>
+                                    </button>
+                                    <button class="remove-btn" data-action="remove-library" data-novel-id="${id}" aria-label="Remove from library">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 6h18"/>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                attachContinueHandlers(grid);
+
+                // Add remove handlers
+                grid.querySelectorAll('[data-action="remove-library"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const novelId = e.currentTarget.dataset.novelId;
+                        if (confirm('Remove this novel from your library?')) {
+                            LibrarySystem.removeFromLibrary(novelId);
+                            renderLibrary();
+                        }
+                    });
+                });
+
+                // Add download handlers
+                grid.querySelectorAll('[data-action="download-novel"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const { novelId, novelTitle, totalChapters } = e.currentTarget.dataset;
+                        openDownloadModal(novelId, novelTitle, parseInt(totalChapters));
+                    });
+                });
+            }
+
+            // Render Reading History
+            function renderHistory() {
+                const grid = document.getElementById('historyGrid');
+                const emptyState = document.getElementById('historyEmpty');
+                const history = ReadingHistory.getHistory();
+
+                if (history.length === 0) {
+                    grid.style.display = 'none';
+                    emptyState.style.display = '';
+                    return;
+                }
+
+                grid.style.display = '';
+                emptyState.style.display = 'none';
+
+                grid.innerHTML = history.map(item => `
+                    <div class="history-card">
+                        <div class="history-card-cover">
+                            ${item.coverImage
+                                ? `<img src="${item.coverImage}" alt="${item.novelTitle}">`
+                                : `<div class="placeholder-cover">${item.novelTitle.charAt(0)}</div>`}
+                        </div>
+                        <div class="history-card-info">
+                            <h3 class="history-card-title">${item.novelTitle}</h3>
+                            <p class="history-card-chapter">${item.chapterTitle}</p>
+                            <p class="history-card-time">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12,6 12,12 16,14"/>
+                                </svg>
+                                ${getTimeAgo(item.timestamp)}
+                            </p>
+                        </div>
+                        <div class="history-card-action">
+                            <a href="reader.html?novelId=${item.novelId}&chapterId=${item.chapterId}" class="continue-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="5 3 19 12 5 21 5 3"/>
+                                </svg>
+                                Continue
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+
+                attachContinueHandlers(grid);
+            }
+
+            // Render Downloads
+            function renderDownloads() {
+                const grid = document.getElementById('downloadsGrid');
+                const emptyState = document.getElementById('downloadsEmpty');
+                const raw = JSON.parse(localStorage.getItem('novelshare_offline') || '{}');
+                const deleted = (() => { try { return new Set(JSON.parse(localStorage.getItem('novelshare_deleted_ids') || '[]')); } catch { return new Set(); } })();
+
+                // Normalize data into consistent structure
+                const downloads = {};
+                Object.entries(raw).forEach(([novelId, novelData]) => {
+                  if (deleted.has(novelId)) {
+                    // purge deleted novel download
+                    delete raw[novelId];
+                    return;
+                  }
+                  // Check if this is the current format: downloads[novelId][chapterId] = { novelTitle, chapterTitle, ... }
+                  // The novelData would be an object with numeric keys (chapter IDs)
+                  const chapterKeys = Object.keys(novelData || {});
+                  const isChapterObject = chapterKeys.length > 0 && chapterKeys.some(k => !isNaN(k) || novelData[k]?.chapterTitle);
+
+                  if (isChapterObject && !novelData.chapters) {
+                    // Current format: novelData is { 1: { novelTitle, chapterTitle, content }, 2: {...} }
+                    // Extract novelTitle from the first chapter
+                    const firstChapterKey = chapterKeys[0];
+                    const firstChapter = novelData[firstChapterKey];
+                    const novelTitle = firstChapter?.novelTitle || novelId;
+
+                    downloads[novelId] = {
+                      novelId,
+                      novelTitle: novelTitle,
+                      cover: '',
+                      chapters: {}
+                    };
+
+                    // Convert each chapter
+                    chapterKeys.forEach(chapterId => {
+                      const chapter = novelData[chapterId];
+                      if (chapter && typeof chapter === 'object') {
+                        downloads[novelId].chapters[chapterId] = {
+                          chapterId: chapterId,
+                          chapterTitle: chapter.chapterTitle || `Chapter ${chapterId}`,
+                          content: chapter.content || '',
+                          downloadedAt: chapter.downloadedAt || Date.now()
+                        };
+                      }
+                    });
+                  } else if (novelData && novelData.chapters) {
+                    // Already in normalized format
+                    downloads[novelId] = {
+                      novelId: novelData.novelId || novelId,
+                      novelTitle: novelData.novelTitle || novelId,
+                      cover: novelData.cover || '',
+                      chapters: novelData.chapters || {}
+                    };
+                  }
+                });
+
+                // Persist purge of deleted items if any were removed
+                if (Object.keys(raw).length !== Object.keys(downloads).length) {
+                    localStorage.setItem('novelshare_offline', JSON.stringify(raw));
+                }
+
+                const novels = Object.values(downloads);
+
+                if (novels.length === 0) {
+                    grid.style.display = 'none';
+                    emptyState.style.display = '';
+                    return;
+                }
+
+                grid.style.display = '';
+                emptyState.style.display = 'none';
+
+                grid.innerHTML = novels.map(download => {
+                    const chapterIds = Object.keys(download.chapters || {});
+                    const firstChapterId = chapterIds[0];
+                    const chapterLabel = chapterIds.length === 1
+                      ? (download.chapters[firstChapterId]?.chapterTitle || `Chapter ${firstChapterId}`)
+                      : `${chapterIds.length} chapters saved`;
+
+                    return `
+                    <div class="download-card">
+                        <div class="download-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7,10 12,15 17,10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                        </div>
+                        <div class="download-card-info">
+                            <h3 class="download-card-title">${download.novelTitle || 'Unknown Novel'}</h3>
+                            <p class="download-card-chapter">${chapterLabel}</p>
+                            <p class="download-card-size">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                                Available offline
+                            </p>
+                        </div>
+                        <div class="download-card-action">
+                            <a href="reader.html?novelId=${download.novelId}&chapterId=${firstChapterId || ''}&offline=true" class="continue-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                                </svg>
+                                Read
+                            </a>
+                            <button class="remove-btn" data-action="remove-download" data-novel-id="${download.novelId}" aria-label="Remove download">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 6h18"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                }).join('');
+
+                // Add remove handlers
+                grid.querySelectorAll('[data-action="remove-download"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const { novelId } = e.currentTarget.dataset;
+                        const downloads = JSON.parse(localStorage.getItem('novelshare_offline') || '{}');
+                        if (downloads[novelId]) {
+                            delete downloads[novelId];
+                            localStorage.setItem('novelshare_offline', JSON.stringify(downloads));
+                            renderDownloads();
+                        }
+                    });
+                });
+
+                attachContinueHandlers(grid);
+            }
+
+            // Render Favorites
+            function renderFavorites() {
+                const grid = document.getElementById('favoritesGrid');
+                const emptyState = document.getElementById('favoritesEmpty');
+                const countBadge = document.getElementById('favoritesCount');
+                const deleted = getDeletedIds();
+                const favorites = FavoritesSystem.getFavorites().filter(n => n && !deleted.has(n.id) && !deleted.has(n.novelId));
+
+                console.log('[renderFavorites] favorites:', favorites);
+
+                if (countBadge) countBadge.textContent = favorites.length;
+
+                if (favorites.length === 0) {
+                    grid.innerHTML = '';
+                    grid.style.display = 'none';
+                    emptyState.style.display = '';
+                    return;
+                }
+
+                grid.style.display = 'grid';
+                emptyState.style.display = 'none';
+
+                grid.innerHTML = favorites.map(novel => {
+                    const novelId = novel.novelId || novel.id;
+                    const title = novel.title || 'Untitled';
+                    const author = novel.author || 'Unknown';
+                    const cover = novel.coverImage || novel.cover || '';
+                    const chapters = novel.totalChapters || novel.chapters || 0;
+                    const rating = novel.rating || 0;
+                    const coverStyle = cover
+                        ? `background-image: url('${cover}');`
+                        : `background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;`;
+                    const coverFallback = cover ? '' : `<span style="color: white; font-size: 2rem; font-weight: 700;">${title.charAt(0).toUpperCase()}</span>`;
+
+                    return `
+                    <div class="library-card" data-novel-id="${novelId}">
+                        <div class="library-card-inner">
+                            <div class="library-card-cover">
+                                ${cover
+                                    ? `<img src="${cover}" alt="${title}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'placeholder-cover\\'>${title.charAt(0).toUpperCase()}</div>'">`
+                                    : `<div class="placeholder-cover">${title.charAt(0).toUpperCase()}</div>`
+                                }
+                                <div class="favorite-indicator">
+                                    <svg viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="library-card-info">
+                                <h3 class="library-card-title">${title}</h3>
+                                <p class="library-card-author">by ${author}</p>
+                                <div class="library-card-progress">
+                                    <div class="progress-label">
+                                        <span>${chapters} chapters${rating ? ` • ★ ${rating.toFixed(1)}` : ''}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="library-card-footer">
+                            <a href="novel.html?id=${encodeURIComponent(novelId)}" class="continue-btn">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="5,3 19,12 5,21"/>
+                                </svg>
+                                View
+                            </a>
+                            <button class="remove-btn" data-action="remove-favorite" data-novel-id="${novelId}" title="Remove from favorites">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 6h18"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                }).join('');
+
+                // Add remove handlers
+                grid.querySelectorAll('[data-action="remove-favorite"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const novelId = e.currentTarget.dataset.novelId;
+                        if (confirm('Remove from favorites?')) {
+                            FavoritesSystem.removeFavorite(novelId);
+                            renderFavorites();
+                            showToast('Removed from favorites');
+                        }
+                    });
+                });
+            }
+
+            // Clear History Handler
+            document.getElementById('clearHistoryBtn').addEventListener('click', async () => {
+                if (confirm('Are you sure you want to clear your reading history?')) {
+                    ReadingHistory.clearHistory();
+                    if (!GuestMode.isGuest() && typeof SupabaseDB !== 'undefined') {
+                        try {
+                            const user = await SupabaseAuth.getCurrentUser();
+                            if (user) {
+                                await SupabaseDB.clearHistory(user.id);
+                            }
+                        } catch (e) {
+                            console.warn('Failed to clear cloud history:', e);
+                        }
+                    }
+                    renderHistory();
+                }
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('.library-card');
+
+                cards.forEach(card => {
+                    const title = card.dataset.title || '';
+                    card.style.display = title.includes(query) ? '' : 'none';
+                });
+            });
+
+            // Download Modal Functionality
+            const downloadModal = document.getElementById('downloadModal');
+            const downloadModalTitle = document.getElementById('downloadModalTitle');
+            const downloadFrom = document.getElementById('downloadFrom');
+            const downloadTo = document.getElementById('downloadTo');
+            const chapterCount = document.getElementById('chapterCount');
+            const downloadProgress = document.getElementById('downloadProgress');
+            const downloadProgressPercent = document.getElementById('downloadProgressPercent');
+            const downloadProgressFill = document.getElementById('downloadProgressFill');
+            const confirmDownloadBtn = document.getElementById('confirmDownload');
+            const cancelDownloadBtn = document.getElementById('cancelDownload');
+            const closeDownloadModalBtn = document.getElementById('closeDownloadModal');
+
+            let currentDownloadNovel = null;
+            let isDownloading = false;
+
+            function openDownloadModal(novelId, novelTitle, totalChapters) {
+                currentDownloadNovel = { novelId, novelTitle, totalChapters };
+                downloadModalTitle.textContent = `Download - ${novelTitle}`;
+
+                // Get current chapter for the novel from library
+                const library = LibrarySystem.getLibrary();
+                const novel = library.find(n => n.novelId === novelId);
+                const currentChapter = novel ? novel.currentChapter : 1;
+
+                // Set default range from current chapter
+                downloadFrom.value = currentChapter || 1;
+                downloadFrom.max = totalChapters;
+                downloadTo.value = Math.min((currentChapter || 1) + 9, totalChapters);
+                downloadTo.max = totalChapters;
+
+                updateChapterCount();
+
+                // Reset progress
+                downloadProgress.classList.remove('active');
+                downloadProgressFill.style.width = '0%';
+                downloadProgressPercent.textContent = '0%';
+                confirmDownloadBtn.disabled = false;
+                confirmDownloadBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7,10 12,15 17,10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download
+                `;
+
+                downloadModal.classList.add('active');
+            }
+
+            function closeDownloadModal() {
+                if (!isDownloading) {
+                    downloadModal.classList.remove('active');
+                    currentDownloadNovel = null;
+                }
+            }
+
+            function updateChapterCount() {
+                const from = parseInt(downloadFrom.value) || 1;
+                const to = parseInt(downloadTo.value) || 1;
+                const count = Math.max(0, to - from + 1);
+                chapterCount.textContent = count;
+            }
+
+            // Event listeners for chapter range inputs
+            downloadFrom.addEventListener('input', updateChapterCount);
+            downloadTo.addEventListener('input', updateChapterCount);
+
+            // Quick select buttons
+            document.querySelectorAll('.quick-select-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (!currentDownloadNovel) return;
+
+                    const range = btn.dataset.range;
+                    const library = LibrarySystem.getLibrary();
+                    const novel = library.find(n => n.novelId === currentDownloadNovel.novelId);
+                    const currentChapter = novel ? novel.currentChapter : 1;
+                    const totalChapters = currentDownloadNovel.totalChapters;
+
+                    switch(range) {
+                        case 'next-10':
+                            downloadFrom.value = currentChapter || 1;
+                            downloadTo.value = Math.min((currentChapter || 1) + 9, totalChapters);
+                            break;
+                        case 'next-25':
+                            downloadFrom.value = currentChapter || 1;
+                            downloadTo.value = Math.min((currentChapter || 1) + 24, totalChapters);
+                            break;
+                        case 'next-50':
+                            downloadFrom.value = currentChapter || 1;
+                            downloadTo.value = Math.min((currentChapter || 1) + 49, totalChapters);
+                            break;
+                        case 'all':
+                            downloadFrom.value = 1;
+                            downloadTo.value = totalChapters;
+                            break;
+                    }
+                    updateChapterCount();
+                });
+            });
+
+            // Close modal handlers
+            closeDownloadModalBtn.addEventListener('click', closeDownloadModal);
+            cancelDownloadBtn.addEventListener('click', closeDownloadModal);
+            downloadModal.addEventListener('click', (e) => {
+                if (e.target === downloadModal) {
+                    closeDownloadModal();
+                }
+            });
+
+                // Confirm download
+                confirmDownloadBtn.addEventListener('click', async () => {
+                if (!currentDownloadNovel || isDownloading) return;
+
+                // Prevent downloads for deleted novels
+                try {
+                    const deleted = new Set(JSON.parse(localStorage.getItem('novelshare_deleted_ids') || '[]'));
+                    if (deleted.has(currentDownloadNovel.novelId)) {
+                        alert('This novel was removed.');
+                        return;
+                    }
+                } catch {}
+
+                const from = parseInt(downloadFrom.value) || 1;
+                const to = parseInt(downloadTo.value) || 1;
+
+                if (from > to) {
+                    alert('Start chapter must be less than or equal to end chapter');
+                    return;
+                }
+
+                isDownloading = true;
+                confirmDownloadBtn.disabled = true;
+                downloadProgress.classList.add('active');
+
+                const { novelId, novelTitle } = currentDownloadNovel;
+                const totalToDownload = to - from + 1;
+                let downloaded = 0;
+
+                // Get existing downloads
+                const downloads = JSON.parse(localStorage.getItem('novelshare_offline') || '{}');
+                if (!downloads[novelId]) {
+                    downloads[novelId] = {};
+                }
+
+                // Simulate downloading chapters
+                for (let chapter = from; chapter <= to; chapter++) {
+                    // Simulate network delay
+                    await new Promise(resolve => setTimeout(resolve, 100));
+
+                    // Create mock chapter content (in real app, this would fetch from API)
+                    downloads[novelId][chapter] = {
+                        novelTitle: novelTitle,
+                        chapterTitle: `Chapter ${chapter}`,
+                        content: `<p>This is the content of Chapter ${chapter} of ${novelTitle}.</p><p>Downloaded for offline reading.</p>`,
+                        downloadedAt: Date.now()
+                    };
+
+                    downloaded++;
+                    const progress = Math.round((downloaded / totalToDownload) * 100);
+                    downloadProgressFill.style.width = `${progress}%`;
+                    downloadProgressPercent.textContent = `${progress}%`;
+                }
+
+                // Save to localStorage
+                localStorage.setItem('novelshare_offline', JSON.stringify(downloads));
+
+                // Update UI
+                isDownloading = false;
+                confirmDownloadBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    Downloaded!
+                `;
+
+                // Refresh downloads tab
+                renderDownloads();
+
+                // Close modal after a short delay
+                setTimeout(() => {
+                    closeDownloadModal();
+                    // Switch to downloads tab to show new downloads
+                    document.querySelector('[data-tab="downloads"]').click();
+                }, 1500);
+            });
+
+            // Initialize library after all functions are defined
+            await initializeLibrary();
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovelShare - Discover Your Next Great Read</title>
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+        }
+        .loading {
+            text-align: center;
+        }
+        .loading h1 {
+            color: #1f6fe1;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .loading p {
+            color: #666;
+        }
+        .loading a {
+            color: #1f6fe1;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <h1>NovelShare</h1>
+        <p>Redirecting to homepage...</p>
+        <p><a href="pages/home.html">Click here if you are not redirected</a></p>
+    </div>
+
+    <script>
+      // Redirect to homepage. Only force guest mode if no user context exists.
+      try {
+        const hasProfile = !!localStorage.getItem('novelshare_profile');
+        const hasSavedCreds = !!localStorage.getItem('novelshare_saved_credentials');
+        if (!hasProfile && !hasSavedCreds) {
+          localStorage.setItem('novelshare_guest_mode', 'true');
+        }
+      } catch (e) {
+        // ignore storage errors
+      }
+      window.location.replace('pages/home.html');
+    </script>
+</body>
+</html>

@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reading | NovelShare</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" />
+  <link rel="stylesheet" href="../assets/css/common.css" />
+  <style>
+    /* Reader Page Styles */
+    body {
+      background: var(--bg-secondary);
+    }
+
+    body.dark-mode {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16162a;
+      --text-primary: #e4e4e7;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --border: #27273a;
+      background: var(--bg-secondary);
+    }
+
+    body.sepia-mode {
+      --bg-primary: #f4ecd8;
+      --bg-secondary: #ebe3cf;
+      --text-primary: #5c4b37;
+      --text-secondary: #7a6a54;
+      --text-muted: #9a8a74;
+      --border: #d4c9b5;
+      background: var(--bg-secondary);
+    }
+
+    .page {
+      gap: 0;
+      padding: 0;
+    }
+
+    /* Reader Header */
+    .reader-header {
+      position: sticky;
+      top: 0;
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .reader-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      text-decoration: none;
+    }
+
+    .btn-back:hover {
+      background: #f0f4ff;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-back svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .novel-info-header {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .novel-title-header {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .chapter-title-header {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .reader-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .reader-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-normal);
+    }
+
+    .reader-btn:hover {
+      background: #f0f4ff;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .reader-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .reader-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Reading Progress Bar */
+    .reading-progress-bar {
+      position: fixed;
+      top: 65px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--border);
+      z-index: 99;
+    }
+
+    .reading-progress-fill {
+      height: 100%;
+      background: var(--primary-gradient);
+      width: 0%;
+      transition: width 0.1s ease;
+    }
+
+    /* Reader Content */
+    .reader-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .chapter-header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chapter-number {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .chapter-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 16px;
+      line-height: 1.3;
+    }
+
+    .chapter-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .chapter-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chapter-meta svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Chapter Content */
+    .chapter-content {
+      font-family: 'Merriweather', Georgia, serif;
+      font-size: 1.125rem;
+      line-height: 1.9;
+      color: var(--text-primary);
+    }
+
+    .chapter-content p {
+      margin-bottom: 1.5em;
+      text-align: justify;
+    }
+
+    .chapter-content p:first-child::first-letter {
+      font-size: 3.5em;
+      float: left;
+      line-height: 1;
+      margin-right: 12px;
+      margin-top: 4px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Font size adjustments */
+    body.font-small .chapter-content {
+      font-size: 1rem;
+    }
+
+    body.font-large .chapter-content {
+      font-size: 1.25rem;
+    }
+
+    body.font-xlarge .chapter-content {
+      font-size: 1.375rem;
+    }
+
+    /* Chapter Navigation */
+    .chapter-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 32px 0;
+      margin-top: 48px;
+      border-top: 1px solid var(--border);
+      gap: 16px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      text-decoration: none;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .nav-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .chapter-list-btn {
+      padding: 14px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .chapter-list-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Chapter End Section */
+    .chapter-end {
+      text-align: center;
+      padding: 40px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      margin-top: 48px;
+    }
+
+    .chapter-end h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+    }
+
+    .chapter-end p {
+      color: var(--text-muted);
+      margin: 0 0 24px;
+    }
+
+    .chapter-end-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-rate {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .btn-rate:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+
+    .btn-rate svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Settings Panel */
+    .settings-panel {
+      position: fixed;
+      top: 65px;
+      right: -320px;
+      width: 320px;
+      height: calc(100vh - 65px);
+      background: var(--bg-primary);
+      border-left: 1px solid var(--border);
+      box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+      z-index: 100;
+      transition: right var(--transition-slow);
+      overflow-y: auto;
+    }
+
+    .settings-panel.open {
+      right: 0;
+    }
+
+    .settings-panel-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .settings-panel-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .settings-panel-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-normal);
+    }
+
+    .settings-panel-close:hover {
+      background: #f0f4ff;
+    }
+
+    .settings-panel-close svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-secondary);
+    }
+
+    .settings-section {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-section:last-child {
+      border-bottom: none;
+    }
+
+    .settings-section h4 {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 16px;
+    }
+
+    /* Font Size Slider */
+    .font-size-options {
+      display: flex;
+      gap: 8px;
+    }
+
+    .font-size-btn {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .font-size-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .font-size-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    /* Theme Options */
+    .theme-options {
+      display: flex;
+      gap: 12px;
+    }
+
+    .theme-btn {
+      flex: 1;
+      padding: 16px 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition-normal);
+    }
+
+    .theme-btn:hover {
+      border-color: var(--primary);
+    }
+
+    .theme-btn.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(31, 111, 225, 0.2);
+    }
+
+    .theme-btn.light {
+      background: #fff;
+      color: #1b1f3b;
+    }
+
+    .theme-btn.dark {
+      background: #1a1a2e;
+      color: #e4e4e7;
+    }
+
+    .theme-btn.sepia {
+      background: #f4ecd8;
+      color: #5c4b37;
+    }
+
+    .theme-btn span {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* Chapter List Panel */
+    .chapter-list-panel {
+      position: fixed;
+      top: 65px;
+      left: -360px;
+      width: 360px;
+      height: calc(100vh - 65px);
+      background: var(--bg-primary);
+      border-right: 1px solid var(--border);
+      box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+      z-index: 100;
+      transition: left var(--transition-slow);
+      overflow-y: auto;
+    }
+
+    .chapter-list-panel.open {
+      left: 0;
+    }
+
+    .chapter-list-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--bg-primary);
+    }
+
+    .chapter-list-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .chapter-list {
+      padding: 12px;
+    }
+
+    .chapter-list-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .chapter-list-item:hover {
+      background: var(--bg-secondary);
+    }
+
+    .chapter-list-item.current {
+      background: #f0f4ff;
+      border-left: 3px solid var(--primary);
+    }
+
+    .chapter-list-item.read {
+      color: var(--text-muted);
+    }
+
+    .chapter-list-number {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--primary);
+      min-width: 40px;
+    }
+
+    .chapter-list-title {
+      flex: 1;
+      font-size: 0.9375rem;
+    }
+
+    .chapter-list-check {
+      color: #22c55e;
+    }
+
+    .chapter-list-check svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Rating Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      padding: 32px;
+    }
+
+    .modal h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+    }
+
+    .modal p {
+      color: var(--text-muted);
+      margin: 0 0 24px;
+    }
+
+    .star-rating {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .star-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      transition: transform var(--transition-fast);
+    }
+
+    .star-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .star-btn svg {
+      width: 40px;
+      height: 40px;
+      color: var(--border);
+      transition: color var(--transition-normal);
+    }
+
+    .star-btn.active svg,
+    .star-btn:hover svg {
+      color: #f5b400;
+      fill: #f5b400;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .modal-actions button {
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-cancel:hover {
+      background: #f0f4ff;
+    }
+
+    .btn-submit {
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+
+    /* Overlay when panels are open */
+    .panel-overlay {
+      position: fixed;
+      top: 65px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 50;
+      display: none;
+    }
+
+    .panel-overlay.active {
+      display: block;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 32px;
+      z-index: 1001;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .reader-header {
+        padding: 12px 16px;
+      }
+
+      .btn-back span {
+        display: none;
+      }
+
+      .novel-info-header {
+        display: none;
+      }
+
+      .reader-content {
+        padding: 32px 16px 60px;
+      }
+
+      .chapter-title {
+        font-size: 1.5rem;
+      }
+
+      .chapter-content {
+        font-size: 1rem;
+      }
+
+      .chapter-nav {
+        flex-direction: column;
+      }
+
+      .nav-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .settings-panel,
+      .chapter-list-panel {
+        width: 100%;
+        right: -100%;
+        left: -100%;
+      }
+
+      .settings-panel.open {
+        right: 0;
+      }
+
+      .chapter-list-panel.open {
+        left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Reader Header -->
+    <header class="reader-header">
+      <div class="reader-header-left">
+        <a href="novel.html" class="btn-back" id="backToNovelBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span>Back</span>
+        </a>
+        <div class="novel-info-header">
+          <span class="novel-title-header" id="headerNovelTitle">Loading...</span>
+          <span class="chapter-title-header" id="headerChapterTitle"></span>
+        </div>
+      </div>
+
+      <div class="reader-header-right">
+        <button class="reader-btn" id="chapterListBtn" title="Chapter List">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+        </button>
+        <button class="reader-btn" id="downloadBtn" title="Download for Offline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </button>
+        <button class="reader-btn" id="settingsBtn" title="Reading Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress-bar">
+      <div class="reading-progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Panel Overlay -->
+    <div class="panel-overlay" id="panelOverlay"></div>
+
+    <!-- Reader Content -->
+    <main class="reader-content">
+      <div class="chapter-header">
+        <div class="chapter-number">Chapter</div>
+        <h1 class="chapter-title">Loading…</h1>
+        <div class="chapter-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            —
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            —
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            —
+          </span>
+        </div>
+      </div>
+
+      <article class="chapter-content" id="chapterContent">
+        <p style="text-align:center;color:var(--text-muted);">Loading chapter content...</p>
+      </article>
+
+      <!-- Chapter End Section -->
+      <div class="chapter-end">
+        <h3 id="chapterEndHeading">End of Chapter</h3>
+        <p>Did you enjoy this chapter? Let the author know!</p>
+        <div class="chapter-end-actions">
+          <button class="btn-rate" id="rateChapterBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            Rate This Chapter
+          </button>
+          <button class="nav-btn" id="addToLibraryBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            Add to Library
+          </button>
+        </div>
+      </div>
+
+      <!-- Chapter Navigation -->
+      <nav class="chapter-nav">
+        <button class="nav-btn" id="prevChapterBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Previous Chapter
+        </button>
+        <button class="chapter-list-btn" id="chapterListBtn2">
+          <span id="chapterNavLabel">Chapter</span>
+        </button>
+        <button class="nav-btn" id="nextChapterBtn">
+          Next Chapter
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </nav>
+    </main>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+      <div class="settings-panel-header">
+        <h3>Reading Settings</h3>
+        <button class="settings-panel-close" id="closeSettings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="settings-section">
+        <h4>Font Size</h4>
+        <div class="font-size-options">
+          <button class="font-size-btn" data-size="small">A-</button>
+          <button class="font-size-btn active" data-size="medium">A</button>
+          <button class="font-size-btn" data-size="large">A+</button>
+          <button class="font-size-btn" data-size="xlarge">A++</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h4>Theme</h4>
+        <div class="theme-options">
+          <button class="theme-btn light active" data-theme="light">
+            <span>Light</span>
+          </button>
+          <button class="theme-btn dark" data-theme="dark">
+            <span>Dark</span>
+          </button>
+          <button class="theme-btn sepia" data-theme="sepia">
+            <span>Sepia</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter List Panel -->
+    <div class="chapter-list-panel" id="chapterListPanel">
+      <div class="chapter-list-header">
+        <h3>Chapters</h3>
+        <button class="settings-panel-close" id="closeChapterList">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="chapter-list chapter-list-grid"></div>
+    </div>
+  </div>
+
+  <!-- Rating Modal -->
+  <div class="modal-overlay" id="ratingModal">
+    <div class="modal">
+      <h2>Rate This Chapter</h2>
+      <p>How would you rate "The Escape"?</p>
+      <div class="star-rating" id="starRating">
+        <button class="star-btn" data-rating="1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </button>
+        <button class="star-btn" data-rating="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </button>
+        <button class="star-btn" data-rating="3">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </button>
+        <button class="star-btn" data-rating="4">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </button>
+        <button class="star-btn" data-rating="5">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelRating">Cancel</button>
+        <button class="btn-submit" id="submitRating">Submit Rating</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const novelId = params.get('novelId') || params.get('novel') || '';
+    const chapterId = params.get('chapterId') || '';
+    const chapterNumberParam = Number(params.get('chapter') || params.get('chapterNumber') || 0);
+    const chapterStoreKey = 'novelshare_chapters';
+
+    let novelData = { id: novelId, title: 'Loading...', cover: '', author: '', authorId: '', totalChapters: 0 };
+    let chapterData = { id: chapterId, title: 'Loading...', number: 1, content: '', createdAt: null, totalChapters: 0 };
+    let chaptersList = [];
+
+    // Fix back button to go to correct novel
+    const backToNovelBtn = document.getElementById('backToNovelBtn');
+    if (backToNovelBtn && novelId) {
+      backToNovelBtn.href = `novel.html?id=${encodeURIComponent(novelId)}`;
+    }
+
+    const progressFill = document.getElementById('progressFill');
+    const chapterContentEl = document.getElementById('chapterContent');
+    const addToLibraryBtn = document.getElementById('addToLibraryBtn');
+    const ratingModal = document.getElementById('ratingModal');
+    const rateChapterBtn = document.getElementById('rateChapterBtn');
+    const cancelRating = document.getElementById('cancelRating');
+    const submitRating = document.getElementById('submitRating');
+    const starBtns = document.querySelectorAll('.star-btn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const closeSettings = document.getElementById('closeSettings');
+    const panelOverlay = document.getElementById('panelOverlay');
+    const chapterListBtn = document.getElementById('chapterListBtn');
+    const chapterListBtn2 = document.getElementById('chapterListBtn2');
+    const chapterListPanel = document.getElementById('chapterListPanel');
+    const closeChapterList = document.getElementById('closeChapterList');
+    const chapterListGrid = document.querySelector('.chapter-list-grid');
+    const prevBtn = document.getElementById('prevChapterBtn');
+    const nextBtn = document.getElementById('nextChapterBtn');
+
+    function normalizeChapters(list = []) {
+      return (list || []).map(ch => {
+        const status = (ch.status || 'draft').toLowerCase();
+        const num = Number(ch.number || ch.chapter_number || ch.order);
+        return {
+          ...ch,
+          status,
+          number: status === 'published' && Number.isFinite(num) ? num : null,
+        };
+      });
+    }
+
+    function getLocalChapters(id) {
+      try {
+        const store = JSON.parse(localStorage.getItem(chapterStoreKey) || '{}');
+        return Array.isArray(store[id]) ? normalizeChapters(store[id]) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    async function fetchChapter() {
+      const local = novelId ? getLocalChapters(novelId) : [];
+      let chapter = null;
+      if (chapterId) {
+        chapter = local.find(ch => ch.id === chapterId);
+      } else if (chapterNumberParam > 0) {
+        chapter = local.find(ch => (ch.number || ch.chapter_number || ch.order) === chapterNumberParam);
+      }
+      if (!chapter && local.length) chapter = local[0];
+
+      if (!chapter && chapterId && typeof SupabaseDB !== 'undefined' && SupabaseDB.getChapterById) {
+        try {
+          const supa = await SupabaseDB.getChapterById(novelId, chapterId);
+          if (supa) {
+            const status = (supa.status || 'published').toLowerCase();
+            chapter = {
+              id: supa.id,
+              title: supa.title,
+              content: supa.content,
+              status,
+              number: status === 'published' ? (supa.chapter_number || 1) : null,
+              createdAt: supa.created_at,
+            };
+            // persist fetched chapter into local store for TOC
+            const store = (() => { try { return JSON.parse(localStorage.getItem(chapterStoreKey) || '{}'); } catch { return {}; } })();
+            const existing = Array.isArray(store[novelId]) ? store[novelId] : [];
+            const next = normalizeChapters([...existing.filter(ch => ch.id !== chapter.id), chapter]);
+            store[novelId] = next;
+            localStorage.setItem(chapterStoreKey, JSON.stringify(store));
+            chaptersList = next;
+          }
+        } catch (err) {
+          console.warn('Supabase chapter fetch failed:', err);
+        }
+      }
+
+      // If still no chapter but we have a number, try Supabase getChapters and cache them
+      if (!chapter && typeof SupabaseDB !== 'undefined' && SupabaseDB.getChapters && novelId) {
+        try {
+          const supaList = await SupabaseDB.getChapters(novelId);
+          if (Array.isArray(supaList) && supaList.length) {
+            const store = (() => { try { return JSON.parse(localStorage.getItem(chapterStoreKey) || '{}'); } catch { return {}; } })();
+            store[novelId] = supaList.map(ch => {
+              const status = (ch.status || 'published').toLowerCase();
+              const num = Number(ch.chapter_number || ch.number || ch.order);
+              return {
+                id: ch.id,
+                title: ch.title,
+                content: ch.content,
+                status,
+                number: status === 'published' && Number.isFinite(num) ? num : null,
+                createdAt: ch.created_at || ch.updated_at
+              };
+            });
+            localStorage.setItem(chapterStoreKey, JSON.stringify(store));
+            chaptersList = normalizeChapters(store[novelId]);
+            if (chapterId) chapter = chaptersList.find(c => c.id === chapterId);
+            if (!chapter && chapterNumberParam > 0) chapter = chaptersList.find(c => c.number === chapterNumberParam);
+            if (!chapter) chapter = chaptersList[0];
+          }
+        } catch (err) {
+          console.warn('Supabase chapter list fetch failed:', err);
+        }
+      }
+
+      if (!chapter && local.length) chapter = local[0];
+      if (!chaptersList.length) {
+        chaptersList = normalizeChapters(local.length ? local : (chapter ? [chapter] : []));
+      }
+      return chapter;
+    }
+
+    async function fetchNovelMeta() {
+      const pools = ['novelshare_library', 'novelshare_my_works'];
+      for (const key of pools) {
+        try {
+          const arr = JSON.parse(localStorage.getItem(key) || '[]');
+          const match = arr.find(item => [item.id, item.novelId, item.novel_id, item.slug, item.workId].includes(novelId));
+          if (match) return match;
+        } catch { /* ignore */ }
+      }
+      if (typeof SupabaseDB !== 'undefined' && SupabaseDB.getNovelById) {
+        try {
+          return await SupabaseDB.getNovelById(novelId);
+        } catch (err) {
+          console.warn('Supabase novel fetch failed:', err);
+        }
+      }
+      return null;
+    }
+
+    async function ensureChapterList() {
+      if (chaptersList.length || !novelId) return;
+      // Try Supabase for full list
+      if (typeof SupabaseDB !== 'undefined' && SupabaseDB.getChapters) {
+        try {
+          const supaList = await SupabaseDB.getChapters(novelId);
+          if (Array.isArray(supaList) && supaList.length) {
+            const store = (() => { try { return JSON.parse(localStorage.getItem(chapterStoreKey) || '{}'); } catch { return {}; } })();
+            store[novelId] = supaList.map(ch => {
+              const status = (ch.status || 'published').toLowerCase();
+              const num = Number(ch.chapter_number || ch.number || ch.order);
+              return {
+                id: ch.id,
+                title: ch.title,
+                content: ch.content,
+                status,
+                number: status === 'published' && Number.isFinite(num) ? num : null,
+                createdAt: ch.created_at || ch.updated_at
+              };
+            });
+            localStorage.setItem(chapterStoreKey, JSON.stringify(store));
+            chaptersList = normalizeChapters(store[novelId]);
+          }
+        } catch (err) {
+          console.warn('Supabase chapter list fetch (ensure) failed:', err);
+        }
+      }
+      if (!chaptersList.length && chapterData.id) {
+        chaptersList = [chapterData];
+      }
+    }
+
+    function renderChapter(data, novelMeta) {
+      // Update novel title in header even if no chapter
+      if (novelMeta?.title) {
+        document.getElementById('headerNovelTitle').textContent = novelMeta.title;
+        document.title = `Reading: ${novelMeta.title} | NovelShare`;
+      }
+      // Update back button
+      if (novelId && backToNovelBtn) {
+        backToNovelBtn.href = `novel.html?id=${encodeURIComponent(novelId)}`;
+      }
+
+      if (!data) {
+        document.querySelector('.chapter-number').textContent = '';
+        document.querySelector('.chapter-title').textContent = 'No Chapter Available';
+        chapterContentEl.innerHTML = `
+          <div style="text-align:center;padding:60px 20px;">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin-bottom:16px;">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <h3 style="color:var(--text-primary);margin-bottom:8px;">Chapter content not available</h3>
+            <p style="color:var(--text-muted);margin-bottom:24px;">This chapter's content hasn't been uploaded yet. Check back later!</p>
+            <a href="novel.html?id=${encodeURIComponent(novelId || '')}" class="btn-back" style="display:inline-flex;">Back to Novel</a>
+          </div>
+        `;
+        // Hide chapter end section
+        const chapterEnd = document.querySelector('.chapter-end');
+        if (chapterEnd) chapterEnd.style.display = 'none';
+        return;
+      }
+      const publishedCount = chaptersList.filter(ch => ch.status === 'published').length;
+
+      novelData = {
+        ...novelData,
+        ...novelMeta,
+        id: novelId || novelMeta?.id || '',
+        title: novelMeta?.title || novelData.title || 'Untitled Story',
+        cover: novelMeta?.cover || novelMeta?.coverImage || novelMeta?.cover_image || '',
+        totalChapters: novelMeta?.chapters || novelMeta?.total_chapters || publishedCount || 1
+      };
+      chapterData = {
+        ...chapterData,
+        ...data,
+        id: data.id || chapterId || '',
+        number: Number.isFinite(data.number) ? data.number : (Number.isFinite(data.chapter_number) ? data.chapter_number : null),
+        totalChapters: data.totalChapters || novelData.totalChapters || publishedCount || 1
+      };
+
+      // Calculate display number as position in sorted published chapters list
+      const published = chaptersList.filter(ch => ch.status === 'published');
+      const sortedPublished = [...published].sort((a, b) => (a.number || 0) - (b.number || 0));
+      const chapterIdx = sortedPublished.findIndex(ch => ch.id === chapterData.id);
+      const displayNum = chapterIdx >= 0 ? chapterIdx + 1 : (chapterData.number || 1);
+      const totalChapters = sortedPublished.length || 1;
+
+      document.title = `Reading: ${novelData.title}${displayNum ? ` - Chapter ${displayNum}` : ''} | NovelShare`;
+      document.getElementById('headerNovelTitle').textContent = novelData.title || 'Untitled Story';
+      document.getElementById('headerChapterTitle').textContent = chapterData.title ? `Chapter ${displayNum}: ${chapterData.title}` : '';
+      document.querySelector('.chapter-number').textContent = displayNum ? `Chapter ${displayNum}` : 'Chapter';
+      document.querySelector('.chapter-title').textContent = chapterData.title || 'Untitled Chapter';
+      const endHeading = document.getElementById('chapterEndHeading');
+      if (endHeading) {
+        endHeading.textContent = displayNum ? `End of Chapter ${displayNum}` : 'End of Chapter';
+      }
+      const centerLabel = document.getElementById('chapterNavLabel');
+      if (centerLabel) {
+        centerLabel.textContent = displayNum && totalChapters ? `Chapter ${displayNum} of ${totalChapters}` : (displayNum ? `Chapter ${displayNum}` : 'Chapter');
+      }
+
+      const readTime = chapterData.content ? `${Math.max(1, Math.ceil(chapterData.content.split(/\s+/).length / 200))} min read` : '—';
+      const dateLabel = chapterData.createdAt ? new Date(chapterData.createdAt).toLocaleDateString() : '';
+      const chapterMeta = document.querySelector('.chapter-meta');
+      if (chapterMeta) {
+        chapterMeta.innerHTML = `
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> ${readTime}</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg> —</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 17l-5-5 5-5"/><path d="M21 12H3"/></svg> ${dateLabel}</span>
+        `;
+      }
+
+      const paragraphs = (chapterData.content || '').trim().split(/\n\s*\n/).filter(Boolean);
+      chapterContentEl.innerHTML = paragraphs.length ? paragraphs.map(p => `<p>${p.trim()}</p>`).join('') : '<p>No content available.</p>';
+
+      // reading position
+      const savedPos = novelData.id ? localStorage.getItem(`reading_position_${novelData.id}_${chapterData.id || ''}`) : null;
+      if (savedPos) {
+        setTimeout(() => window.scrollTo(0, parseInt(savedPos, 10)), 50);
+      }
+
+      // history
+      if (novelData.id && chapterData.id && typeof ReadingHistory !== 'undefined') {
+        ReadingHistory.addToHistory(novelData.id, chapterData.id, {
+          title: novelData.title,
+          chapterTitle: chapterData.title,
+          cover: novelData.cover || ''
+        });
+      }
+
+      // Update library progress immediately when chapter loads (not just on scroll)
+      // This ensures currentChapterId is saved even if user clicks Back quickly
+      if (novelData.id && chapterData.id && typeof LibrarySystem !== 'undefined' && LibrarySystem.isInLibrary(novelData.id)) {
+        LibrarySystem.updateProgress(novelData.id, 0, chapterData.number || 0, chapterData.id);
+      }
+
+      updateLibraryBtnUI();
+      populateChapterList();
+      updateNavButtonStates();
+    }
+
+    async function loadData() {
+      const [chapter, novelMeta] = await Promise.all([fetchChapter(), fetchNovelMeta()]);
+      renderChapter(chapter, novelMeta || {});
+      await ensureChapterList();
+      populateChapterList();
+      updateNavButtonStates();
+    }
+
+    // Reading progress
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      if (progressFill) progressFill.style.width = Math.min(progress, 100) + '%';
+
+      clearTimeout(window.savePositionTimeout);
+      window.savePositionTimeout = setTimeout(() => {
+        if (novelData.id) {
+          localStorage.setItem(`reading_position_${novelData.id}_${chapterData.id || ''}`, scrollTop);
+          if (LibrarySystem.isInLibrary(novelData.id)) {
+            LibrarySystem.updateProgress(novelData.id, Math.round(progress), chapterData.number || 0, chapterData.id);
+          }
+        }
+      }, 300);
+    }
+    window.addEventListener('scroll', updateProgress);
+
+    // Settings/overlays
+    settingsBtn?.addEventListener('click', () => {
+      settingsPanel?.classList.add('open');
+      panelOverlay?.classList.add('active');
+    });
+    closeSettings?.addEventListener('click', () => {
+      settingsPanel?.classList.remove('open');
+      panelOverlay?.classList.remove('active');
+    });
+    [chapterListBtn, chapterListBtn2].forEach(btn => {
+      btn?.addEventListener('click', () => {
+        chapterListPanel?.classList.add('open');
+        panelOverlay?.classList.add('active');
+      });
+    });
+    closeChapterList?.addEventListener('click', () => {
+      chapterListPanel?.classList.remove('open');
+      panelOverlay?.classList.remove('active');
+    });
+    panelOverlay?.addEventListener('click', () => {
+      settingsPanel?.classList.remove('open');
+      chapterListPanel?.classList.remove('open');
+      panelOverlay?.classList.remove('active');
+    });
+
+    // Font size/theme toggles (unchanged)
+    const fontSizeBtns = document.querySelectorAll('.font-size-btn');
+    fontSizeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        fontSizeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.body.classList.remove('font-small', 'font-large', 'font-xlarge');
+        const size = btn.dataset.size;
+        if (size !== 'medium') document.body.classList.add('font-' + size);
+        localStorage.setItem('reader_font_size', size);
+      });
+    });
+    const savedFontSize = localStorage.getItem('reader_font_size');
+    if (savedFontSize) {
+      fontSizeBtns.forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-size="${savedFontSize}"]`)?.classList.add('active');
+      if (savedFontSize !== 'medium') document.body.classList.add('font-' + savedFontSize);
+    }
+    const themeBtns = document.querySelectorAll('.theme-btn');
+    themeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        themeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.body.classList.remove('dark-mode', 'sepia-mode');
+        const theme = btn.dataset.theme;
+        if (theme === 'dark') document.body.classList.add('dark-mode');
+        else if (theme === 'sepia') document.body.classList.add('sepia-mode');
+        localStorage.setItem('reader_theme', theme);
+      });
+    });
+    const savedTheme = localStorage.getItem('reader_theme');
+    if (savedTheme) {
+      themeBtns.forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-theme="${savedTheme}"]`)?.classList.add('active');
+      if (savedTheme === 'dark') document.body.classList.add('dark-mode');
+      else if (savedTheme === 'sepia') document.body.classList.add('sepia-mode');
+    }
+
+    // Library button
+    function updateLibraryBtnUI() {
+      if (!addToLibraryBtn) return;
+      const inLibrary = LibrarySystem.isInLibrary(novelData.id);
+      addToLibraryBtn.innerHTML = inLibrary
+        ? `<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> In Library`
+        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Add to Library`;
+      addToLibraryBtn.classList.toggle('primary', inLibrary);
+    }
+    addToLibraryBtn?.addEventListener('click', () => {
+      const added = LibrarySystem.toggleLibrary(novelData.id, novelData);
+      updateLibraryBtnUI();
+      showToast(added ? 'Added to your library' : 'Removed from library');
+    });
+
+    // Download for offline
+    document.getElementById('downloadBtn')?.addEventListener('click', () => {
+      if (!novelData.id || !chapterData.id) {
+        showToast('No chapter available to download');
+        return;
+      }
+      if (!chapterContentEl.innerHTML || chapterContentEl.innerHTML.trim() === '') {
+        showToast('Chapter content not loaded yet');
+        return;
+      }
+      const offline = JSON.parse(localStorage.getItem('novelshare_offline') || '{}');
+      if (!offline[novelData.id]) {
+        offline[novelData.id] = { novelId: novelData.id, novelTitle: novelData.title, cover: novelData.cover || '', chapters: {} };
+      }
+      const existingChapters = offline[novelData.id].chapters || {};
+      if (existingChapters[chapterData.id]) {
+        delete existingChapters[chapterData.id];
+        if (Object.keys(existingChapters).length === 0) delete offline[novelData.id];
+        else offline[novelData.id].chapters = existingChapters;
+        showToast('Removed from offline reading');
+      } else {
+        existingChapters[chapterData.id] = {
+          chapterId: chapterData.id,
+          chapterTitle: chapterData.title,
+          content: chapterContentEl.innerHTML,
+          downloadedAt: Date.now()
+        };
+        offline[novelData.id].chapters = existingChapters;
+        showToast('Chapter saved for offline reading');
+      }
+      localStorage.setItem('novelshare_offline', JSON.stringify(offline));
+    });
+
+    // Rating
+    let currentRating = 0;
+    function updateStarDisplay(rating) {
+      starBtns.forEach((b, index) => b.classList.toggle('active', index < rating));
+    }
+    rateChapterBtn?.addEventListener('click', () => {
+      ratingModal?.classList.add('open');
+      updateStarDisplay(currentRating);
+    });
+    cancelRating?.addEventListener('click', () => ratingModal?.classList.remove('open'));
+    ratingModal?.addEventListener('click', (e) => { if (e.target === ratingModal) ratingModal.classList.remove('open'); });
+    starBtns.forEach(btn => {
+      btn.addEventListener('click', () => { currentRating = parseInt(btn.dataset.rating, 10); updateStarDisplay(currentRating); });
+      btn.addEventListener('mouseenter', () => updateStarDisplay(parseInt(btn.dataset.rating, 10)));
+      btn.addEventListener('mouseleave', () => updateStarDisplay(currentRating));
+    });
+    submitRating?.addEventListener('click', () => {
+      if (!currentRating) return showToast('Please select a rating');
+      if (novelData.id && chapterData.id) {
+        RatingSystem.saveRating(`${novelData.id}_chapter_${chapterData.id}`, currentRating);
+      }
+      ratingModal?.classList.remove('open');
+      showToast(`Thanks for rating! You gave ${currentRating} stars`);
+    });
+
+    // Chapter list / navigation
+    function populateChapterList() {
+      if (!chapterListGrid) return;
+      const readChapters = (() => {
+        try { return JSON.parse(localStorage.getItem(`read_chapters_${novelId}`) || '[]'); }
+        catch { return []; }
+      })();
+      const published = chaptersList.filter(ch => ch.status === 'published');
+      if (!published.length) {
+        chapterListGrid.innerHTML = `<div class="chapter-list-item" style="opacity:0.7;">No chapters yet.</div>`;
+        return;
+      }
+      // Sort by database chapter_number first, then assign sequential display numbers (1, 2, 3...)
+      const ordered = [...published].sort((a, b) => (a.number || 0) - (b.number || 0));
+      chapterListGrid.innerHTML = ordered.map((ch, idx) => {
+        // Use sequential display number (1, 2, 3...) instead of raw database chapter_number
+        const displayNumber = idx + 1;
+        return `
+        <a href="reader.html?novelId=${encodeURIComponent(novelId)}&chapterId=${encodeURIComponent(ch.id || '')}" class="chapter-list-item${ch.id === chapterData.id ? ' current' : ''}">
+          <span class="chapter-list-number">${displayNumber}</span>
+          <span class="chapter-list-title">${ch.title || 'Untitled'}</span>
+          ${readChapters.includes(ch.id) ? `<span class="chapter-list-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </span>` : ''}
+        </a>
+      `}).join('');
+    }
+
+    function updateNavButtonStates() {
+      const ordered = chaptersList.length
+        ? chaptersList
+            .filter(ch => ch.status === 'published')
+            .sort((a, b) => (a.number || 0) - (b.number || 0))
+        : (chapterData.id ? [chapterData] : []);
+      const idx = ordered.findIndex(ch => ch.id === chapterData.id);
+      const prev = ordered.length ? (idx > 0 ? ordered[idx - 1] : null) : null;
+      const next = ordered.length ? (idx >= 0 && idx < ordered.length - 1 ? ordered[idx + 1] : null) : null;
+      // Use actual chapter list length as the total (not stale metadata)
+      const total = ordered.length || 1;
+      // Display number is the position in the sorted list (1-indexed)
+      const displayNumber = idx >= 0 ? idx + 1 : (chapterData.number || 1);
+
+      prevBtn.style.opacity = prev ? '1' : '0.5';
+      prevBtn.style.cursor = prev ? 'pointer' : 'not-allowed';
+      nextBtn.style.opacity = next ? '1' : '0.5';
+      nextBtn.style.cursor = next ? 'pointer' : 'not-allowed';
+
+      prevBtn.onclick = prev
+        ? () => window.location.href = `reader.html?novelId=${encodeURIComponent(novelId)}&chapterId=${encodeURIComponent(prev.id)}`
+        : () => showToast('This is the first chapter');
+      nextBtn.onclick = next
+        ? () => window.location.href = `reader.html?novelId=${encodeURIComponent(novelId)}&chapterId=${encodeURIComponent(next.id)}`
+        : () => showToast('This is the last chapter');
+
+      const centerLabel = document.getElementById('chapterNavLabel');
+      if (centerLabel) {
+        // Use displayNumber (position in list) and actual total from ordered list
+        centerLabel.textContent = displayNumber && total ? `Chapter ${displayNumber} of ${total}` : `Chapter ${displayNumber || ''}`;
+      }
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        settingsPanel?.classList.remove('open');
+        chapterListPanel?.classList.remove('open');
+        ratingModal?.classList.remove('open');
+        panelOverlay?.classList.remove('active');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+    });
+  </script>
+</body>
+</html>

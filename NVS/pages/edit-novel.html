@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Novel | NovelShare</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="../assets/css/common.css" />
+  <style>
+    .form-container {
+      max-width: 1100px;
+      margin: 64px auto 40px;
+      padding: 32px 24px 40px;
+    }
+    .form-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .page-header h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0 0 4px;
+    }
+    .page-header .subtext {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .draft-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+    .draft-status svg { width: 16px; height: 16px; }
+
+    .novel-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    .cover-panel .label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 0 0 12px;
+    }
+    .cover-frame {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      background: #f8fafc;
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .cover-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-muted);
+    }
+    .cover-placeholder svg { width: 58px; height: 58px; color: #9ca3af; }
+    .file-btn {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #1f2937;
+      color: #fff;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9375rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .file-btn:hover { background: #111827; transform: translateY(-1px); }
+    .file-name { margin-top: 8px; font-size: 0.875rem; color: var(--text-muted); }
+    .helper-text { margin-top: 6px; font-size: 0.8125rem; color: var(--text-muted); }
+
+    .form-fields label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    .form-fields input,
+    .form-fields select,
+    .form-fields textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fff;
+    }
+    .form-fields input:focus,
+    .form-fields select:focus,
+    .form-fields textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 111, 225, 0.1);
+    }
+    .form-fields .field { margin-bottom: 18px; }
+    .form-fields textarea { min-height: 220px; resize: vertical; line-height: 1.6; }
+
+    .form-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .form-buttons button {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      border: none;
+    }
+    .cancel-btn {
+      background: #f5f5f5;
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+    }
+    .cancel-btn:hover { background: #eee; }
+    .draft-btn {
+      background: #fff;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .draft-btn:hover { background: #f0f4ff; }
+    .add-btn {
+      background: var(--primary);
+      color: #fff;
+    }
+    .add-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+    @media (max-width: 900px) {
+      .novel-layout { grid-template-columns: 1fr; }
+      .cover-panel { order: -1; }
+    }
+    @media (max-width: 620px) {
+      .form-container { padding: 0 16px; margin: 24px auto; }
+      .form-card { padding: 20px; }
+      .form-buttons { flex-direction: column; }
+      .form-buttons button { width: 100%; }
+      .top-bar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <a href="home.html" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">NovelShare</span>
+          <span class="logo-tagline">READ • WRITE • SHARE</span>
+        </div>
+      </a>
+
+      <nav class="nav-pills">
+        <a class="pill" href="library.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+            </svg>
+          </span>
+          Library
+        </a>
+        <a class="pill" href="browse.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M11 5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm6.7 11.3L21 19.6" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Browse
+        </a>
+      </nav>
+
+      <div class="profile-actions">
+        <button class="bell-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <div class="profile-wrapper">
+          <div class="profile" id="profileBtn">
+            <div class="avatar">U</div>
+            <span class="username">user</span>
+          </div>
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar-lg">U</div>
+              <div class="name">User Name</div>
+              <div class="email">user@example.com</div>
+            </div>
+            <div class="profile-dropdown-menu">
+              <a href="profile.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                </svg>
+                My Profile
+              </a>
+              <a href="author-dashboard.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                My Works
+              </a>
+              <a href="profile.html#settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                Settings
+              </a>
+              <a href="login.html" class="logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Log Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="form-container">
+      <div class="page-header">
+        <div>
+          <h2>Edit Novel</h2>
+          <p class="subtext">Update your story details</p>
+        </div>
+        <div class="draft-status" id="draftStatus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          <span>Changes not saved</span>
+        </div>
+      </div>
+
+      <form id="editNovelForm" class="form-card">
+        <div class="novel-layout">
+          <div class="cover-panel">
+            <p class="label">Cover Image</p>
+            <div class="cover-frame" id="coverFrame">
+              <img id="coverPreview" alt="Cover preview" />
+              <div class="cover-placeholder" id="coverPlaceholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <path d="M21 15l-5-5L5 21"/>
+                </svg>
+                <span>Upload a cover</span>
+              </div>
+            </div>
+            <label class="file-btn">
+              <input type="file" id="coverInput" accept="image/*" hidden />
+              Choose File
+            </label>
+            <div class="file-name" id="fileName">No file chosen</div>
+            <p class="helper-text">Recommended: 600x900 JPG or PNG</p>
+          </div>
+
+          <div class="form-fields">
+            <div class="field">
+              <label for="novel-title">Novel Title <span style="color: #ef4444;">*</span></label>
+              <input type="text" id="novel-title" placeholder="Enter your novel title" required />
+            </div>
+
+            <div class="field">
+              <label for="genre">Genre</label>
+              <select id="genre">
+                <option value="">Select a genre</option>
+                <option>Fantasy</option>
+                <option>Romance</option>
+                <option>Action</option>
+                <option>Sci-Fi</option>
+                <option>Mystery</option>
+                <option>Horror</option>
+                <option>Adventure</option>
+                <option>Urban</option>
+                <option>Historical</option>
+                <option>Comedy</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="status">Status</label>
+              <select id="status">
+                <option value="Ongoing">Ongoing</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="description">Story Description</label>
+              <textarea id="description" placeholder="Write a brief description of your novel"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
+          <button type="button" class="draft-btn" id="draftBtn">Save as Draft</button>
+          <button type="submit" class="add-btn">Save Changes</button>
+        </div>
+      </form>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2025 Novel Share. All Rights Reserved.</p>
+      <div class="footer-links">
+        <a href="#">Contact Us</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../assets/js/common.js"></script>
+  <!-- Supabase client library must load before our wrapper -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase.js"></script>
+  <script>
+    const notify = (window.showToast) ? window.showToast : (msg) => console.log(msg);
+    const form = document.getElementById('editNovelForm');
+    const titleInput = document.getElementById('novel-title');
+    const genreSelect = document.getElementById('genre');
+    const statusSelect = document.getElementById('status');
+    const descTextarea = document.getElementById('description');
+    const coverInput = document.getElementById('coverInput');
+    const coverPreview = document.getElementById('coverPreview');
+    const coverPlaceholder = document.getElementById('coverPlaceholder');
+    const fileName = document.getElementById('fileName');
+    const draftStatus = document.getElementById('draftStatus');
+
+    let coverData = '';
+    let currentWorkId = null;
+
+    const isUUID = (value) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value || '');
+
+    function getQueryParam(key) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(key);
+    }
+
+    async function ensureProfileLoaded() {
+      // First, try to apply any cached profile so UI updates instantly
+      const cachedProfile = localStorage.getItem('novelshare_profile');
+      if (cachedProfile) {
+        GuestMode.updateProfileUI();
+      }
+
+      if (typeof supabase === 'undefined') return;
+      try {
+        const user = await SupabaseAuth.getCurrentUser();
+        if (!user) return;
+
+        // Force user mode for UI
+        localStorage.removeItem('novelshare_guest_mode');
+
+        let profile = null;
+        try {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle();
+          if (error) throw error;
+          profile = data;
+        } catch {
+          const meta = user.user_metadata || {};
+          profile = {
+            display_name: meta.display_name || meta.full_name || '',
+            username: meta.username || meta.user_name || '',
+            email: user.email || ''
+          };
+        }
+
+        const normalized = {
+          name: profile?.display_name || profile?.username || user.email || 'User',
+          username: profile?.username || profile?.display_name || user.email || 'User',
+          email: profile?.email || user.email || ''
+        };
+        localStorage.setItem('novelshare_profile', JSON.stringify(normalized));
+        GuestMode.updateProfileUI();
+      } catch (e) {
+        console.warn('Could not load profile for header:', e);
+      }
+    }
+
+    const matchWorkById = (list, id) => list.find(w => (w.id || w.novelId || w.slug) === id);
+
+    async function loadWork() {
+      let works = [];
+      try { works = JSON.parse(localStorage.getItem('novelshare_my_works') || '[]'); } catch { works = []; }
+      const paramId = getQueryParam('id');
+      let work = paramId ? matchWorkById(works, paramId) : null;
+
+      // Fallback: try library cache
+      if (!work && paramId) {
+        try {
+          const library = JSON.parse(localStorage.getItem('novelshare_library') || '[]');
+          const libItem = matchWorkById(library, paramId);
+          if (libItem) {
+            work = {
+              id: libItem.id || libItem.novelId || paramId,
+              title: libItem.title || 'Untitled',
+              genre: libItem.genre || (Array.isArray(libItem.genres) ? libItem.genres[0] : '') || 'Original',
+              status: libItem.status || 'ongoing',
+              description: libItem.description || '',
+              cover: libItem.cover || libItem.coverImage || libItem.cover_image || '',
+              chapters: libItem.chapters || libItem.totalChapters || libItem.total_chapters || 0,
+              reads: libItem.reads || 0,
+              updatedAt: libItem.updatedAt || libItem.updated_at || Date.now()
+            };
+            works.unshift(work);
+            localStorage.setItem('novelshare_my_works', JSON.stringify(works));
+          }
+        } catch { /* ignore */ }
+      }
+
+      // Fallback: fetch from Supabase if logged in
+      if (!work && paramId && typeof SupabaseDB !== 'undefined' && SupabaseDB.getNovelById && typeof GuestMode !== 'undefined' && !GuestMode.isGuest()) {
+        try {
+          const user = typeof SupabaseAuth !== 'undefined' ? await SupabaseAuth.getCurrentUser() : null;
+          if (user) {
+            const supa = await SupabaseDB.getNovelById(paramId);
+            if (supa) {
+              work = {
+                id: supa.id || paramId,
+                title: supa.title || 'Untitled',
+                genre: Array.isArray(supa.genres) ? supa.genres[0] : (supa.genre || 'Original'),
+                status: (supa.status || 'ongoing').toString().toLowerCase(),
+                description: supa.description || '',
+                cover: supa.cover_image || supa.cover || '',
+                chapters: supa.total_chapters || 0,
+                reads: supa.view_count || 0,
+                updatedAt: supa.updated_at || supa.created_at || Date.now(),
+                author: supa.author
+              };
+              works.unshift(work);
+              localStorage.setItem('novelshare_my_works', JSON.stringify(works));
+            }
+          }
+        } catch (err) {
+          console.warn('Supabase novel fetch failed:', err);
+        }
+      }
+
+      if (!work && works.length) {
+        work = works[0];
+      }
+      if (!work) {
+        notify('No saved works found. Create one first.');
+        setTimeout(() => window.location.href = 'add-novel.html', 800);
+        return;
+      }
+      currentWorkId = work.id;
+      titleInput.value = work.title || '';
+      genreSelect.value = work.genre || '';
+      statusSelect.value = work.status || 'Ongoing';
+      descTextarea.value = work.description || '';
+      if (work.cover) {
+        coverData = work.cover;
+        coverPreview.src = work.cover;
+        coverPreview.style.display = 'block';
+        coverPlaceholder.style.display = 'none';
+        fileName.textContent = 'Cover loaded';
+      } else {
+        coverPreview.style.display = 'none';
+        coverPlaceholder.style.display = 'flex';
+        fileName.textContent = 'No file chosen';
+      }
+      draftStatus.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+        <span>Loaded from My Works</span>
+      `;
+    }
+
+    async function saveWork(statusLabel) {
+      const title = titleInput.value.trim();
+      if (!title) {
+        notify('Title is required');
+        return false;
+      }
+      let works = [];
+      try {
+        works = JSON.parse(localStorage.getItem('novelshare_my_works') || '[]');
+        if (!Array.isArray(works)) works = [];
+      } catch {
+        works = [];
+      }
+      // Find existing work to preserve chapter count
+      const existingWork = works.find(w => w.id === currentWorkId);
+      const payload = {
+        id: currentWorkId || `work-${Date.now()}`,
+        title,
+        status: statusLabel || statusSelect.value || 'Ongoing',
+        chapters: existingWork?.chapters || existingWork?.total_chapters || 0,
+        reads: existingWork?.reads || 0,
+        cover: coverData,
+        genre: genreSelect.value || 'Uncategorized',
+        description: descTextarea.value.trim(),
+        updatedAt: Date.now()
+      };
+
+      const idx = works.findIndex(w => w.id === payload.id);
+      if (idx >= 0) {
+        works[idx] = { ...works[idx], ...payload };
+      } else {
+        works.unshift(payload);
+      }
+      try {
+        localStorage.setItem('novelshare_my_works', JSON.stringify(works));
+      } catch (err) {
+        console.error('Local save failed:', err);
+        notify('Could not save locally. Please check storage space or try again.');
+        return false;
+      }
+      currentWorkId = payload.id;
+
+      // Try to push to Supabase novels table if logged in
+      if (typeof GuestMode !== 'undefined' && !GuestMode.isGuest() && typeof supabase !== 'undefined' && typeof SupabaseAuth !== 'undefined') {
+        try {
+          const user = await SupabaseAuth.getCurrentUser();
+          if (user) {
+            let supabaseStatus = (payload.status || 'ongoing').toString().trim().toLowerCase();
+            if (!['ongoing', 'completed', 'hiatus'].includes(supabaseStatus)) {
+              supabaseStatus = 'ongoing';
+            }
+
+            // Get author name from profile
+            let authorName = user.email || 'Unknown';
+            try {
+              const profile = JSON.parse(localStorage.getItem('novelshare_profile') || '{}');
+              authorName = profile.display_name || profile.name || profile.username || user.email || 'Unknown';
+            } catch { /* use default */ }
+
+            const upsertPayload = {
+              title: payload.title,
+              description: payload.description,
+              cover_image: payload.cover || null,
+              genres: payload.genre ? [payload.genre] : [],
+              status: supabaseStatus,
+              total_chapters: payload.chapters,
+              author_id: user.id,
+              author: payload.author || authorName,
+              updated_at: new Date().toISOString()
+            };
+            if (isUUID(payload.id)) {
+              upsertPayload.id = payload.id;
+            }
+            const { data, error } = await supabase
+              .from('novels')
+              .upsert(upsertPayload)
+              .select()
+              .limit(1);
+            if (error) throw error;
+            const newId = data && data[0] && data[0].id;
+            if (newId && newId !== currentWorkId) {
+              currentWorkId = newId;
+              let updated = [];
+              try {
+                updated = JSON.parse(localStorage.getItem('novelshare_my_works') || '[]');
+                if (!Array.isArray(updated)) updated = [];
+              } catch {
+                updated = [];
+              }
+              updated = updated.map(w =>
+                w.id === payload.id ? { ...w, id: newId } : w
+              );
+              localStorage.setItem('novelshare_my_works', JSON.stringify(updated));
+            }
+          }
+        } catch (err) {
+          console.warn('Supabase novel sync failed (continuing with local save):', err);
+        }
+      }
+
+      return true;
+    }
+
+    coverInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) {
+        coverData = '';
+        coverPreview.style.display = 'none';
+        coverPlaceholder.style.display = 'flex';
+        fileName.textContent = 'No file chosen';
+        return;
+      }
+      fileName.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        coverData = event.target.result || '';
+        coverPreview.src = coverData;
+        coverPreview.style.display = 'block';
+        coverPlaceholder.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('draftBtn').addEventListener('click', async () => {
+      try {
+        const saved = await saveWork('Draft');
+        if (saved) {
+          draftStatus.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            <span>Draft saved</span>
+          `;
+          notify('Draft saved');
+        }
+      } catch (err) {
+        console.error('Draft save failed:', err);
+        notify('Could not save draft. Please try again.');
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        // Use the chosen status directly (no override)
+        const saved = await saveWork();
+        if (saved) {
+          draftStatus.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            <span>Changes saved</span>
+          `;
+          notify('Novel updated!');
+        }
+      } catch (err) {
+        console.error('Save failed:', err);
+        notify('Could not save changes. Please try again.');
+      }
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      window.location.href = 'author-dashboard.html';
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      ensureProfileLoaded();
+      await loadWork();
+    });
+  </script>
+</body>
+</html>

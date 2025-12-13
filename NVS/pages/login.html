@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Login | NovelShare</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <link rel="stylesheet" href="../assets/css/auth-common.css">
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="auth-logo">
+      <div class="logo-mark">
+        <svg class="logo-icon" viewBox="0 0 64 64" aria-hidden="true">
+          <path
+            d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z"
+            fill="currentColor"
+          />
+        </svg>
+        <span class="logo-name">NovelShare</span>
+      </div>
+      <p class="logo-subtitle">Join our community of readers and authors</p>
+    </div>
+
+    <div class="auth-container">
+      <h2>Welcome</h2>
+      <p>Sign in to your account or create a new one</p>
+
+      <div class="tabs">
+        <button class="tab active">Login</button>
+        <a href="signup.html" class="tab">Sign Up</a>
+      </div>
+
+      <form id="loginForm" autocomplete="off" novalidate>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required
+                 autocomplete="new-password" spellcheck="false">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-input-container">
+            <input type="password" id="password" name="password" placeholder="Enter your password" required
+                   autocomplete="new-password" spellcheck="false">
+            <button type="button" class="password-toggle" aria-label="Show password">
+              <img src="../assets/images/icons/hide.png" alt="" class="eye-icon" aria-hidden="true">
+            </button>
+          </div>
+        </div>
+
+        <a href="forgot-password.html" class="forgot-password">Forget Password?</a>
+
+        <button type="submit" class="sign-in-btn">Sign In</button>
+
+        <div class="divider">
+          <span>or</span>
+        </div>
+
+        <button type="button" class="guest-btn" id="guestBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Continue as Guest</span>
+        </button>
+      </form>
+    </div>
+
+    <a href="home.html" class="back-link">&larr; Back to Home</a>
+  </div>
+
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    // Initialize password toggle
+    initPasswordToggle();
+
+    // Check if already logged in
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check for existing Supabase session
+      try {
+        const session = await SupabaseAuth.getSession();
+        if (session) {
+          // Clear existing session so user can sign in again
+          try {
+            await SupabaseAuth.signOut();
+          } catch (signOutErr) {
+            console.warn('Supabase sign-out before login failed:', signOutErr);
+          }
+        }
+      } catch (e) {
+        console.log('No active session');
+      }
+
+      // Auto-fill for returning users (from localStorage)
+      const savedCredentials = UserCredentials.getSavedCredentials();
+      if (savedCredentials && savedCredentials.email) {
+        const emailInput = document.getElementById('email');
+        emailInput.value = savedCredentials.email;
+
+        // Show welcome back message
+        const welcomeMsg = document.createElement('div');
+        welcomeMsg.className = 'welcome-back-msg';
+
+        // Prefer saved username; fallback to stored profile name/username; last fallback to email prefix
+        const cachedProfile = JSON.parse(localStorage.getItem('novelshare_profile') || '{}');
+        const displayName =
+          savedCredentials.username ||
+          cachedProfile.name ||
+          cachedProfile.username ||
+          (savedCredentials.email ? savedCredentials.email.split('@')[0] : '');
+
+        welcomeMsg.innerHTML = `
+          <span>Welcome back${displayName ? ', ' + displayName : ''}!</span>
+          <button type="button" class="clear-saved-btn" title="Use different account">Not you?</button>
+        `;
+        welcomeMsg.style.cssText = 'display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: var(--primary); margin-bottom: 16px; padding: 10px 14px; background: rgba(31, 111, 225, 0.08); border-radius: 8px;';
+
+        const form = document.getElementById('loginForm');
+        form.insertBefore(welcomeMsg, form.firstChild);
+
+        // Clear saved credentials button
+        welcomeMsg.querySelector('.clear-saved-btn').addEventListener('click', () => {
+          UserCredentials.clearCredentials();
+          emailInput.value = '';
+          welcomeMsg.remove();
+          showToast('Saved login cleared');
+        });
+
+        // Style the clear button
+        const clearBtn = welcomeMsg.querySelector('.clear-saved-btn');
+        clearBtn.style.cssText = 'background: none; border: none; color: var(--text-muted); font-size: 0.8125rem; cursor: pointer; text-decoration: underline;';
+      }
+    });
+
+    // Login form handling with Supabase
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const submitBtn = e.target.querySelector('.sign-in-btn');
+
+      if (!email || !password) {
+        showToast('Please fill in all fields');
+        return;
+      }
+
+      if (!Validators.email(email)) {
+        showToast('Please enter a valid email');
+        return;
+      }
+
+      // Disable button and show loading
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Signing in';
+
+      try {
+        // Try Supabase authentication
+        const { user, session } = await SupabaseAuth.signIn(email, password);
+
+        // Switch to user mode with data isolation
+        GuestMode.setGuestMode(false);
+
+        // Fetch profile for display/name (fallback to metadata/email)
+        let profileData = {};
+        try {
+          const dbProfile = await SupabaseDB.getProfile(user?.id);
+          profileData = {
+            id: user?.id || null,
+            name: dbProfile?.display_name || dbProfile?.username || user?.email || 'User',
+            username: dbProfile?.username || dbProfile?.display_name || 'user',
+            email: dbProfile?.email || user?.email || '',
+            location: dbProfile?.location || '',
+            bio: dbProfile?.bio || ''
+          };
+        } catch (e) {
+          const meta = session?.user?.user_metadata || {};
+          profileData = {
+            id: user?.id || null,
+            name: meta.display_name || meta.full_name || user?.email || 'User',
+            username: meta.username || meta.user_name || 'user',
+            email: user?.email || '',
+            location: meta.location || '',
+            bio: meta.bio || ''
+          };
+        }
+
+        // Save credentials for auto-fill (with username)
+        UserCredentials.saveCredentials(email, profileData.username);
+        // Cache profile for UI
+        localStorage.setItem('novelshare_profile', JSON.stringify(profileData));
+
+        // Sync user data from cloud
+        await SupabaseSync.fullSync();
+
+        showToast('Login successful!');
+        setTimeout(() => {
+          window.location.href = 'home.html';
+        }, 1000);
+
+      } catch (error) {
+        console.error('Supabase login error:', error);
+
+        // Fallback to demo mode if Supabase fails
+        if (error.message && (error.message.includes('Invalid login credentials') || error.message.includes('Email not confirmed'))) {
+          showToast(error.message);
+        } else {
+          showToast('Login failed. Please try again.');
+        }
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+      }
+    });
+
+    // Continue as Guest - skip Supabase entirely
+    document.getElementById('guestBtn').addEventListener('click', () => {
+      // Use GuestMode system to properly switch to guest mode with data isolation
+      GuestMode.setGuestMode(true);
+
+      showToast('Continuing as guest...');
+      setTimeout(() => {
+        window.location.href = 'home.html';
+      }, 800);
+    });
+  </script>
+</body>
+</html>

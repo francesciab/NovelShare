@@ -1,0 +1,2207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Novel | NovelShare</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="../assets/css/common.css" />
+  <style>
+    /* Novel Details Page Styles */
+    .novel-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Novel Header Section */
+    .novel-header {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 32px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-medium);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .novel-cover {
+      width: 220px;
+      height: 320px;
+      border-radius: var(--radius-md);
+      background: var(--primary-gradient);
+      box-shadow: var(--shadow-medium);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .novel-cover::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.3) 100%);
+    }
+
+    .novel-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .novel-badges {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-genre {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .badge-status {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-status.ongoing {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .novel-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+      line-height: 1.2;
+    }
+
+    .novel-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .author-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .author-name {
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+    }
+
+    .author-name a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .author-name a:hover {
+      text-decoration: underline;
+    }
+
+    .novel-stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+    }
+
+    .stat svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+    }
+
+    .stat.rating svg {
+      color: #f5b400;
+      fill: #f5b400;
+    }
+
+    .stat strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .novel-description {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      flex: 1;
+    }
+
+    .novel-description.collapsed {
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .read-more-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 24px;
+    }
+
+    .novel-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-read {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .btn-read:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-primary);
+    }
+
+    .btn-read svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .btn-action {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .btn-action:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #f0f4ff;
+    }
+
+    .btn-action.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-action svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-action.favorite-active {
+      border-color: #ef4444;
+      color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .btn-action.favorite-active svg {
+      fill: #ef4444;
+    }
+
+    .btn-action.favorite-active:hover {
+      background: #fee2e2;
+      border-color: #dc2626;
+      color: #dc2626;
+    }
+
+    /* Floating Action Button */
+    .fab-add {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      transition: all var(--transition-normal);
+      z-index: 100;
+    }
+
+    .fab-add:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    }
+
+    .fab-add svg {
+      width: 24px;
+      height: 24px;
+      transition: transform var(--transition-normal);
+    }
+
+    .fab-add.in-library svg {
+      transform: rotate(45deg);
+    }
+
+    .fab-add.in-library {
+      background: #10b981;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .fab-add.in-library:hover {
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Novel Tabs Section */
+    .novel-tabs-section {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .novel-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      overflow: hidden;
+    }
+
+    .novel-tab {
+      padding: 16px 20px;
+      background: none;
+      border: none;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: color var(--transition-normal);
+    }
+
+    .novel-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .novel-tab.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .novel-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary-gradient);
+      border-radius: var(--radius-full) var(--radius-full) 0 0;
+    }
+
+    .novel-tab-content {
+      padding: 24px;
+      display: none;
+    }
+
+    .novel-tab-content.active {
+      display: block;
+    }
+
+    /* Chapters Tab */
+    .chapters-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .chapters-header h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .chapters-sort {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chapters-sort label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .chapters-sort select {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      background: var(--bg-primary);
+      cursor: pointer;
+    }
+
+    .chapter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chapter-empty {
+      padding: 20px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .chapter-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all var(--transition-normal);
+    }
+
+    .chapter-item:hover {
+      background: #f0f4ff;
+      transform: translateX(4px);
+    }
+
+    .chapter-number {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--primary);
+      min-width: 60px;
+    }
+
+    .chapter-info {
+      flex: 1;
+    }
+
+    .chapter-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 4px;
+    }
+
+    .chapter-meta {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .chapter-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chapter-read-badge {
+      padding: 4px 10px;
+      background: #d1fae5;
+      color: #065f46;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
+    .chapter-new-badge {
+      padding: 4px 10px;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
+    /* Reviews Tab */
+    .reviews-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .reviews-summary {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .rating-big {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .rating-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stars {
+      display: flex;
+      gap: 4px;
+    }
+
+    .stars svg {
+      width: 20px;
+      height: 20px;
+      color: #f5b400;
+      fill: #f5b400;
+    }
+
+    .stars svg.empty {
+      fill: none;
+      color: var(--border);
+    }
+
+    .rating-count {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .btn-write-review {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .btn-write-review:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+
+    .btn-write-review svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .review-item {
+      padding: 20px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+    }
+
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .reviewer-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .reviewer-info {
+      flex: 1;
+    }
+
+    .reviewer-name {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .review-date {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .review-rating {
+      display: flex;
+      gap: 2px;
+    }
+
+    .review-rating svg {
+      width: 16px;
+      height: 16px;
+      color: #f5b400;
+      fill: #f5b400;
+    }
+
+    .review-content {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .review-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .review-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color var(--transition-normal);
+    }
+
+    .review-action:hover {
+      color: var(--primary);
+    }
+
+    .review-action svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Similar Novels Tab */
+    .similar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .similar-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      text-decoration: none;
+      transition: all var(--transition-normal);
+    }
+
+    .similar-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .similar-cover {
+      height: 200px;
+      background: var(--primary-gradient);
+    }
+
+    .similar-info {
+      padding: 16px;
+    }
+
+    .similar-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .similar-author {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .similar-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    .similar-rating svg {
+      width: 14px;
+      height: 14px;
+      color: #f5b400;
+      fill: #f5b400;
+    }
+
+    /* Write Review Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-normal);
+    }
+
+    .modal-close:hover {
+      background: #f0f4ff;
+    }
+
+    .modal-close svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-secondary);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Modal buttons - match site CTA style */
+    .modal-footer .btn-primary {
+      background: linear-gradient(135deg, #2f7dfc, #1851c6);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      box-shadow: 0 10px 18px rgba(13, 123, 255, 0.25);
+      border: none;
+      outline: none;
+    }
+
+    .modal-footer .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 22px rgba(13, 123, 255, 0.32);
+    }
+
+    .modal-footer .btn-secondary {
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid rgba(45, 114, 233, 0.35);
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .modal-footer .btn-secondary:hover {
+      background: #f5f8ff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(45, 114, 233, 0.12);
+    }
+
+    .rating-select {
+      margin-bottom: 20px;
+    }
+
+    .rating-select label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .star-select {
+      display: flex;
+      gap: 8px;
+    }
+
+    .star-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      transition: transform var(--transition-fast);
+    }
+
+    .star-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .star-btn svg {
+      width: 32px;
+      height: 32px;
+      color: var(--border);
+      transition: color var(--transition-normal);
+    }
+
+    .star-btn.active svg {
+      color: #f5b400;
+      fill: #f5b400;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .form-group textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9375rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: all var(--transition-normal);
+    }
+
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 111, 225, 0.1);
+    }
+
+    /* Notification & Profile Dropdowns */
+    .notification-wrapper, .profile-wrapper {
+      position: relative;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 18px;
+      height: 18px;
+      background: #ef4444;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: scale(0.95);
+      transform-origin: center;
+    }
+
+    .notification-dropdown, .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--bg-primary);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-heavy);
+      display: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .notification-dropdown { width: 320px; }
+    .profile-dropdown { width: 200px; }
+
+    .notification-dropdown.open, .profile-dropdown.open {
+      display: block;
+    }
+
+    .notification-header, .profile-dropdown-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .notification-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notification-header h4 {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .notification-header button {
+      font-size: 0.8125rem;
+      color: var(--primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background var(--transition-normal);
+    }
+
+    .notification-item:hover {
+      background: var(--bg-secondary);
+    }
+
+    .notification-item.unread {
+      background: #f0f7ff;
+    }
+
+    .notif-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .notif-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .profile-dropdown-header {
+      text-align: center;
+    }
+
+    .profile-dropdown-header .avatar-lg {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin: 0 auto 8px;
+    }
+
+    .profile-dropdown-header .name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .profile-dropdown-header .email {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .profile-dropdown-menu {
+      padding: 8px 0;
+    }
+
+    .profile-dropdown-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background var(--transition-normal);
+    }
+
+    .profile-dropdown-menu a:hover {
+      background: var(--bg-secondary);
+    }
+
+    .profile-dropdown-menu a svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+    }
+
+    .profile-dropdown-menu .logout {
+      color: #dc2626;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      padding-top: 16px;
+    }
+
+    .profile-dropdown-menu .logout svg {
+      color: #dc2626;
+    }
+
+    .profile { cursor: pointer; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .novel-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .novel-cover {
+        margin: 0 auto;
+        width: 180px;
+        height: 260px;
+      }
+
+      .novel-badges, .novel-author, .novel-stats, .novel-actions {
+        justify-content: center;
+      }
+
+      .novel-title {
+        font-size: 1.5rem;
+      }
+
+      .reviews-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
+      .similar-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .notification-dropdown {
+        width: 280px;
+        right: -100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="top-bar">
+      <a href="home.html" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">NovelShare</span>
+          <span class="logo-tagline">READ • WRITE • SHARE</span>
+        </div>
+      </a>
+
+      <nav class="nav-pills">
+        <a class="pill" href="library.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+            </svg>
+          </span>
+          Library
+        </a>
+        <a class="pill" href="browse.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24"><path d="M11 5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm6.7 11.3L21 19.6" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round"/></svg>
+          </span>
+          Browse
+        </a>
+      </nav>
+
+      <div class="profile-actions">
+        <div class="notification-wrapper">
+          <button class="bell-btn" id="notificationBtn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.73 21a2 2 0 0 1-3.46 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="notification-badge">2</span>
+          </button>
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-header">
+              <h4>Notifications</h4>
+              <button id="markAllRead">Mark all read</button>
+            </div>
+            <div class="notification-list">
+              <div class="notification-item unread"><div class="notif-title">New chapter available!</div><div class="notif-time">5 minutes ago</div></div>
+              <div class="notification-item unread"><div class="notif-title">Author replied to your review</div><div class="notif-time">1 hour ago</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-wrapper">
+          <div class="profile" id="profileBtn">
+            <div class="avatar">U</div>
+            <span class="username">user</span>
+          </div>
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar-lg">U</div>
+              <div class="name">User Name</div>
+              <div class="email">user@example.com</div>
+            </div>
+            <div class="profile-dropdown-menu">
+              <a href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>My Profile</a>
+              <a href="author-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>My Works</a>
+              <a href="login.html" class="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Novel Content -->
+    <main class="novel-content">
+      <!-- Novel Header -->
+      <div class="novel-header">
+        <div class="novel-cover"></div>
+
+        <div class="novel-info">
+          <div class="novel-badges">
+            <span class="badge badge-genre">Historical Drama</span>
+            <span class="badge badge-status ongoing">Ongoing</span>
+          </div>
+
+          <h1 class="novel-title">Loading...</h1>
+
+          <div class="novel-author">
+            <div class="author-avatar">?</div>
+            <span class="author-name">by <a href="#">Loading...</a></span>
+          </div>
+
+          <div class="novel-stats">
+            <div class="stat rating">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <strong class="rating-value">-</strong> <span class="rating-count">(0 ratings)</span>
+            </div>
+            <div class="stat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <strong class="reads-value">-</strong> reads
+            </div>
+            <div class="stat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <strong class="chapters-value">0</strong> chapters
+            </div>
+            <div class="stat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              <strong class="library-value">-</strong> in library
+            </div>
+          </div>
+
+          <p class="novel-description collapsed" id="novelDescription">
+            Loading story description...
+          </p>
+          <button class="read-more-btn" id="readMoreBtn">Read more...</button>
+
+          <div class="novel-actions">
+            <button class="btn-read" id="startReadingBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              Start Reading
+            </button>
+            <button class="btn-action" id="addToLibraryBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              Add to Library
+            </button>
+            <button class="btn-action" id="shareBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
+            </button>
+            <button class="btn-action" id="favoriteBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Favorite
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Novel Tabs -->
+      <div class="novel-tabs-section">
+        <div class="novel-tabs">
+          <button class="novel-tab active" data-tab="chapters">Chapters</button>
+          <button class="novel-tab" data-tab="reviews">Reviews</button>
+          <button class="novel-tab" data-tab="similar">Similar Novels</button>
+        </div>
+
+        <!-- Chapters Tab -->
+        <div class="novel-tab-content active" id="tab-chapters">
+          <div class="chapters-header">
+            <h3>All Chapters</h3>
+            <div class="chapters-sort">
+              <label>Sort by:</label>
+              <select id="chapterSort">
+                <option value="oldest">Oldest First</option>
+                <option value="newest">Newest First</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="chapter-list" id="chapterList"></div>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div class="novel-tab-content" id="tab-reviews">
+          <div class="reviews-header">
+            <div class="reviews-summary">
+              <span class="rating-big">4.8</span>
+              <div class="rating-details">
+                <div class="stars">
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24" class="empty"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <span class="rating-count">Based on 256 ratings</span>
+              </div>
+            </div>
+            <button class="btn-write-review" id="writeReviewBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Write a Review
+            </button>
+          </div>
+
+          <div class="review-list">
+            <div class="review-item">
+              <div class="review-header">
+                <div class="reviewer-avatar">B</div>
+                <div class="reviewer-info">
+                  <div class="reviewer-name">BookLover22</div>
+                  <div class="review-date">December 18, 2024</div>
+                </div>
+                <div class="review-rating">
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+              </div>
+              <p class="review-content">Absolutely captivating story! The author does an amazing job of bringing ancient China to life. The relationship between the two sisters is so touching and real. I can't wait for the next chapter!</p>
+              <div class="review-actions">
+                <button class="review-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg> Helpful (24)</button>
+                <button class="review-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Reply</button>
+              </div>
+            </div>
+
+            <div class="review-item">
+              <div class="review-header">
+                <div class="reviewer-avatar">R</div>
+                <div class="reviewer-info">
+                  <div class="reviewer-name">HistoryFan99</div>
+                  <div class="review-date">December 15, 2024</div>
+                </div>
+                <div class="review-rating">
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+              </div>
+              <p class="review-content">Great historical accuracy and attention to detail. The plot is engaging and the characters are well-developed. My only wish is that chapters were released more frequently!</p>
+              <div class="review-actions">
+                <button class="review-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg> Helpful (18)</button>
+                <button class="review-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Reply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Similar Novels Tab -->
+        <div class="novel-tab-content" id="tab-similar">
+          <div class="similar-grid">
+            <a href="#" class="similar-card">
+              <div class="similar-cover"></div>
+              <div class="similar-info">
+                <h4 class="similar-title">The Emperor's Concubine</h4>
+                <p class="similar-author">by HistoryWriter</p>
+                <div class="similar-rating"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 4.7</div>
+              </div>
+            </a>
+            <a href="#" class="similar-card">
+              <div class="similar-cover"></div>
+              <div class="similar-info">
+                <h4 class="similar-title">Dynasty of Dreams</h4>
+                <p class="similar-author">by AncientTales</p>
+                <div class="similar-rating"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 4.5</div>
+              </div>
+            </a>
+            <a href="#" class="similar-card">
+              <div class="similar-cover"></div>
+              <div class="similar-info">
+                <h4 class="similar-title">Silk Road Secrets</h4>
+                <p class="similar-author">by TravelWriter</p>
+                <div class="similar-rating"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 4.6</div>
+              </div>
+            </a>
+            <a href="#" class="similar-card">
+              <div class="similar-cover"></div>
+              <div class="similar-info">
+                <h4 class="similar-title">Palace Intrigue</h4>
+                <p class="similar-author">by DramaQueen</p>
+                <div class="similar-rating"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 4.4</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2025 NovelShare. All Rights Reserved.</p>
+      <div class="footer-links">
+        <a href="javascript:void(0)" onclick="showToast('Contact page coming soon')">Contact Us</a>
+        <a href="javascript:void(0)" onclick="showToast('Privacy Policy coming soon')">Privacy Policy</a>
+        <a href="javascript:void(0)" onclick="showToast('Terms of Service coming soon')">Terms of Service</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Write Review Modal -->
+  <div class="modal-overlay" id="reviewModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Write a Review</h2>
+        <button class="modal-close" id="closeReviewModal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="rating-select">
+          <label>Your Rating</label>
+          <div class="star-select" id="starSelect">
+            <button class="star-btn" data-rating="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+            <button class="star-btn" data-rating="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+            <button class="star-btn" data-rating="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+            <button class="star-btn" data-rating="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+            <button class="star-btn" data-rating="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reviewText">Your Review</label>
+          <textarea id="reviewText" placeholder="Share your thoughts about this novel..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelReview">Cancel</button>
+        <button class="btn-primary" id="submitReview">Submit Review</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Supabase SDK + app scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    // Build novel data from URL (prefer catalog + stored works/library)
+    const params = new URLSearchParams(window.location.search);
+    const novelId = params.get('id') || '';
+
+    // If no novel ID provided, redirect to browse page
+    if (!novelId) {
+      showToast('No novel selected. Redirecting to browse...');
+      setTimeout(() => { window.location.href = 'browse.html'; }, 1500);
+    }
+
+    const twinSistersLongDesc = document.getElementById('novelDescription')?.textContent?.trim();
+
+    // Static catalog matching Browse cards
+    const catalog = {
+      'twin-sisters': {
+        title: 'Twin Sisters',
+        cover: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80',
+        author: 'JaneWriter',
+        authorId: 'janewriter',
+        genre: 'Historical Drama',
+        status: 'ongoing',
+        rating: 4.8,
+        reads: '45.2K',
+        chapters: 12,
+        library: '1.2K',
+        description: twinSistersLongDesc || 'Two sisters in ancient China fight to clear their family\'s name while surviving in hiding.'
+      },
+      'shadow-slave': {
+        title: 'Shadow Slave',
+        cover: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=600&q=80',
+        author: 'Guiltythree',
+        genre: 'Fantasy',
+        status: 'ongoing',
+        rating: 4.79,
+        reads: '9.5M',
+        chapters: 2721,
+        description: 'Growing up in poverty, Sunny never expected anything good from life...'
+      },
+      'legendary-beast-master': {
+        title: 'The First Legendary Beast Master',
+        cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80',
+        author: 'Asvald',
+        genre: 'Fantasy',
+        status: 'ongoing',
+        rating: 4.48,
+        reads: '3.2M',
+        chapters: 1434,
+        description: 'Born into a dirt poor mining family, Karl only had one chance to get ahead...'
+      },
+      'lord-of-mysteries': {
+        title: 'Lord of Mysteries',
+        cover: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=600&q=80',
+        author: 'Cuttlefish That Loves Diving',
+        genre: 'Mystery',
+        status: 'completed',
+        rating: 4.83,
+        reads: '8.7M',
+        chapters: 1432,
+        description: 'With the rising tide of steam power and machinery, who can come close to being a Beyonder...'
+      },
+      'supreme-magus': {
+        title: 'Supreme Magus',
+        cover: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80',
+        author: 'Legion20',
+        genre: 'Fantasy',
+        status: 'ongoing',
+        rating: 4.62,
+        reads: '7.1M',
+        chapters: 3995,
+        description: 'Derek McCoy was a man who spent his entire life facing adversity and injustice...'
+      },
+      'cultivation-online': {
+        title: 'Cultivation Online',
+        cover: 'https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?auto=format&fit=crop&w=600&q=80',
+        author: 'MyLittle',
+        genre: 'Action',
+        status: 'ongoing',
+        rating: 4.79,
+        reads: '5.8M',
+        chapters: 2260,
+        description: 'Yuan was born with an incurable illness that left him blind at a young age...'
+      },
+      'vampire-system': {
+        title: 'My Vampire System',
+        cover: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80',
+        author: 'JKSManga',
+        genre: 'Sci-Fi',
+        status: 'completed',
+        rating: 4.6,
+        reads: '6.2M',
+        chapters: 2551,
+        description: 'The human race is at war with the Vicious Dalki and when they needed heroes...'
+      },
+      'timeless-assassin': {
+        title: 'Timeless Assassin',
+        cover: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=600&q=80',
+        author: 'Shadows',
+        genre: 'Action',
+        status: 'ongoing',
+        rating: 4.66,
+        reads: '2.1M',
+        chapters: 831,
+        description: 'Time-bending assassin walking between shadows.'
+      },
+      'beast-tamer': {
+        title: 'Weakest Beast Tamer',
+        cover: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80',
+        author: 'DragonKing',
+        genre: 'Adventure',
+        status: 'ongoing',
+        rating: 4.58,
+        reads: '1.8M',
+        chapters: 726,
+        description: 'From weakest to legendary as a beast tamer.'
+      },
+      'omniscient-reader': {
+        title: "Omniscient Reader's Viewpoint",
+        cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80',
+        author: 'Sing Shong',
+        genre: 'Fantasy',
+        status: 'completed',
+        rating: 4.85,
+        reads: '8.1M',
+        chapters: 553,
+        description: 'Reader becomes the protagonist when his favorite novel turns real.'
+      },
+      'reverend-insanity': {
+        title: 'Reverend Insanity',
+        cover: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=600&q=80',
+        author: 'Gu Zhen Ren',
+        genre: 'Horror',
+        status: 'completed',
+        rating: 4.71,
+        reads: '7.5M',
+        chapters: 2463,
+        description: 'A ruthless Gu Master climbs to the apex of the world.'
+      },
+      'solo-leveling': {
+        title: 'Solo Leveling',
+        cover: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80',
+        author: 'Chugong',
+        genre: 'Action',
+        status: 'completed',
+        rating: 4.77,
+        reads: '12M',
+        chapters: 270,
+        description: 'Jinwoo rises from weakest hunter to Shadow Monarch.'
+      },
+      'dao-library': {
+        title: 'Heavenly Dao Library',
+        cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80',
+        author: 'Heavenly',
+        genre: 'Fantasy',
+        status: 'ongoing',
+        rating: 4.63,
+        reads: '2.5M',
+        chapters: 1233,
+        description: 'A librarian with a mystical catalogue sees flaws in everything and everyone he meets...'
+      }
+    };
+
+    const maybeParse = (key) => {
+      try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
+    };
+
+    function getLastViewed(id) {
+      try {
+        const raw = sessionStorage.getItem('novelshare_last_viewed');
+        if (!raw) return null;
+        const payload = JSON.parse(raw);
+        if (payload?.id !== id) return null;
+        return payload;
+      } catch {
+        return null;
+      }
+    }
+
+    function resolveFromStorage(id) {
+      const pools = [
+        ...maybeParse('novelshare_library'),
+        ...maybeParse('novelshare_my_works')
+      ];
+      const match = pools.find(item => {
+        const ids = [item.id, item.novelId, item.novel_id, item.slug, item.workId];
+        return ids.includes(id);
+      });
+      if (!match) return null;
+      return {
+        title: match.title || match.name,
+        author: match.author || match.author_name || match.authorName || match.username,
+        authorId: match.authorId || match.author_id || match.user_id || '',
+        cover: match.cover || match.coverImage || match.cover_image || '',
+        genre: Array.isArray(match.genres) ? match.genres[0] : match.genre,
+        status: match.status,
+        rating: Number(match.rating || match.avg_rating) || 0,
+        reads: match.reads || match.popularity,
+        chapters: match.chapters || match.total_chapters || match.totalChapters,
+        description: match.description || match.summary
+      };
+    }
+
+    function toTitle(str) {
+      return str.split(/[-_]/).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+    }
+
+    function isUuidish(val) {
+      return /^[0-9a-f-]{16,}$/i.test((val || '').replace(/-/g, ''));
+    }
+
+    function getLibraryEntry(id) {
+      try {
+        const lib = JSON.parse(localStorage.getItem('novelshare_library') || '[]');
+        return lib.find(item => item.id === id || item.novelId === id) || null;
+      } catch {
+        return null;
+      }
+    }
+
+    const resolved =
+      resolveFromStorage(novelId) ||
+      getLastViewed(novelId) ||
+      getLibraryEntry(novelId) ||
+      catalog[novelId] ||
+      null;
+
+    const profile = (() => {
+      try { return JSON.parse(localStorage.getItem('novelshare_profile') || '{}'); }
+      catch { return {}; }
+    })();
+    const profileDisplay = profile.display_name || profile.username || profile.name || profile.email || 'Unknown';
+    const resolvedAuthor = (() => {
+      const a = resolved?.author;
+      if (a && a.includes('@')) return profileDisplay;
+      return a || profileDisplay;
+    })();
+    const fallbackTitle = (() => {
+      if (resolved?.title) return resolved.title;
+      if (isUuidish(novelId)) return 'Untitled Story';
+      const pretty = toTitle(novelId);
+      return pretty && pretty.trim() ? pretty : 'Untitled Story';
+    })();
+
+    let novelData = {
+      id: novelId,
+      title: resolved?.title || fallbackTitle,
+      cover: resolved?.cover || '',
+      author: resolvedAuthor,
+      authorId: resolved?.authorId || profile.id || '',
+      genre: resolved?.genre,
+      status: resolved?.status ? resolved.status.toLowerCase() : undefined,
+      rating: Number(resolved?.rating || 0),
+      reads: resolved?.reads || '—',
+      chapters: resolved?.chapters,
+      library: resolved?.library || '—',
+      description: resolved?.description
+    };
+    // Apply sensible defaults if still missing
+    novelData.genre = novelData.genre || 'Fiction';
+    novelData.status = (novelData.status || 'ongoing').toLowerCase();
+    novelData.description = novelData.description || 'Stay tuned for more details on this story.';
+
+    // Refresh library metadata if this novel is already saved (fills genre/status for older entries)
+    try {
+      if (typeof LibrarySystem !== 'undefined' && LibrarySystem.isInLibrary(novelData.id)) {
+        LibrarySystem.addToLibrary({
+          novelId: novelData.id,
+          title: novelData.title,
+          author: novelData.author,
+          genre: novelData.genre,
+          status: novelData.status,
+          rating: novelData.rating,
+          reads: novelData.reads,
+          description: novelData.description,
+          cover: novelData.cover,
+          chapters: novelData.chapters
+        });
+      }
+    } catch (e) {
+      console.warn('Library sync skipped:', e);
+    }
+
+    // Apply data to the static template
+    function applyNovelData() {
+      document.title = `${novelData.title} | NovelShare`;
+
+      const titleEl = document.querySelector('.novel-title');
+      if (titleEl) titleEl.textContent = novelData.title;
+
+      const genreBadge = document.querySelector('.badge-genre');
+      if (genreBadge) {
+        const genreLabel = novelData.genre ? toTitle(novelData.genre.replace(/\s+/g, '-')) : 'Genre';
+        genreBadge.textContent = genreLabel;
+      }
+
+      const statusBadge = document.querySelector('.badge-status');
+      if (statusBadge) {
+        statusBadge.textContent = (novelData.status || 'Ongoing').charAt(0).toUpperCase() + (novelData.status || 'Ongoing').slice(1);
+        statusBadge.classList.toggle('completed', (novelData.status || '').toLowerCase() === 'completed');
+        statusBadge.classList.toggle('ongoing', (novelData.status || '').toLowerCase() !== 'completed');
+      }
+
+      const authorName = document.querySelector('.novel-author .author-name a');
+      if (authorName) {
+        authorName.textContent = novelData.author || 'Unknown';
+        authorName.href = novelData.authorId ? `view-profile.html?id=${encodeURIComponent(novelData.authorId)}` : 'javascript:void(0)';
+      }
+
+      const authorAvatar = document.querySelector('.author-avatar');
+      if (authorAvatar) authorAvatar.textContent = (novelData.author || 'U').charAt(0).toUpperCase();
+
+      const coverEl = document.querySelector('.novel-cover');
+      if (coverEl) {
+        if (novelData.cover) {
+          coverEl.style.backgroundImage = `url('${novelData.cover}')`;
+          coverEl.style.backgroundSize = 'cover';
+          coverEl.style.backgroundPosition = 'center';
+        } else {
+          coverEl.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+      }
+
+      // Update stats text
+      const stats = document.querySelectorAll('.novel-stats .stat');
+      if (stats.length >= 4) {
+        const ratingEl = stats[0].querySelector('strong');
+        const ratingCountEl = stats[0].querySelector('.rating-count');
+        if (ratingEl) ratingEl.textContent = novelData.rating ? Number(novelData.rating).toFixed(1) : '—';
+        if (ratingCountEl) ratingCountEl.textContent = novelData.rating ? 'Ratings' : 'No ratings yet';
+
+        const readsEl = stats[1].querySelector('strong');
+        if (readsEl) readsEl.textContent = novelData.reads || '—';
+        const chaptersEl = stats[2].querySelector('strong');
+        if (chaptersEl) chaptersEl.textContent = novelData.chapters || 0;
+        const libEl = stats[3].querySelector('strong');
+        if (libEl) libEl.textContent = novelData.library || '—';
+      }
+
+      const descEl = document.getElementById('novelDescription');
+      if (descEl && novelData.description) {
+        descEl.textContent = novelData.description;
+      }
+
+      // Remove reviews tab when there are no ratings
+      if (!novelData.rating) {
+        const reviewsTab = document.querySelector('.novel-tab[data-tab="reviews"]');
+        const reviewsContent = document.getElementById('tab-reviews');
+        reviewsTab?.remove();
+        reviewsContent?.remove();
+        // Ensure first tab stays active
+        const firstTab = document.querySelector('.novel-tab');
+        const firstContent = document.querySelector('.novel-tab-content');
+        if (firstTab) firstTab.classList.add('active');
+        if (firstContent) firstContent.classList.add('active');
+      }
+    }
+    // Chapter rendering (keep numbering consistent and sortable)
+    let chaptersData = [];
+
+    function renderChapters(sort = 'oldest') {
+      const list = document.getElementById('chapterList');
+      if (!list) return;
+      if (!chaptersData.length) {
+        list.innerHTML = `<div class="chapter-empty">No chapters published yet.</div>`;
+        return;
+      }
+
+      // Always sort by chapter number first to establish correct order
+      // Chapter 1 should always be first when sorted by oldest
+      const sortedByNumber = [...chaptersData].sort((a, b) => {
+        const numA = a.number || 0;
+        const numB = b.number || 0;
+        return numA - numB;
+      });
+
+      // Apply display order based on sort preference
+      const displayOrder = sort === 'newest' ? [...sortedByNumber].reverse() : sortedByNumber;
+
+      list.innerHTML = displayOrder.map((ch, idx) => {
+        // Use the actual chapter number, not the display index
+        const chapterNum = ch.number || (idx + 1);
+        const dateLabel = ch.date ? ch.date : '';
+        const wordLabel = ch.words ? `${Number(ch.words).toLocaleString()} words` : '';
+        const meta = [dateLabel, wordLabel].filter(Boolean).join(' • ');
+        const link = ch.id ? `reader.html?chapterId=${encodeURIComponent(ch.id)}&novelId=${encodeURIComponent(novelData.id)}` : 'reader.html';
+        return `
+          <a href="${link}" class="chapter-item">
+            <span class="chapter-number">Ch. ${chapterNum}</span>
+            <div class="chapter-info">
+              <h4 class="chapter-title">${ch.title || 'Untitled'}</h4>
+              <span class="chapter-meta">${meta || ''}</span>
+            </div>
+            ${ch.status === 'new' ? `<div class="chapter-status"><span class="chapter-new-badge">New</span></div>` : ''}
+            ${ch.status === 'read' ? `<div class="chapter-status"><span class="chapter-read-badge">Read</span></div>` : ''}
+          </a>
+        `;
+      }).join('');
+    }
+
+    const chapterSort = document.getElementById('chapterSort');
+    if (chapterSort) {
+      chapterSort.addEventListener('change', (e) => {
+        renderChapters(e.target.value === 'oldest' ? 'oldest' : 'newest');
+      });
+    }
+
+    async function loadChapters() {
+      const storeKey = 'novelshare_chapters';
+      let chapters = [];
+
+      // Always prefer Supabase so drafts stay hidden on the public page
+      if (typeof SupabaseDB !== 'undefined' && SupabaseDB.getChapters) {
+        try {
+          const supaChapters = await SupabaseDB.getChapters(novelData.id);
+          if (Array.isArray(supaChapters)) {
+            chapters = supaChapters.map(ch => ({
+              id: ch.id,
+              title: ch.title,
+              content: ch.content,
+              status: (ch.status || 'published').toLowerCase(),
+              number: ch.chapter_number || ch.number || ch.order,
+              createdAt: ch.created_at || ch.updated_at
+            }));
+            // cache the published set for offline fallback
+            const store = (() => { try { return JSON.parse(localStorage.getItem(storeKey) || '{}'); } catch { return {}; } })();
+            store[novelData.id] = chapters;
+            localStorage.setItem(storeKey, JSON.stringify(store));
+          }
+        } catch (err) {
+          console.warn('Supabase chapters fetch failed:', err);
+        }
+      }
+
+      // Fallback to local cache if Supabase gave nothing
+      if (!chapters.length) {
+        try {
+          const raw = localStorage.getItem(storeKey) || '{}';
+          const parsed = JSON.parse(raw);
+          chapters = Array.isArray(parsed[novelData.id]) ? parsed[novelData.id] : [];
+        } catch {
+          chapters = [];
+        }
+      }
+
+      // Only expose published chapters to readers
+      const publishedChapters = (chapters || [])
+        .map(ch => ({ ...ch, status: (ch.status || 'draft').toLowerCase() }))
+        .filter(ch => ch.status === 'published');
+
+      // Sort by chapter number first, then by creation date as fallback
+      const sortedPublished = publishedChapters.sort((a, b) => {
+        const numA = a.number || 0;
+        const numB = b.number || 0;
+        if (numA !== numB) return numA - numB;
+        // Fallback to creation date
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateA - dateB;
+      });
+
+      // Assign sequential chapter numbers (1, 2, 3, ...) based on sorted order
+      chaptersData = sortedPublished.map((ch, idx) => ({
+        id: ch.id,
+        title: ch.title || `Chapter ${idx + 1}`,
+        number: idx + 1, // Always use sequential numbering
+        date: ch.createdAt ? new Date(ch.createdAt).toLocaleDateString() : '',
+        words: ch.content ? ch.content.length : undefined,
+        status: 'published'
+      }));
+
+      // Update chapter count and stats based on published chapters only
+      novelData.chapters = Math.max(novelData.chapters || 0, chaptersData.length);
+      applyNovelData();
+      renderChapters(chapterSort?.value || 'oldest');
+    }
+
+    async function loadNovelDetails() {
+      // First check if we have valid local data (from novelshare_my_works or library)
+      const hasLocalData = resolved && resolved.title && resolved.title !== 'Untitled Story';
+
+      // Fetch details from Supabase (only if not a local-only ID like work-12345)
+      const isLocalOnlyId = novelData.id && novelData.id.startsWith('work-');
+
+      if (!isLocalOnlyId && typeof SupabaseDB !== 'undefined' && SupabaseDB.getNovelById) {
+        try {
+          const supa = await SupabaseDB.getNovelById(novelData.id);
+          if (supa) {
+            // Supabase data takes priority over local/catalog data
+            novelData = {
+              id: novelData.id,
+              title: supa.title || novelData.title,
+              cover: supa.cover_image || supa.cover || novelData.cover,
+              author: supa.author || novelData.author,
+              authorId: supa.author_id || novelData.authorId,
+              genre: (Array.isArray(supa.genres) ? supa.genres[0] : supa.genre) || novelData.genre || 'Fiction',
+              status: (supa.status || novelData.status || 'ongoing').toLowerCase(),
+              rating: Number(supa.rating || supa.avg_rating || 0) || novelData.rating,
+              reads: supa.reads || supa.popularity || novelData.reads || '—',
+              chapters: supa.total_chapters || supa.chapters || novelData.chapters,
+              library: novelData.library || '—',
+              description: supa.description || novelData.description || 'Stay tuned for more details on this story.'
+            };
+          }
+        } catch (err) {
+          console.warn('Supabase novel fetch failed:', err);
+        }
+      }
+
+      // If we still have defaults but had local data, use the local data
+      if (novelData.title === 'Untitled Story' && hasLocalData) {
+        novelData.title = resolved.title;
+        novelData.cover = resolved.cover || novelData.cover;
+        novelData.author = resolved.author || novelData.author;
+        novelData.authorId = resolved.authorId || novelData.authorId;
+        novelData.genre = resolved.genre || novelData.genre;
+        novelData.status = resolved.status || novelData.status;
+        novelData.description = resolved.description || novelData.description;
+        novelData.chapters = resolved.chapters || novelData.chapters;
+      }
+
+      // Apply data after enrichment
+      applyNovelData();
+      await loadChapters();
+    }
+
+    loadNovelDetails();
+
+    // Start Reading / Continue Reading button
+    const startReadingBtn = document.getElementById('startReadingBtn');
+    if (startReadingBtn) {
+      startReadingBtn.addEventListener('click', () => {
+        // Check if there's a last read chapter to continue from
+        const lastRead = ReadingHistory.getLastRead(novelData.id);
+        if (lastRead && lastRead.chapterId) {
+          // Continue from last read chapter
+          window.location.href = `reader.html?novelId=${encodeURIComponent(novelId)}&chapterId=${encodeURIComponent(lastRead.chapterId)}`;
+          return;
+        }
+
+        // Also check library for currentChapterId
+        const libraryProgress = LibrarySystem.getProgress(novelData.id);
+        if (libraryProgress && libraryProgress.currentChapterId) {
+          window.location.href = `reader.html?novelId=${encodeURIComponent(novelId)}&chapterId=${encodeURIComponent(libraryProgress.currentChapterId)}`;
+          return;
+        }
+
+        // No reading history - start from first chapter
+        const sortedChapters = [...chaptersData].sort((a, b) => (a.number || 0) - (b.number || 0));
+        const firstChapter = sortedChapters.find(ch => ch.status === 'published') || sortedChapters[0];
+
+        if (firstChapter && firstChapter.id) {
+          window.location.href = `reader.html?novelId=${encodeURIComponent(novelId)}&chapterId=${encodeURIComponent(firstChapter.id)}`;
+        } else if (novelData.chapters > 0) {
+          // Has chapters but not loaded yet, go to reader and let it find the first chapter
+          window.location.href = `reader.html?novelId=${encodeURIComponent(novelId)}`;
+        } else {
+          showToast('No chapters available yet');
+        }
+      });
+    }
+
+    // Tab switching
+    const tabs = document.querySelectorAll('.novel-tab');
+    const tabContents = document.querySelectorAll('.novel-tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+      });
+    });
+
+    // Read more description
+    const description = document.getElementById('novelDescription');
+    const readMoreBtn = document.getElementById('readMoreBtn');
+    let isExpanded = false;
+
+    readMoreBtn.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      description.classList.toggle('collapsed', !isExpanded);
+      readMoreBtn.textContent = isExpanded ? 'Show less' : 'Read more...';
+    });
+
+    // Add to Library using LibrarySystem
+    const addToLibraryBtn = document.getElementById('addToLibraryBtn');
+
+    function updateLibraryUI() {
+      if (!addToLibraryBtn) return;
+      const inLibrary = LibrarySystem.isInLibrary(novelData.id);
+      if (inLibrary) {
+        addToLibraryBtn.classList.add('active');
+        addToLibraryBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> In Library`;
+      } else {
+        addToLibraryBtn.classList.remove('active');
+        addToLibraryBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Add to Library`;
+      }
+    }
+    updateLibraryUI();
+
+    addToLibraryBtn?.addEventListener('click', () => {
+      // Check if user is in guest mode
+      if (GuestMode.isGuest()) {
+        showToast('Please sign up to add novels to your library');
+        setTimeout(() => {
+          window.location.href = 'signup.html';
+        }, 1500);
+        return;
+      }
+
+      const added = LibrarySystem.toggleLibrary(novelData.id, novelData);
+      updateLibraryUI();
+      showToast(added ? 'Added to your library' : 'Removed from library');
+    });
+
+    // Follow Author removed
+
+    // Share
+    document.getElementById('shareBtn').addEventListener('click', () => {
+      if (navigator.share) {
+        navigator.share({ title: `${novelData.title} - NovelShare`, url: window.location.href });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        showToast('Link copied to clipboard!');
+      }
+    });
+
+    // Favorite Button
+    const favoriteBtn = document.getElementById('favoriteBtn');
+    function updateFavoriteUI() {
+      if (!favoriteBtn) return;
+      const isFav = FavoritesSystem.isFavorite(novelData.id);
+      if (isFav) {
+        favoriteBtn.classList.add('favorite-active');
+        favoriteBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Favorited`;
+      } else {
+        favoriteBtn.classList.remove('favorite-active');
+        favoriteBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Favorite`;
+      }
+    }
+    updateFavoriteUI();
+
+    favoriteBtn?.addEventListener('click', () => {
+      // Check if user is in guest mode
+      if (GuestMode.isGuest()) {
+        showToast('Please sign up to add favorites');
+        setTimeout(() => {
+          window.location.href = 'signup.html';
+        }, 1500);
+        return;
+      }
+
+      const isFav = FavoritesSystem.isFavorite(novelData.id);
+      if (isFav) {
+        FavoritesSystem.removeFavorite(novelData.id);
+        showToast('Removed from favorites');
+      } else {
+        FavoritesSystem.addFavorite(novelData.id, {
+          title: novelData.title,
+          author: novelData.author,
+          cover: novelData.cover,
+          genre: novelData.genre,
+          status: novelData.status,
+          rating: novelData.rating,
+          totalChapters: novelData.chapters
+        });
+        showToast('Added to favorites');
+      }
+      updateFavoriteUI();
+    });
+
+    // Review Modal using RatingSystem
+    const reviewModal = document.getElementById('reviewModal');
+    const writeReviewBtn = document.getElementById('writeReviewBtn');
+    const closeReviewModal = document.getElementById('closeReviewModal');
+    const cancelReview = document.getElementById('cancelReview');
+    const submitReview = document.getElementById('submitReview');
+    const starBtns = document.querySelectorAll('#starSelect .star-btn');
+
+    // Load existing rating if any
+    const existingRating = RatingSystem.getRating(novelData.id);
+    let selectedRating = 0;
+
+    // Update star display
+    function updateStarDisplay(rating) {
+      starBtns.forEach((b, i) => b.classList.toggle('active', i < rating));
+    }
+
+    writeReviewBtn.addEventListener('click', () => {
+      reviewModal.classList.add('open');
+      selectedRating = 0;
+      updateStarDisplay(0);
+      document.getElementById('reviewText').value = '';
+    });
+
+    closeReviewModal.addEventListener('click', () => reviewModal.classList.remove('open'));
+    cancelReview.addEventListener('click', () => reviewModal.classList.remove('open'));
+    reviewModal.addEventListener('click', (e) => { if (e.target === reviewModal) reviewModal.classList.remove('open'); });
+
+    starBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedRating = parseInt(btn.dataset.rating);
+        updateStarDisplay(selectedRating);
+      });
+
+      btn.addEventListener('mouseenter', () => {
+        const rating = parseInt(btn.dataset.rating);
+        updateStarDisplay(rating);
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        updateStarDisplay(selectedRating);
+      });
+    });
+
+    submitReview.addEventListener('click', () => {
+      const reviewText = document.getElementById('reviewText').value.trim();
+      if (selectedRating === 0) { showToast('Please select a rating'); return; }
+      if (!reviewText) { showToast('Please write a review'); return; }
+
+      // Save using RatingSystem
+      RatingSystem.saveRating(novelData.id, selectedRating, reviewText);
+
+      reviewModal.classList.remove('open');
+      showToast('Review submitted successfully!');
+    });
+
+    // Chapter sort - use renderChapters for proper sorting
+    document.getElementById('chapterSort').addEventListener('change', (e) => {
+      renderChapters(e.target.value);
+    });
+
+    // Mark read chapters based on localStorage
+    const readChapters = JSON.parse(localStorage.getItem(`read_chapters_${novelData.id}`) || '[]');
+    document.querySelectorAll('.chapter-item').forEach(item => {
+      const chapterNumText = item.querySelector('.chapter-number').textContent;
+      const chapterNum = parseInt(chapterNumText.replace('Ch. ', ''));
+      if (readChapters.includes(chapterNum)) {
+        const statusDiv = item.querySelector('.chapter-status');
+        if (!statusDiv) {
+          const newStatus = document.createElement('div');
+          newStatus.className = 'chapter-status';
+          newStatus.innerHTML = '<span class="chapter-read-badge">Read</span>';
+          item.appendChild(newStatus);
+        }
+      }
+    });
+
+    // Continue reading - check if there's a last read position
+    const lastRead = ReadingHistory.getLastRead(novelData.id);
+    if (lastRead) {
+      const readBtn = document.querySelector('.btn-read');
+      readBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Continue Reading`;
+    }
+
+    // Dropdowns
+    const notifBtn = document.getElementById('notificationBtn');
+    const notifDropdown = document.getElementById('notificationDropdown');
+    const profileBtn = document.getElementById('profileBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    if (notifBtn && notifDropdown) {
+      notifBtn.addEventListener('click', (e) => { e.stopPropagation(); notifDropdown.classList.toggle('open'); if (profileDropdown) profileDropdown.classList.remove('open'); });
+      notifDropdown.addEventListener('click', (e) => e.stopPropagation());
+      const markAll = document.getElementById('markAllRead');
+      if (markAll) {
+        markAll.addEventListener('click', () => {
+          document.querySelectorAll('.notification-item.unread').forEach(item => item.classList.remove('unread'));
+          const badge = document.querySelector('.notification-badge');
+          if (badge) badge.style.display = 'none';
+          showToast('All notifications marked as read');
+        });
+      }
+    }
+
+    if (profileBtn && profileDropdown) {
+      profileBtn.addEventListener('click', (e) => { e.stopPropagation(); profileDropdown.classList.toggle('open'); if (notifDropdown) notifDropdown.classList.remove('open'); });
+      profileDropdown.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    document.addEventListener('click', () => {
+      if (notifDropdown) notifDropdown.classList.remove('open');
+      if (profileDropdown) profileDropdown.classList.remove('open');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        reviewModal.classList.remove('open');
+        if (notifDropdown) notifDropdown.classList.remove('open');
+        if (profileDropdown) profileDropdown.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>

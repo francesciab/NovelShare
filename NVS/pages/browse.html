@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Browse Novels - NovelShare</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">   
+    <!-- Shared CSS (includes fonts) -->
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <style>
+        /* Modern Browse Page Styles */
+
+        /* Override common.css page layout for browse */
+        body {
+            background: #f8fafc;
+        }
+
+        /* Use .page from common.css but override for browse layout */
+        .page.browse-page {
+            display: block;
+            padding: 0 var(--page-pad) 40px;
+        }
+
+        /* Horizontal layout for sidebar + content */
+        .browse-layout {
+            display: flex;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        /* Modern Sidebar */
+        .sidebar {
+            width: 220px;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 16px;
+            padding: 20px;
+            position: sticky;
+            top: 24px;
+            height: fit-content;
+            max-height: calc(100vh - 48px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .sidebar-header {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .genre-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .genre-list li {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .genre-list li:hover {
+            background: rgba(102, 126, 234, 0.08);
+            color: var(--primary);
+        }
+
+        .genre-list li.active {
+            background: linear-gradient(135deg, var(--primary), #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .genre-list li .genre-count {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+        }
+
+        .genre-list li.active .genre-count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            padding: 24px 32px;
+            background: #f8fafc;
+            min-width: 0;
+        }
+
+        /* Hero Header */
+        .browse-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 28px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .browse-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .browse-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: 5%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .browse-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .browse-hero h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 8px;
+        }
+
+        .browse-hero p {
+            opacity: 0.9;
+            margin: 0 0 20px;
+            font-size: 0.95rem;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-bar svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            width: 100%;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Filter Section */
+        .filters {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .filter-group h3 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 10px;
+        }
+
+        .filter-group .sub-label {
+            display: none;
+        }
+
+        .pill-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pill-row .pill {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pill-row .pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .pill-row .pill.active {
+            background: linear-gradient(135deg, var(--primary), #5a7ee0);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Results Count */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .results-count {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .results-count strong {
+            color: var(--text-primary);
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        /* Novel Card - Modern Design */
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-cover {
+            position: relative;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        .card-cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+        }
+
+        .card:hover .card-cover::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(102, 126, 234, 0.3);
+            z-index: 1;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
+        .status-badge.ongoing {
+            background: rgba(16, 185, 129, 0.95);
+            color: white;
+        }
+
+        .status-badge.completed {
+            background: rgba(99, 102, 241, 0.95);
+            color: white;
+        }
+
+        /* Library Badge */
+        .library-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            background: rgba(16, 185, 129, 0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .library-badge svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Rating Badge */
+        .rating-badge {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            padding: 6px 10px;
+            border-radius: 8px;
+            z-index: 2;
+        }
+
+        .rating-badge svg {
+            width: 14px;
+            height: 14px;
+            color: #fbbf24;
+            fill: #fbbf24;
+        }
+
+        .rating-badge span {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .card-body {
+            padding: 16px 20px;
+        }
+
+        .tags {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            padding: 4px 10px;
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .card-body h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 8px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-body p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: linear-gradient(to right, rgba(102, 126, 234, 0.02), rgba(118, 75, 162, 0.02));
+        }
+
+        .meta-left {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .meta-left .icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        .meta-left .icon.star {
+            color: #fbbf24;
+        }
+
+        .add-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--primary), #5a7ee0);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31, 111, 225, 0.35);
+        }
+
+        .add-btn.in-library {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .add-btn.in-library:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        /* TEMPORARY: Delete button for removing duplicates */
+        .delete-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            background: rgba(220, 38, 38, 0.95);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 20;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+            pointer-events: auto;
+        }
+
+        .delete-btn:hover {
+            background: rgba(185, 28, 28, 1);
+            transform: scale(1.1);
+        }
+
+        .delete-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 52px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            z-index: 20;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease;
+            pointer-events: auto;
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.1);
+            color: #ef4444;
+        }
+
+        .favorite-btn.active {
+            color: #ef4444;
+            background: rgba(254, 226, 226, 0.95);
+        }
+
+        .favorite-btn.active svg {
+            fill: #ef4444;
+        }
+
+        .favorite-btn svg {
+            width: 18px;
+            height: 18px;
+            transition: all 0.2s ease;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .empty-state-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--primary);
+        }
+
+        .empty-state h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 8px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 20px 0;
+        }
+
+        .page-link {
+            min-width: 40px;
+            height: 40px;
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .page-link:hover:not(:disabled):not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-link.active {
+            background: linear-gradient(135deg, var(--primary), #5a7ee0);
+            color: white;
+            border-color: transparent;
+        }
+
+        .page-link:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-ellipsis {
+            color: var(--text-muted);
+            padding: 0 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .browse-hero {
+                padding: 24px;
+            }
+
+            .browse-hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .filters {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page browse-page">
+        <header class="top-bar">
+            <a class="logo" href="home.html" aria-label="NovelShare Home">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 64 64" aria-hidden="true">
+                        <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-name">NovelShare</span>
+                    <span class="logo-tagline">READ • WRITE • SHARE</span>
+                </div>
+            </a>
+
+            <nav class="nav-pills" aria-label="Main navigation">
+                <a class="pill" href="library.html">
+                    <span class="pill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+                        </svg>
+                    </span>
+                    Library
+                </a>
+                <a class="pill active" href="browse.html" aria-current="page">
+                    <span class="pill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </span>
+                    Browse
+                </a>
+            </nav>
+
+            <div class="profile-actions">
+                <button class="bell-btn" aria-label="Notifications">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+                <div class="profile-wrapper">
+                    <a href="profile.html" class="profile" id="profileBtn">
+                        <div class="avatar">U</div>
+                        <span class="username">user</span>
+                    </a>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-dropdown-header">
+                            <div class="avatar-lg">U</div>
+                            <div class="name">User</div>
+                            <div class="email">user@example.com</div>
+                        </div>
+                        <div class="profile-dropdown-menu">
+                            <a href="profile.html">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="8" r="4"/>
+                                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                                </svg>
+                                My Profile
+                            </a>
+                            <a href="author-dashboard.html">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                </svg>
+                                My Works
+                            </a>
+                            <a href="login.html" class="logout">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                                </svg>
+                                Log Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="browse-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+                    </svg>
+                    Genres
+                </h2>
+            </div>
+            <ul class="genre-list">
+                <li class="active" data-genre="all">All Novels <span class="genre-count">12</span></li>
+                <li data-genre="fantasy">Fantasy <span class="genre-count">5</span></li>
+                <li data-genre="romance">Romance <span class="genre-count">0</span></li>
+                <li data-genre="action">Action <span class="genre-count">3</span></li>
+                <li data-genre="scifi">Sci-Fi <span class="genre-count">1</span></li>
+                <li data-genre="mystery">Mystery <span class="genre-count">1</span></li>
+                <li data-genre="horror">Horror <span class="genre-count">1</span></li>
+                <li data-genre="adventure">Adventure <span class="genre-count">1</span></li>
+                <li data-genre="urban">Urban <span class="genre-count">0</span></li>
+                <li data-genre="historical">Historical <span class="genre-count">0</span></li>
+                <li data-genre="comedy">Comedy <span class="genre-count">0</span></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <!-- Hero Section -->
+            <div class="browse-hero">
+                <div class="browse-hero-content">
+                    <h1>Discover Your Next Adventure</h1>
+                    <p>Explore thousands of novels across every genre imaginable</p>
+                    <div class="search-bar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="search" placeholder="Search novels by title, author, or keyword..." aria-label="Search novels">
+                    </div>
+                </div>
+            </div>
+
+            <section class="filters">
+                <div class="filter-group">
+                    <h3>Filter By</h3>
+                    <p class="sub-label">Content Status</p>
+                    <div class="pill-row" data-filter-type="status">
+                        <button class="pill active" data-filter="all">All</button>
+                        <button class="pill" data-filter="completed">Completed</button>
+                        <button class="pill" data-filter="ongoing">Ongoing</button>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <h3>Sort By</h3>
+                    <div class="pill-row" data-filter-type="sort">
+                        <button class="pill active" data-sort="popular">Popular</button>
+                        <button class="pill" data-sort="rating">Rating</button>
+                        <button class="pill" data-sort="newest">Newly Released</button>
+                        <button class="pill" data-sort="updated">Updated</button>
+                    </div>
+                </div>
+            </section>
+
+            <div class="empty-state" style="display: none;">
+                <div class="empty-state-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </div>
+                <h3>No novels found</h3>
+                <p>Try adjusting your search or filters</p>
+            </div>
+
+            <!-- Results Header -->
+            <div class="results-header">
+                <span class="results-count">Showing <strong id="visibleCount">12</strong> novels</span>
+            </div>
+
+            <!-- Card grid populated dynamically from Supabase -->
+            <section class="card-grid" id="cardGrid"></section>
+
+            <nav class="pagination" aria-label="Pagination">
+                <button class="page-link" disabled aria-disabled="true">← Previous</button>
+                <button class="page-link active" aria-current="page">1</button>
+                <button class="page-link">2</button>
+                <button class="page-link">3</button>
+                <span class="page-ellipsis">...</span>
+                <button class="page-link">10</button>
+                <button class="page-link">Next →</button>
+            </nav>
+        </main>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <span>&copy; 2025 NovelShare. All Rights Reserved.</span>
+        <nav class="footer-links" aria-label="Footer navigation">
+            <a href="javascript:void(0)" onclick="showToast('Contact page coming soon')">Contact Us</a>
+            <a href="javascript:void(0)" onclick="showToast('Privacy Policy coming soon')">Privacy Policy</a>
+            <a href="javascript:void(0)" onclick="showToast('Terms of Service coming soon')">Terms of Service</a>
+        </nav>
+    </footer>
+
+    <!-- Supabase SDK + app scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../assets/js/common.js"></script>
+    <!-- Page-specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // ============================================
+            // Unified Filter State Management
+            // ============================================
+            let activeGenre = 'all';
+            let activeStatus = 'all';
+            let activeSort = 'popular';
+            let searchQuery = '';
+            const cardGrid = document.querySelector('.card-grid');
+
+            const escapeHtml = (str = '') => String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+
+            function normalizeGenre(value = '') {
+                const slug = value.toLowerCase().replace(/[^a-z0-9]+/g, '');
+                return slug || 'other';
+            }
+
+            function getProfileAuthor() {
+                try {
+                    const profile = JSON.parse(localStorage.getItem('novelshare_profile') || '{}');
+                    return profile.username || profile.name || 'You';
+                } catch {
+                    return 'You';
+                }
+            }
+
+            function buildCardMarkup(card) {
+                const title = (card.title || 'Untitled').trim();
+                const id = card.id || `work-${Date.now()}`;
+                const author = card.author || 'Unknown';
+                const authorId = card.authorId || '';
+                const genreLabel = card.genre || 'Original';
+                const genreSlug = normalizeGenre(genreLabel);
+                const statusLower = (card.status || 'ongoing').toLowerCase();
+                if (statusLower === 'draft') return '';
+                const statusClass = statusLower === 'completed' ? 'completed' : 'ongoing';
+                const statusLabel = statusLower === 'completed' ? 'Completed' : 'Ongoing';
+                const description = card.description || `A new ${genreLabel.toLowerCase()} story by ${author}.`;
+                const cover = card.cover || '';
+                const chapters = Number(card.chapters) || 0;
+                const reads = Number(card.reads) || 0;
+                const ratingValue = Number(card.rating) || 0;
+                const ratingDisplay = ratingValue ? ratingValue.toFixed(2) : 'New';
+                const popularity = Number(card.popularity) || (reads ? reads : 1);
+                const updatedTs = card.updatedAt ? new Date(card.updatedAt).getTime() : Date.now();
+                const publishedTs = card.publishedAt ? new Date(card.publishedAt).getTime() : updatedTs;
+                const coverStyle = cover
+                    ? `style="background-image: url('${cover.replace(/'/g, "\\'")}');"`
+                    : `style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.8rem;"`;
+                const coverFallback = cover ? '' : escapeHtml(title.charAt(0).toUpperCase() || 'N');
+
+                return `
+                    <article class="card user-card" data-genre="${genreSlug}" data-status="${statusLower}" data-rating="${ratingValue || 0}" data-title="${escapeHtml(title)}" data-novel-id="${escapeHtml(id)}" data-chapters="${chapters}" data-author="${escapeHtml(author)}" data-author-id="${escapeHtml(authorId)}" data-popularity="${popularity}" data-updated="${updatedTs}" data-published="${publishedTs}">
+                        <button class="delete-btn" data-novel-id="${escapeHtml(id)}" data-title="${escapeHtml(title)}" title="Delete novel">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </button>
+                        <button class="favorite-btn" data-novel-id="${escapeHtml(id)}" title="Add to favorites">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        </button>
+                        <a class="card-link" href="novel.html?id=${encodeURIComponent(id)}">
+                            <div class="card-cover" ${coverStyle}>
+                                <span class="status-badge ${statusClass}">${statusLabel}</span>
+                                <div class="rating-badge">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.2 6.8.6-5.2 4.8 1.5 6.7L12 16.9l-6 3.4 1.5-6.7-5.2-4.8 6.8-.6z"/></svg>
+                                    <span>${ratingDisplay}</span>
+                                </div>
+                                ${cover ? '' : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">${coverFallback}</div>`}
+                            </div>
+                            <div class="card-body">
+                                <div class="tags"><span class="tag">${escapeHtml(genreLabel)}</span></div>
+                                <h2>${escapeHtml(title)}</h2>
+                                <p>${escapeHtml(description)}</p>
+                            </div>
+                        </a>
+                        <div class="card-meta">
+                            <div class="meta-left">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                    <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+                                </svg>
+                                <span>${chapters} chapters</span>
+                            </div>
+                            <button class="add-btn" data-novel-id="${escapeHtml(id)}">+ Add</button>
+                        </div>
+                    </article>
+                `;
+            }
+
+            function updateGenreCounts() {
+                const cards = document.querySelectorAll('.card');
+                const totals = {};
+                cards.forEach(card => {
+                    const g = card.dataset.genre || 'all';
+                    totals[g] = (totals[g] || 0) + 1;
+                });
+                document.querySelectorAll('.genre-list li').forEach(li => {
+                    const key = li.dataset.genre;
+                    const countEl = li.querySelector('.genre-count');
+                    if (!countEl) return;
+                    if (key === 'all') {
+                        countEl.textContent = cards.length;
+                    } else {
+                        countEl.textContent = totals[key] || 0;
+                    }
+                });
+            }
+
+    function getLocalWorks() {
+        try {
+            const works = JSON.parse(localStorage.getItem('novelshare_my_works') || '[]');
+            if (!Array.isArray(works)) return [];
+            return works;
+        } catch {
+            return [];
+        }
+    }
+
+    function getPublishedCountLocal(novelId) {
+        try {
+            const chaptersStore = JSON.parse(localStorage.getItem('novelshare_chapters') || '{}');
+            const list = Array.isArray(chaptersStore[novelId]) ? chaptersStore[novelId] : [];
+            return list.filter(ch => (ch.status || 'draft').toLowerCase() === 'published').length;
+        } catch {
+            return 0;
+        }
+    }
+
+            async function fetchSupabaseNovelsSafe(limit = 30) {
+                if (typeof SupabaseDB === 'undefined') return [];
+                try {
+                    return await SupabaseDB.getNovels(limit, 0);
+                } catch (err) {
+                    console.warn('Supabase novel fetch failed:', err);
+                    return [];
+                }
+            }
+            const DELETED_KEY = 'novelshare_deleted_ids';
+            function getDeletedIds() {
+                try { return new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || '[]')); }
+                catch { return new Set(); }
+            }
+
+            // Get live chapter count from Supabase
+            // Uses countPublishedChapters for consistency - only counts published chapters
+            async function getLiveChapterCount(novelId) {
+                if (typeof countPublishedChapters === 'function') {
+                    try {
+                        return await countPublishedChapters(novelId);
+                    } catch (err) {
+                        console.warn('getLiveChapterCount failed:', err);
+                    }
+                }
+                // Fallback to local count
+                return getPublishedCountLocal(novelId);
+            }
+
+            async function injectDynamicNovels() {
+                if (!cardGrid) return;
+                const deleted = getDeletedIds();
+                const existingIds = new Set(Array.from(cardGrid.querySelectorAll('.card')).map(c => c.dataset.novelId));
+                const additions = [];
+                const authorName = getProfileAuthor();
+
+                // Process local works with live chapter counts
+                const localWorks = getLocalWorks();
+                for (const work of localWorks) {
+                    const statusLower = (work.status || '').toLowerCase();
+                    if (statusLower === 'draft') continue;
+                    if (deleted.has(work.id)) continue;
+                    if (work.id && existingIds.has(work.id)) continue;
+
+                    // Get live chapter count from Supabase
+                    const liveCount = await getLiveChapterCount(work.id);
+
+                    const payload = {
+                        id: work.id,
+                        title: work.title,
+                        author: authorName,
+                        genre: work.genre || 'Original',
+                        status: work.status || 'Ongoing',
+                        description: work.description || '',
+                        cover: work.cover || '',
+                        chapters: liveCount,
+                        reads: work.reads || 0,
+                        rating: work.rating || 0,
+                        popularity: work.reads || 1,
+                        updatedAt: work.updatedAt || work.createdAt || Date.now(),
+                        publishedAt: work.publishedAt || work.createdAt || Date.now()
+                    };
+                    const markup = buildCardMarkup(payload);
+                    if (markup) {
+                        additions.push(markup);
+                        if (payload.id) existingIds.add(payload.id);
+                    }
+                }
+
+                const supabaseNovels = await fetchSupabaseNovelsSafe();
+                supabaseNovels.forEach(novel => {
+                    const novelId = novel.id || novel.novel_id;
+                    if (!novelId || existingIds.has(novelId) || deleted.has(novelId)) return;
+                    const genres = Array.isArray(novel.genres) ? novel.genres : [];
+                    const payload = {
+                        id: novelId,
+                        title: novel.title,
+                        author: novel.author || novel.author_name || 'Unknown',
+                        authorId: novel.author_id || '',
+                        genre: genres[0] || novel.genre || 'Original',
+                        status: novel.status || 'ongoing',
+                        description: novel.description || '',
+                        cover: novel.cover_image || '',
+                        chapters: novel.total_chapters || novel.chapters || 0,
+                        reads: novel.view_count || 0,
+                        rating: novel.rating_avg || novel.avg_rating || novel.rating || 0,
+                        popularity: novel.view_count || 1,
+                        updatedAt: novel.updated_at,
+                        publishedAt: novel.created_at
+                    };
+                    const markup = buildCardMarkup(payload);
+                    if (markup) {
+                        additions.push(markup);
+                        existingIds.add(novelId);
+                    }
+                });
+
+                if (additions.length > 0) {
+                    cardGrid.insertAdjacentHTML('beforeend', additions.join(''));
+                    bindLibraryButtons();
+                    updateLibraryButtons();
+                }
+
+                updateGenreCounts();
+                applyFilters();
+            }
+
+            // Update empty state and visible count helper
+            function updateEmptyState() {
+                const emptyState = document.querySelector('.empty-state');
+                const resultsHeader = document.querySelector('.results-header');
+                const cardGrid = document.querySelector('.card-grid');
+                const visibleCards = document.querySelectorAll('.card:not([style*="display: none"])');
+                const count = visibleCards.length;
+
+                emptyState.style.display = count === 0 ? 'block' : 'none';
+                if (cardGrid) cardGrid.style.display = count === 0 ? 'none' : '';
+                resultsHeader.style.display = count === 0 ? 'none' : '';
+                document.getElementById('visibleCount').textContent = count;
+            }
+
+            // Unified filter function that combines all filters
+            function applyFilters() {
+                const cards = document.querySelectorAll('.card');
+                const grid = document.querySelector('.card-grid');
+
+                // First, apply visibility filters (genre, status, search)
+                cards.forEach(card => {
+                    const cardGenre = (card.dataset.genre || '').toLowerCase();
+                    const cardStatus = card.dataset.status || '';
+                    const cardTitle = (card.dataset.title || '').toLowerCase();
+                    const cardAuthor = (card.dataset.author || '').toLowerCase();
+
+                    // Check genre filter
+                    const matchesGenre = activeGenre === 'all' || cardGenre === activeGenre;
+
+                    // Check status filter
+                    const matchesStatus = activeStatus === 'all' || cardStatus === activeStatus;
+
+                    // Check search filter
+                    const matchesSearch = searchQuery === '' ||
+                        cardTitle.includes(searchQuery) ||
+                        cardAuthor.includes(searchQuery) ||
+                        cardGenre.includes(searchQuery);
+
+                    // Show card only if it matches ALL active filters
+                    if (matchesGenre && matchesStatus && matchesSearch) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Then apply sorting to visible cards
+                const visibleCards = Array.from(grid.querySelectorAll('.card:not([style*="display: none"])'));
+                visibleCards.sort((a, b) => {
+                    switch (activeSort) {
+                        case 'popular':
+                            return parseInt(b.dataset.popularity || 0) - parseInt(a.dataset.popularity || 0);
+                        case 'rating':
+                            return parseFloat(b.dataset.rating || 0) - parseFloat(a.dataset.rating || 0);
+                        case 'newest':
+                            return parseInt(b.dataset.published || 0) - parseInt(a.dataset.published || 0);
+                        case 'updated':
+                            return parseInt(b.dataset.updated || 0) - parseInt(a.dataset.updated || 0);
+                        default:
+                            return 0;
+                    }
+                });
+
+                // Re-append sorted cards (visible ones first, then hidden ones)
+                const hiddenCards = Array.from(grid.querySelectorAll('.card[style*="display: none"]'));
+                visibleCards.forEach(card => grid.appendChild(card));
+                hiddenCards.forEach(card => grid.appendChild(card));
+
+                updateEmptyState();
+            }
+
+            // Search input handler
+            const searchInput = document.querySelector('.search-bar input');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    searchQuery = e.target.value.toLowerCase().trim();
+                    applyFilters();
+                });
+            }
+
+            // Genre filter handler
+            const genreItems = document.querySelectorAll('.genre-list li');
+            genreItems.forEach(genre => {
+                genre.addEventListener('click', () => {
+                    genreItems.forEach(g => g.classList.remove('active'));
+                    genre.classList.add('active');
+                    activeGenre = genre.dataset.genre || 'all';
+                    applyFilters();
+                });
+            });
+
+            // Status filter pills handler
+            const statusPills = document.querySelectorAll('[data-filter-type="status"] .pill');
+            statusPills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    statusPills.forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    activeStatus = pill.dataset.filter || 'all';
+                    applyFilters();
+                });
+            });
+
+            // Sort pills handler
+            const sortPills = document.querySelectorAll('[data-filter-type="sort"] .pill');
+            sortPills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    sortPills.forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    activeSort = pill.dataset.sort || 'popular';
+                    applyFilters();
+                });
+            });
+
+            // Update library button states
+            function updateLibraryButtons() {
+                const library = LibrarySystem.getLibrary();
+                const libraryIds = library.map(item => item.novelId);
+
+                document.querySelectorAll('.add-btn[data-novel-id]').forEach(btn => {
+                    const novelId = btn.dataset.novelId;
+                    const card = btn.closest('.card');
+                    const cover = card.querySelector('.card-cover');
+
+                    if (libraryIds.includes(novelId)) {
+                        btn.textContent = '✓ In Library';
+                        btn.classList.add('in-library');
+
+                        // Add badge if not exists
+                        if (!cover.querySelector('.library-badge')) {
+                            const badge = document.createElement('div');
+                            badge.className = 'library-badge';
+                            badge.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>`;
+                            cover.appendChild(badge);
+                        }
+                    } else {
+                        btn.textContent = '+ Add';
+                        btn.classList.remove('in-library');
+
+                        // Remove badge if exists
+                        const badge = cover.querySelector('.library-badge');
+                        if (badge) badge.remove();
+                    }
+                });
+            }
+
+            function bindLibraryButtons() {
+                document.querySelectorAll('.add-btn[data-novel-id]').forEach(btn => {
+                    if (btn.dataset.bound === 'true') return;
+                    btn.dataset.bound = 'true';
+
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Check if user is in guest mode
+                        if (GuestMode.isGuest()) {
+                            showToast('Please sign up to add novels to your library');
+                            setTimeout(() => {
+                                window.location.href = 'signup.html';
+                            }, 1500);
+                            return;
+                        }
+
+                        const novelId = btn.dataset.novelId;
+                        const card = btn.closest('.card');
+                        const title = card.dataset.title;
+                        const author = card.dataset.author;
+                        const chapters = parseInt(card.dataset.chapters) || 0;
+                        const genre = card.dataset.genre || '';
+                        const status = card.dataset.status || '';
+                        const rating = Number(card.dataset.rating) || 0;
+                        const description = card.querySelector('.card-body p')?.textContent || '';
+                        const coverStyle = card.querySelector('.card-cover').style.backgroundImage;
+                        const coverUrl = coverStyle ? coverStyle.replace(/url\(['"]?|['"]?\)/g, '') : '';
+
+                        if (LibrarySystem.isInLibrary(novelId)) {
+                            // Remove from library
+                            if (confirm(`Remove "${title}" from your library?`)) {
+                                LibrarySystem.removeFromLibrary(novelId);
+                                updateLibraryButtons();
+                            }
+                        } else {
+                            // Add to library
+                            const libraryData = {
+                                novelId,
+                                title,
+                                author,
+                                genre,
+                                status,
+                                rating,
+                                description,
+                                coverImage: coverUrl,
+                                totalChapters: chapters,
+                                currentChapter: 0
+                            };
+                            LibrarySystem.addToLibrary(libraryData);
+                            updateLibraryButtons();
+
+                            // Show feedback
+                            const originalText = btn.textContent;
+                            btn.textContent = 'Added!';
+                            setTimeout(() => {
+                                updateLibraryButtons();
+                            }, 1000);
+                        }
+                    });
+                });
+            }
+
+            bindLibraryButtons();
+            updateLibraryButtons();
+            updateGenreCounts();
+            applyFilters();
+
+            // Update favorite button states
+            function updateFavoriteButtons() {
+                document.querySelectorAll('.favorite-btn[data-novel-id]').forEach(btn => {
+                    const novelId = btn.dataset.novelId;
+                    if (FavoritesSystem.isFavorite(novelId)) {
+                        btn.classList.add('active');
+                        btn.title = 'Remove from favorites';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.title = 'Add to favorites';
+                    }
+                });
+            }
+
+            function bindFavoriteButtons() {
+                document.querySelectorAll('.favorite-btn[data-novel-id]').forEach(btn => {
+                    if (btn.dataset.favBound === 'true') return;
+                    btn.dataset.favBound = 'true';
+
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Check if user is in guest mode
+                        if (GuestMode.isGuest()) {
+                            showToast('Please sign up to add favorites');
+                            setTimeout(() => {
+                                window.location.href = 'signup.html';
+                            }, 1500);
+                            return;
+                        }
+
+                        const novelId = btn.dataset.novelId;
+                        const card = btn.closest('.card');
+                        const title = card.dataset.title;
+                        const author = card.dataset.author;
+                        const chapters = parseInt(card.dataset.chapters) || 0;
+                        const genre = card.dataset.genre || '';
+                        const status = card.dataset.status || '';
+                        const rating = Number(card.dataset.rating) || 0;
+                        const description = card.querySelector('.card-body p')?.textContent || '';
+                        const coverStyle = card.querySelector('.card-cover').style.backgroundImage;
+                        const coverUrl = coverStyle ? coverStyle.replace(/url\(['"]?|['"]?\)/g, '') : '';
+
+                        const isFavorite = FavoritesSystem.isFavorite(novelId);
+
+                        if (isFavorite) {
+                            FavoritesSystem.removeFavorite(novelId);
+                            showToast(`Removed "${title}" from favorites`);
+                        } else {
+                            FavoritesSystem.addFavorite(novelId, {
+                                title,
+                                author,
+                                genre,
+                                status,
+                                rating,
+                                description,
+                                cover: coverUrl,
+                                totalChapters: chapters
+                            });
+                            showToast(`Added "${title}" to favorites`);
+                        }
+                        updateFavoriteButtons();
+                    });
+                });
+            }
+
+            await injectDynamicNovels();
+            bindFavoriteButtons();
+            updateFavoriteButtons();
+
+            // Refresh chapter counts when page becomes visible (after navigating back)
+            document.addEventListener('visibilitychange', async () => {
+              if (document.visibilityState === 'visible') {
+                await injectDynamicNovels();
+              }
+            });
+
+            // Pagination functionality
+            const ITEMS_PER_PAGE = 18;
+            let currentPage = 1;
+
+            function getVisibleCards() {
+                // Get cards that pass filters (not hidden by filters)
+                return Array.from(document.querySelectorAll('.card')).filter(card => {
+                    const cardGenre = (card.dataset.genre || '').toLowerCase();
+                    const cardStatus = card.dataset.status || '';
+                    const cardTitle = (card.dataset.title || '').toLowerCase();
+                    const cardAuthor = (card.dataset.author || '').toLowerCase();
+
+                    const matchesGenre = activeGenre === 'all' || cardGenre === activeGenre;
+                    const matchesStatus = activeStatus === 'all' || cardStatus === activeStatus;
+                    const matchesSearch = searchQuery === '' ||
+                        cardTitle.includes(searchQuery) ||
+                        cardAuthor.includes(searchQuery) ||
+                        cardGenre.includes(searchQuery);
+
+                    return matchesGenre && matchesStatus && matchesSearch;
+                });
+            }
+
+            function applyPagination() {
+                const filteredCards = getVisibleCards();
+                const totalPages = Math.ceil(filteredCards.length / ITEMS_PER_PAGE);
+                const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+                const endIndex = startIndex + ITEMS_PER_PAGE;
+
+                // Hide all cards first
+                document.querySelectorAll('.card').forEach(card => {
+                    card.style.display = 'none';
+                });
+
+                // Show only cards for current page
+                filteredCards.slice(startIndex, endIndex).forEach(card => {
+                    card.style.display = '';
+                });
+
+                // Update pagination UI
+                updatePaginationUI(totalPages);
+
+                // Update visible count
+                document.getElementById('visibleCount').textContent = Math.min(filteredCards.length, endIndex) - startIndex + ' of ' + filteredCards.length;
+            }
+
+            function updatePaginationUI(totalPages) {
+                const paginationNav = document.querySelector('.pagination');
+                if (!paginationNav) return;
+
+                if (totalPages <= 1) {
+                    paginationNav.style.display = 'none';
+                    return;
+                }
+                paginationNav.style.display = '';
+
+                let html = `<button class="page-link" data-action="prev" ${currentPage === 1 ? 'disabled' : ''}>← Previous</button>`;
+
+                // Show page numbers (max 5 visible)
+                const maxVisible = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+                if (endPage - startPage < maxVisible - 1) {
+                    startPage = Math.max(1, endPage - maxVisible + 1);
+                }
+
+                if (startPage > 1) {
+                    html += `<button class="page-link" data-page="1">1</button>`;
+                    if (startPage > 2) html += `<span class="page-ellipsis">...</span>`;
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    html += `<button class="page-link ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+                }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) html += `<span class="page-ellipsis">...</span>`;
+                    html += `<button class="page-link" data-page="${totalPages}">${totalPages}</button>`;
+                }
+
+                html += `<button class="page-link" data-action="next" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
+
+                paginationNav.innerHTML = html;
+
+                // Bind pagination events
+                paginationNav.querySelectorAll('.page-link').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (btn.disabled) return;
+                        if (btn.dataset.action === 'prev') {
+                            currentPage = Math.max(1, currentPage - 1);
+                        } else if (btn.dataset.action === 'next') {
+                            currentPage = Math.min(totalPages, currentPage + 1);
+                        } else if (btn.dataset.page) {
+                            currentPage = parseInt(btn.dataset.page);
+                        }
+                        applyPagination();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                });
+            }
+
+            // Override applyFilters to include pagination
+            const originalApplyFilters = applyFilters;
+            applyFilters = function() {
+                originalApplyFilters(); // Run original sorting/filtering logic first
+                currentPage = 1; // Reset to page 1 when filters change
+                applyPagination();
+            };
+
+            // Initial pagination
+            applyPagination();
+
+            // Persist card metadata so novel page can render genre/status/rating correctly
+            function bindCardLinks() {
+                document.querySelectorAll('.card-link').forEach(link => {
+                    if (link.dataset.bound === 'true') return;
+                    link.dataset.bound = 'true';
+                    link.addEventListener('click', () => {
+                        const card = link.closest('.card');
+                        if (!card) return;
+                        const coverStyle = card.querySelector('.card-cover')?.style?.backgroundImage || '';
+                        const coverUrl = coverStyle ? coverStyle.replace(/url\(['"]?|['"]?\)/g, '') : '';
+                        const payload = {
+                            id: card.dataset.novelId,
+                            title: card.dataset.title,
+                            author: card.dataset.author,
+                            authorId: card.dataset.authorId || '',
+                            genre: card.dataset.genre,
+                            status: card.dataset.status,
+                            rating: Number(card.dataset.rating || 0),
+                            chapters: Number(card.dataset.chapters || 0),
+                            cover: coverUrl,
+                            description: card.querySelector('.card-body p')?.textContent || ''
+                        };
+                        try {
+                            sessionStorage.setItem('novelshare_last_viewed', JSON.stringify(payload));
+                        } catch (err) {
+                            console.warn('Failed to store last viewed novel', err);
+                        }
+                    });
+                });
+            }
+
+            bindCardLinks();
+
+            // TEMPORARY: Delete functionality for removing duplicate novels
+            async function deleteNovelFromSupabase(novelId) {
+                if (!window.supabaseClient) {
+                    console.error('Supabase not available');
+                    return { error: 'Supabase not available' };
+                }
+
+                try {
+                    // Delete from novels table (this will cascade to related tables)
+                    // Use .select() to get back deleted rows and verify deletion worked
+                    const { data, error } = await window.supabaseClient
+                        .from('novels')
+                        .delete()
+                        .eq('id', novelId)
+                        .select();
+
+                    if (error) throw error;
+
+                    // Check if any rows were actually deleted
+                    // RLS may silently block deletion (no error but no rows affected)
+                    if (!data || data.length === 0) {
+                        console.error('Delete was blocked - no rows affected. Check RLS policies.');
+                        return { error: 'Delete permission denied. You can only delete your own novels.' };
+                    }
+
+                    return { success: true };
+                } catch (err) {
+                    console.error('Failed to delete novel:', err);
+                    return { error: err.message || 'Delete failed' };
+                }
+            }
+
+            function bindDeleteButtons() {
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    if (btn.dataset.deleteBound === 'true') return;
+                    btn.dataset.deleteBound = 'true';
+
+                    btn.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const novelId = btn.dataset.novelId;
+                        const title = btn.dataset.title || 'this novel';
+
+                        if (!confirm(`DELETE "${title}"?\n\nThis will permanently remove it from the database. This action cannot be undone!`)) {
+                            return;
+                        }
+
+                        // Double confirmation for safety
+                        if (!confirm(`Are you SURE you want to delete "${title}"?\n\nClick OK to permanently delete.`)) {
+                            return;
+                        }
+
+                        btn.disabled = true;
+                        btn.innerHTML = '<span style="font-size: 10px;">...</span>';
+
+                        const result = await deleteNovelFromSupabase(novelId);
+
+                        if (result.success) {
+                            // Track deleted ID in localStorage to prevent reappearing
+                            try {
+                                const deletedIds = JSON.parse(localStorage.getItem(DELETED_KEY) || '[]');
+                                if (!deletedIds.includes(novelId)) {
+                                    deletedIds.push(novelId);
+                                    localStorage.setItem(DELETED_KEY, JSON.stringify(deletedIds));
+                                }
+                            } catch (err) {
+                                console.warn('Failed to track deleted ID:', err);
+                            }
+
+                            // Remove the card from the DOM
+                            const card = btn.closest('.card');
+                            if (card) {
+                                card.style.transition = 'opacity 0.3s, transform 0.3s';
+                                card.style.opacity = '0';
+                                card.style.transform = 'scale(0.8)';
+                                setTimeout(() => {
+                                    card.remove();
+                                    updateGenreCounts();
+                                    applyPagination();
+                                }, 300);
+                            }
+                            showToast(`"${title}" deleted successfully`);
+                        } else {
+                            btn.disabled = false;
+                            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>`;
+                            showToast(`Failed to delete: ${result.error}`, 'error');
+                        }
+                    });
+                });
+            }
+
+            bindDeleteButtons();
+
+            // Re-bind buttons when new cards are added
+            const originalInjectDynamicNovels = injectDynamicNovels;
+            injectDynamicNovels = async function() {
+                await originalInjectDynamicNovels();
+                bindDeleteButtons();
+                bindFavoriteButtons();
+                updateFavoriteButtons();
+            };
+        });
+    </script>
+</body>
+</html>

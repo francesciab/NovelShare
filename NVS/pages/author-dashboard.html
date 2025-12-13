@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Author Dashboard | NovelShare</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { background: #f7f9fc; }
+    .page { padding: 0 var(--page-pad) 48px; }
+    .dashboard-hero {
+      margin-top: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-radius: 22px;
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 36px rgba(103, 126, 234, 0.25);
+    }
+    .dashboard-hero::before {
+      content: '';
+      position: absolute;
+      top: -45%;
+      right: -20%;
+      width: 420px;
+      height: 420px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .dashboard-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 320px;
+      height: 320px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-main { position: relative; z-index: 1; }
+    .hero-title { font-size: 1.5rem; margin: 0 0 6px; }
+    .hero-sub { margin: 0; opacity: 0.9; }
+    .hero-actions { position: relative; z-index: 1; display: flex; gap: 10px; flex-wrap: wrap; }
+    .primary-btn, .ghost-btn {
+      border: none; cursor: pointer; border-radius: 12px;
+      padding: 12px 16px; font-weight: 700; font-size: 0.95rem;
+      display: inline-flex; align-items: center; gap: 8px; transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .primary-btn {
+      background: #fff;
+      color: #1f3c88;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    .primary-btn:hover { transform: translateY(-1px); }
+    .ghost-btn {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.45);
+      backdrop-filter: blur(6px);
+    }
+    .ghost-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.18); }
+    .stats-grid {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+    }
+    .stat-label { color: var(--text-muted); font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; }
+    .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--text-primary); }
+    .stat-sub { color: var(--text-muted); font-size: 0.85rem; }
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .panel {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      padding: 18px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .panel-actions { display: flex; align-items: center; gap: 12px; }
+    .panel-action-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0;
+    }
+    .panel-action-btn.danger { color: #e11d48; }
+    .panel-action-btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+    .panel-title { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+    .panel-action { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+    .works-list { display: grid; gap: 10px; }
+    .work-row {
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .work-row.select-mode { background: #f8fbff; border-color: #dbeafe; }
+    .work-main { display: grid; gap: 4px; }
+    .work-title { margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+    .work-meta { color: var(--text-muted); font-size: 0.9rem; }
+    .select-box { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-secondary); }
+    .select-box input { width: 16px; height: 16px; }
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      max-width: 360px;
+      width: 100%;
+      padding: 20px 22px;
+    }
+    .modal-card h3 { margin: 0 0 10px; font-size: 1.05rem; }
+    .modal-card p { margin: 0 0 18px; color: var(--text-muted); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-ghost {
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+    .btn-danger {
+      background: #e11d48;
+      border: 1px solid #e11d48;
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    /* Scoped status pills so nav pills stay untouched */
+    .status-pill {
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+    }
+    .status-pill.ongoing { background: rgba(16,185,129,0.12); color: #0f9d58; }
+    .status-pill.completed { background: rgba(99,102,241,0.12); color: #4338ca; }
+    .status-pill.draft { background: rgba(249,115,22,0.15); color: #b45309; }
+    .work-actions { display: flex; gap: 8px; }
+    .link-btn {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .link-btn.primary { background: var(--primary); color: #fff; border-color: transparent; }
+    .feed { display: grid; gap: 10px; }
+    .feed-item {
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: grid;
+      gap: 4px;
+    }
+    .feed-title { font-weight: 700; color: var(--text-primary); margin: 0; }
+    .feed-sub { color: var(--text-muted); font-size: 0.9rem; }
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 1fr; }
+      .dashboard-hero { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="top-bar">
+      <a class="logo" href="home.html" aria-label="NovelShare Home">
+        <div class="logo-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">NovelShare</span>
+          <span class="logo-tagline">READ • WRITE • SHARE</span>
+        </div>
+      </a>
+
+      <nav class="nav-pills" aria-label="Main navigation">
+        <a class="pill" href="library.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+            </svg>
+          </span>
+          Library
+        </a>
+        <a class="pill" href="browse.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+          </span>
+          Browse
+        </a>
+      </nav>
+
+      <div class="profile-actions">
+        <button class="bell-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <div class="profile-wrapper">
+          <a href="profile.html" class="profile" id="profileBtn">
+            <div class="avatar">U</div>
+            <span class="username">user</span>
+          </a>
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar-lg">U</div>
+              <div class="name">User</div>
+              <div class="email">user@example.com</div>
+            </div>
+            <div class="profile-dropdown-menu">
+              <a href="profile.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                </svg>
+                My Profile
+              </a>
+              <a href="author-dashboard.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                My Works
+              </a>
+              <a href="login.html" class="logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Log Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="dashboard-hero">
+      <div class="hero-main">
+        <p class="hero-sub" id="greetingSub">Keep your readers engaged</p>
+        <h1 class="hero-title" id="greetingTitle">Welcome back, Author</h1>
+        <p class="hero-sub" id="greetingMeta">Plan releases, track reads, and jump into your next draft.</p>
+      </div>
+      <div class="hero-actions"></div>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Works</div>
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-sub">Across all statuses</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Ongoing</div>
+        <div class="stat-value" id="statOngoing">0</div>
+        <div class="stat-sub">Publishing in progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="statCompleted">0</div>
+        <div class="stat-sub">Wrapped series</div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Your Works</span>
+          <div class="panel-actions">
+            <button class="panel-action-btn" id="editModeBtn" type="button"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-2px;"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Edit</button>
+            <a class="panel-action" href="add-novel.html"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-2px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create new</a>
+            <button class="panel-action-btn danger" id="deleteSelectedBtn" type="button" style="display:none;">Delete selected</button>
+          </div>
+        </div>
+        <div id="worksList" class="works-list"></div>
+        <div id="worksEmpty" class="feed" style="display:none;">
+          <div class="feed-item">
+            <p class="feed-title">No works yet</p>
+            <p class="feed-sub">Publish your first story to start tracking performance.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Recent Activity</span>
+          <a class="panel-action" href="library.html#history">View history</a>
+        </div>
+        <div id="activityList" class="feed"></div>
+        <div id="activityEmpty" class="feed-item" style="display:none;">
+          <p class="feed-title">No recent reads</p>
+          <p class="feed-sub">Read a chapter to see it here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-card">
+      <h3>Delete selected works?</h3>
+      <p id="deleteModalText">This action will remove the selected items from your works.</p>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="cancelDeleteBtn" type="button">Cancel</button>
+        <button class="btn-danger" id="confirmDeleteBtn" type="button">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>&copy; 2025 NovelShare. All Rights Reserved.</span>
+    <nav class="footer-links">
+      <a href="javascript:void(0)" onclick="showToast('Contact page coming soon')">Contact Us</a>
+      <a href="javascript:void(0)" onclick="showToast('Privacy Policy coming soon')">Privacy Policy</a>
+      <a href="javascript:void(0)" onclick="showToast('Terms of Service coming soon')">Terms of Service</a>
+    </nav>
+  </footer>
+
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const worksList = document.getElementById('worksList');
+    const worksEmpty = document.getElementById('worksEmpty');
+    const activityList = document.getElementById('activityList');
+    const activityEmpty = document.getElementById('activityEmpty');
+    let currentUserId = null;
+    const DELETED_KEY = 'novelshare_deleted_ids';
+    const EDIT_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-2px;"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
+
+    function getDeletedIds() {
+      try { return new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || '[]')); }
+      catch { return new Set(); }
+    }
+    function addDeletedIds(ids = []) {
+      const existing = getDeletedIds();
+      ids.forEach(id => existing.add(id));
+      localStorage.setItem(DELETED_KEY, JSON.stringify(Array.from(existing)));
+    }
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteModalText = document.getElementById('deleteModalText');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    function formatDate(ts) {
+      if (!ts) return 'Recently';
+      const d = new Date(ts);
+      if (isNaN(d)) return 'Recently';
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function mapStatus(status) {
+      const s = (status || '').toLowerCase();
+      if (s === 'completed') return { label: 'Completed', className: 'completed' };
+      if (s === 'draft') return { label: 'Draft', className: 'draft' };
+      return { label: 'Ongoing', className: 'ongoing' };
+    }
+
+    function getLocalWorks() {
+      try { return JSON.parse(localStorage.getItem('novelshare_my_works') || '[]'); }
+      catch { return []; }
+    }
+
+    async function getCloudWorks(userId) {
+      if (!userId || typeof SupabaseDB === 'undefined' || !SupabaseDB.getNovelsByAuthor) return [];
+      try {
+        return await SupabaseDB.getNovelsByAuthor(userId, 50, 0);
+      } catch (e) {
+        console.warn('Cloud works fetch failed:', e);
+        return [];
+      }
+    }
+
+    function normalizeWork(work) {
+      if (!work) return null;
+      const publishedChapters = work.publishedChapters || work.published_chapters;
+      const totalChapters = work.total_chapters || work.totalChapters || work.chapters || 0;
+      return {
+        id: work.id || work.novelId || work.slug,
+        title: work.title || 'Untitled',
+        status: work.status || 'ongoing',
+        publishedChapters: Number.isFinite(publishedChapters) ? publishedChapters : undefined,
+        chapters: Number.isFinite(publishedChapters) ? publishedChapters : totalChapters,
+        reads: work.reads || work.popularity || 0,
+        cover: work.cover || work.cover_image || work.coverImage || '',
+        genre: Array.isArray(work.genres) ? work.genres[0] : (work.genre || ''),
+        description: work.description || '',
+        updatedAt: work.updated_at || work.updatedAt || work.savedAt || work.created_at || work.createdAt || Date.now()
+      };
+    }
+
+    function mergeWorks(local, cloud) {
+      const deleted = getDeletedIds();
+      const merged = new Map();
+      local.forEach(w => {
+        const item = normalizeWork(w);
+        if (item && item.id && !deleted.has(item.id)) merged.set(item.id, item);
+      });
+      cloud.forEach(w => {
+        const item = normalizeWork(w);
+        if (item && item.id && !deleted.has(item.id)) merged.set(item.id, item);
+      });
+      return Array.from(merged.values());
+    }
+
+    function renderStats(works) {
+      const total = works.length;
+      const completed = works.filter(w => (w.status || '').toLowerCase() === 'completed').length;
+      const drafts = works.filter(w => (w.status || '').toLowerCase() === 'draft').length;
+      const ongoing = total - completed - drafts;
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statOngoing').textContent = Math.max(ongoing, 0);
+      document.getElementById('statCompleted').textContent = completed;
+    }
+
+    let selectionMode = false;
+    const selectedIds = new Set();
+    let currentWorks = [];
+
+    function openDeleteModal(count) {
+      if (!deleteModal) return;
+      deleteModalText.textContent = `Delete ${count} selected work${count > 1 ? 's' : ''}? This cannot be undone.`;
+      deleteModal.classList.add('open');
+    }
+    function closeDeleteModal() {
+      deleteModal?.classList.remove('open');
+    }
+
+    function updateSelectionControls() {
+      const editBtn = document.getElementById('editModeBtn');
+      const deleteBtn = document.getElementById('deleteSelectedBtn');
+      if (!editBtn || !deleteBtn) return;
+      editBtn.innerHTML = selectionMode ? 'Done' : `${EDIT_ICON}Edit`;
+      deleteBtn.style.display = selectionMode ? 'inline-flex' : 'none';
+      deleteBtn.disabled = selectedIds.size === 0;
+    }
+
+    function toggleSelectionMode() {
+      selectionMode = !selectionMode;
+      if (!selectionMode) selectedIds.clear();
+      updateSelectionControls();
+      renderWorks(currentWorks);
+    }
+
+    function renderWorks(works) {
+      currentWorks = works;
+      if (!works.length) {
+        worksList.innerHTML = '';
+        worksEmpty.style.display = '';
+        return;
+      }
+      worksEmpty.style.display = 'none';
+      const sorted = works.slice().sort((a, b) => (new Date(b.updatedAt || 0)) - (new Date(a.updatedAt || 0)));
+      worksList.innerHTML = sorted.map(work => {
+        const statusObj = mapStatus(work.status);
+        const chapters = Number(work.publishedChapters ?? work.chapters ?? work.totalChapters ?? work.total_chapters) || 0;
+        const isChecked = selectedIds.has(work.id);
+        return `
+          <div class="work-row ${selectionMode ? 'select-mode' : ''}" data-id="${work.id}">
+            <div class="work-main">
+              ${selectionMode ? `
+                <label class="select-box">
+                  <input type="checkbox" class="select-checkbox" data-id="${work.id}" ${isChecked ? 'checked' : ''}>
+                  <span>Select</span>
+                </label>` : ''}
+              <h3 class="work-title">${work.title}</h3>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <span class="status-pill ${statusObj.className}">${statusObj.label}</span>
+                <span class="work-meta">${work.genre || 'Genre TBD'} • ${chapters} chapters • Updated ${formatDate(work.updatedAt)}</span>
+              </div>
+            </div>
+            <div class="work-actions">
+              <button class="link-btn primary" data-action="edit" data-id="${work.id}">Edit</button>
+              <button class="link-btn" data-action="add-chapter" data-id="${work.id}">Add Chapter</button>
+              <button class="link-btn" data-action="view" data-id="${work.id}">View</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      worksList.querySelectorAll('.select-checkbox').forEach(box => {
+        box.addEventListener('change', () => {
+          const id = box.dataset.id;
+          if (box.checked) selectedIds.add(id); else selectedIds.delete(id);
+          updateSelectionControls();
+        });
+      });
+
+      worksList.querySelectorAll('[data-action="edit"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (selectionMode) return;
+          const id = btn.dataset.id;
+          window.location.href = id ? `edit-novel.html?id=${encodeURIComponent(id)}` : 'edit-novel.html';
+        });
+      });
+      worksList.querySelectorAll('[data-action="add-chapter"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (selectionMode) return;
+          const id = btn.dataset.id;
+          window.location.href = id ? `add-chapter.html?workId=${encodeURIComponent(id)}` : 'add-chapter.html';
+        });
+      });
+      worksList.querySelectorAll('[data-action="view"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (selectionMode) return;
+          const id = btn.dataset.id;
+          window.location.href = id ? `novel.html?id=${encodeURIComponent(id)}` : 'novel.html';
+        });
+      });
+
+      // Make row clickable (except when selection mode or clicking actions)
+      worksList.querySelectorAll('.work-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+          if (selectionMode) return;
+          const target = e.target;
+          if (target.closest('.work-actions') || target.closest('.select-box')) return;
+          const id = row.dataset.id;
+          if (id) window.location.href = `work-detail.html?id=${encodeURIComponent(id)}`;
+        });
+        row.style.cursor = selectionMode ? 'default' : 'pointer';
+      });
+    }
+
+    function renderActivity() {
+      const history = (typeof ReadingHistory !== 'undefined') ? ReadingHistory.getHistory().slice(0, 5) : [];
+      if (!history.length) {
+        activityList.innerHTML = '';
+        activityEmpty.style.display = '';
+        return;
+      }
+      activityEmpty.style.display = 'none';
+      activityList.innerHTML = history.map(item => `
+        <div class="feed-item">
+          <p class="feed-title">${item.novelTitle || 'Novel'}</p>
+          <p class="feed-sub">${item.chapterTitle || 'Chapter'} • ${formatDate(item.timestamp)}</p>
+        </div>
+      `).join('');
+    }
+
+    // Refresh chapter counts from Supabase for all works
+    // Uses countPublishedChapters for consistency - only counts published chapters
+    async function refreshAllChapterCounts(works) {
+      if (typeof countPublishedChapters !== 'function') return works;
+
+      const refreshed = await Promise.all(works.map(async (work) => {
+        if (!work.id) return work;
+        try {
+          const count = await countPublishedChapters(work.id);
+          // Update localStorage too
+          if (typeof updateWorkChapterCount === 'function') {
+            updateWorkChapterCount(work.id, count);
+          }
+          return { ...work, chapters: count, publishedChapters: count, total_chapters: count };
+        } catch (err) {
+          console.warn('Failed to refresh chapter count for', work.id, err);
+          return work;
+        }
+      }));
+      return refreshed;
+    }
+
+    async function loadDashboard() {
+      let profileData = null;
+      try {
+        const cached = localStorage.getItem('novelshare_profile');
+        if (cached) profileData = JSON.parse(cached);
+      } catch {}
+
+      let user = null;
+      try {
+        if (typeof SupabaseAuth !== 'undefined') {
+          user = await SupabaseAuth.getCurrentUser();
+          if (user && typeof SupabaseDB !== 'undefined' && SupabaseDB.getProfile) {
+            try {
+              const dbProfile = await SupabaseDB.getProfile(user.id);
+              profileData = {
+                name: dbProfile?.display_name || dbProfile?.username || user.email || 'Author',
+                username: dbProfile?.username || dbProfile?.display_name || 'author',
+                email: dbProfile?.email || user.email || ''
+              };
+            } catch {}
+          }
+        }
+      } catch {}
+      currentUserId = user?.id || null;
+
+      const name = profileData?.name || 'Author';
+      document.getElementById('greetingTitle').textContent = `Welcome back, ${name}`;
+      document.getElementById('greetingSub').textContent = 'Keep your release calendar on track';
+      document.getElementById('greetingMeta').textContent = 'Draft, edit, and publish without leaving your workspace.';
+
+      const localWorks = getLocalWorks();
+      const cloudWorks = await getCloudWorks(user?.id);
+      let works = mergeWorks(localWorks, cloudWorks);
+
+      // Refresh chapter counts from Supabase to ensure consistency
+      works = await refreshAllChapterCounts(works);
+
+      renderStats(works);
+      renderWorks(works);
+      updateSelectionControls();
+      renderActivity();
+    }
+
+    // Refresh chapter counts when page becomes visible (after navigating back from editing)
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible') {
+        const works = JSON.parse(localStorage.getItem('novelshare_my_works') || '[]');
+        const refreshed = await refreshAllChapterCounts(works);
+        localStorage.setItem('novelshare_my_works', JSON.stringify(refreshed));
+        renderWorks(refreshed);
+      }
+    });
+
+    document.getElementById('editModeBtn').addEventListener('click', toggleSelectionMode);
+    document.getElementById('deleteSelectedBtn').addEventListener('click', () => {
+      if (selectedIds.size === 0) return;
+      openDeleteModal(selectedIds.size);
+    });
+    cancelDeleteBtn?.addEventListener('click', closeDeleteModal);
+    confirmDeleteBtn?.addEventListener('click', async () => {
+      const ids = Array.from(selectedIds);
+      // Remove from Supabase if available
+      if (ids.length && currentUserId && typeof SupabaseDB !== 'undefined' && SupabaseDB.deleteNovels) {
+        try {
+          await SupabaseDB.deleteNovels(ids, currentUserId);
+        } catch (err) {
+          console.warn('Supabase delete failed, continuing local removal:', err);
+        }
+      }
+      addDeletedIds(ids);
+      if (typeof SupabaseSync !== 'undefined' && SupabaseSync._purgeLocalCachesFor) {
+        SupabaseSync._purgeLocalCachesFor(ids);
+      }
+      // Remove from local storage cache
+      const current = getLocalWorks();
+      const filtered = current.filter(w => !selectedIds.has(w.id || w.novelId || w.slug));
+      localStorage.setItem('novelshare_my_works', JSON.stringify(filtered));
+
+      selectedIds.clear();
+      selectionMode = false;
+      updateSelectionControls();
+      loadDashboard();
+      closeDeleteModal();
+      showToast('Removed selected works');
+    });
+    deleteModal?.addEventListener('click', (e) => {
+      if (e.target === deleteModal) closeDeleteModal();
+    });
+
+    document.addEventListener('DOMContentLoaded', loadDashboard);
+  </script>
+</body>
+</html>

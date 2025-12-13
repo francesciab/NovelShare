@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Work Detail | NovelShare</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <style>
+    body { background: #f7f9fc; }
+    .page { padding: 0 var(--page-pad) 48px; }
+    .work-header {
+      background: #fff;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-medium);
+      padding: 24px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+    .cover-frame {
+      width: 160px;
+      height: 220px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #5b8def, #4664c7);
+      box-shadow: var(--shadow-card);
+    }
+    .work-meta {
+      display: grid;
+      gap: 12px;
+    }
+    .breadcrumbs {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .work-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 0;
+      color: var(--text-primary);
+    }
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .tag {
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      background: #e0e7ff;
+      color: #4338ca;
+    }
+    .tag.status-completed { background: #ecf0ff; color: #4c51bf; }
+    .tag.status-ongoing { background: #dcfce7; color: #15803d; }
+    .tag.status-draft { background: #fff7ed; color: #c2410c; }
+    .author-line { color: var(--text-secondary); font-weight: 600; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .cta-btn {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cta-btn.primary { background: var(--primary); color: #fff; border-color: transparent; }
+    .info-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .info-card {
+      padding: 14px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    .info-label { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+    .info-value { font-weight: 800; font-size: 1.1rem; color: var(--text-primary); }
+    .detail-card {
+      background: #fff;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 18px;
+    }
+    .tabs { display: flex; gap: 18px; margin-top: 20px; border-bottom: 1px solid var(--border); }
+    .tabs button {
+      border: none;
+      background: none;
+      padding: 12px 0;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+    }
+    .tabs button.active { color: var(--primary); }
+    .tabs button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--primary-gradient);
+    }
+    .tab-panel { display: none; padding: 16px 0; }
+    .tab-panel.active { display: block; }
+    .list-item {
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      background: #f8fafc;
+    }
+    .list-item h4 { margin: 0 0 6px; color: var(--text-primary); }
+    .list-item p { margin: 0; color: var(--text-muted); }
+    .chapter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: relative;
+    }
+    .chapter-row .chapter-text { flex: 1; }
+    .chapter-delete {
+      opacity: 0;
+      transition: opacity 0.15s ease, color 0.15s ease;
+      color: #ef4444;
+      background: transparent;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .chapter-delete.confirm {
+      color: #dc2626;
+      text-decoration: underline;
+    }
+    .chapter-row:hover .chapter-delete { opacity: 1; }
+    @media (max-width: 900px) {
+      .work-header { grid-template-columns: 1fr; }
+      .title-row { align-items: flex-start; }
+      .actions { width: 100%; }
+      .actions .cta-btn { flex: 1; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <a class="logo" href="home.html" aria-label="NovelShare Home">
+        <div class="logo-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">NovelShare</span>
+          <span class="logo-tagline">READ • WRITE • SHARE</span>
+        </div>
+      </a>
+
+      <nav class="nav-pills" aria-label="Main navigation">
+        <a class="pill" href="library.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+            </svg>
+          </span>
+          Library
+        </a>
+        <a class="pill" href="browse.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+          </span>
+          Browse
+        </a>
+      </nav>
+
+      <div class="profile-actions">
+        <button class="bell-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <div class="profile-wrapper">
+          <a href="profile.html" class="profile" id="profileBtn">
+            <div class="avatar">U</div>
+            <span class="username">user</span>
+          </a>
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar-lg">U</div>
+              <div class="name">User</div>
+              <div class="email">user@example.com</div>
+            </div>
+            <div class="profile-dropdown-menu">
+              <a href="profile.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                </svg>
+                My Profile
+              </a>
+              <a href="author-dashboard.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                My Works
+              </a>
+              <a href="login.html" class="logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Log Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="work-header" id="workHeader">
+      <div class="cover-frame" id="workCover"></div>
+      <div class="work-meta">
+        <div class="breadcrumbs">
+          <a href="author-dashboard.html" style="color:inherit; text-decoration:none;">← Back to works</a>
+        </div>
+        <div class="title-row">
+          <h1 class="work-title" id="workTitle">Untitled Work</h1>
+          <div class="tag-row">
+            <span class="tag status-ongoing" id="statusTag">Ongoing</span>
+            <span class="tag" id="genreTag">Original</span>
+          </div>
+        </div>
+        <div class="author-line" id="authorLine">by You</div>
+        <p id="workDescription" style="margin:0; color:var(--text-secondary);">No description provided.</p>
+        <div class="actions">
+          <button class="cta-btn primary" id="createChapterBtn">Create Chapter</button>
+          <button class="cta-btn" id="editWorkBtn">Edit Work</button>
+          <button class="cta-btn" id="shareWorkBtn">Share</button>
+        </div>
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-label">Status</div>
+            <div class="info-value" id="statusValue">Ongoing</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Chapters</div>
+            <div class="info-value" id="chaptersValue">0</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Reads</div>
+            <div class="info-value" id="readsValue">—</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Last Updated</div>
+            <div class="info-value" id="updatedValue">Recently</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="detail-card" style="margin-top:16px;">
+      <div class="tabs">
+        <button class="active" data-tab="drafts">Drafts</button>
+        <button data-tab="published">Published</button>
+      </div>
+      <div class="tab-panel active" id="tab-drafts">
+        <div id="draftList"></div>
+      </div>
+      <div class="tab-panel" id="tab-published">
+        <div id="publishedList"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const workId = params.get('id');
+
+    const profile = (() => { try { return JSON.parse(localStorage.getItem('novelshare_profile') || '{}'); } catch { return {}; } })();
+    const chapterStoreKey = 'novelshare_chapters';
+    const DELETED_KEY = 'novelshare_deleted_ids';
+    function isDeleted(id) {
+      try {
+        const set = new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || '[]'));
+        return set.has(id);
+      } catch {
+        return false;
+      }
+    }
+    function getLibraryEntry(id) {
+      try {
+        const lib = JSON.parse(localStorage.getItem('novelshare_library') || '[]');
+        return lib.find(item => item.id === id || item.novelId === id) || null;
+      } catch {
+        return null;
+      }
+    }
+
+    function normalizeWork(work) {
+      if (!work) return null;
+      return {
+        id: work.id || work.novelId || work.slug,
+        title: work.title || 'Untitled',
+        author: work.author || profile.display_name || profile.username || profile.name || 'You',
+        genre: Array.isArray(work.genres) ? work.genres[0] : (work.genre || 'Original'),
+        status: (work.status || 'ongoing').toLowerCase(),
+        description: work.description || '',
+        cover: work.cover || work.cover_image || work.coverImage || '',
+        chapters: work.chapters || work.total_chapters || 0,
+        reads: work.reads || work.popularity || '—',
+        updatedAt: work.updated_at || work.updatedAt || work.created_at || work.createdAt || Date.now(),
+      };
+    }
+
+    async function fetchChaptersForWork(id) {
+      const store = (() => { try { return JSON.parse(localStorage.getItem(chapterStoreKey) || '{}'); } catch { return {}; } })();
+      let chapters = [];
+
+      if (typeof SupabaseDB !== 'undefined' && SupabaseDB.getChapters) {
+        try {
+          const supa = await SupabaseDB.getChapters(id);
+          if (Array.isArray(supa) && supa.length) {
+            chapters = supa.map(ch => ({
+              id: ch.id,
+              title: ch.title || 'Untitled',
+              content: ch.content || '',
+              status: ch.status ? ch.status.toLowerCase() : 'published', // Use status from Supabase if available
+              number: (ch.status || '').toLowerCase() === 'published' ? (ch.chapter_number || ch.number || ch.order || null) : null,
+              createdAt: ch.created_at || ch.updated_at || Date.now()
+            }));
+          }
+        } catch (err) {
+          console.warn('Supabase getChapters failed:', err);
+        }
+      }
+
+      // Merge in any locally stored chapters (drafts/trash) not present in Supabase response
+      const localList = Array.isArray(store[id]) ? store[id] : [];
+      const merged = [...chapters];
+      localList.forEach(ch => {
+        const idx = merged.findIndex(existing => existing.id === ch.id);
+        if (idx >= 0) {
+          // Prefer local status (draft/trash) when the same chapter exists in both
+          merged[idx] = { ...merged[idx], status: (ch.status || merged[idx].status || 'published').toLowerCase() };
+        } else {
+          merged.push(ch);
+        }
+      });
+      if (merged.length !== localList.length || merged.length !== chapters.length) {
+        store[id] = merged;
+        localStorage.setItem(chapterStoreKey, JSON.stringify(store));
+      }
+
+      chapters = merged;
+
+      return (chapters || []).map(ch => ({
+        ...ch,
+        status: (ch.status || 'published').toLowerCase(),
+        number: ((ch.status || 'draft').toLowerCase() === 'published') ? ch.number : null
+      }));
+    }
+
+    async function fetchWork() {
+      const localWorks = (() => { try { return JSON.parse(localStorage.getItem('novelshare_my_works') || '[]'); } catch { return []; } })();
+      let found = localWorks.find(w => (w.id || w.novelId || w.slug) === workId && !isDeleted(w.id || w.novelId || w.slug));
+
+      if (!found && typeof SupabaseDB !== 'undefined' && SupabaseDB.getNovelById) {
+        try {
+          const supa = await SupabaseDB.getNovelById(workId);
+          found = supa || found;
+        } catch (err) {
+          console.warn('Supabase fetch failed', err);
+        }
+      }
+
+      return normalizeWork(found) || {
+        id: workId || 'work',
+        title: 'Untitled',
+        author: profile.display_name || profile.username || profile.name || 'You',
+        genre: 'Original',
+        status: 'ongoing',
+        description: 'No description provided.',
+        cover: '',
+        chapters: 0,
+        reads: '—',
+        updatedAt: Date.now(),
+      };
+    }
+
+    function formatDate(ts) {
+      const d = new Date(ts);
+      if (Number.isNaN(d.getTime())) return 'Recently';
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function applyWork(work, chapters = []) {
+      document.title = `${work.title} | NovelShare`;
+      const coverEl = document.getElementById('workCover');
+      if (work.cover) {
+        coverEl.style.backgroundImage = `url('${work.cover}')`;
+        coverEl.style.backgroundSize = 'cover';
+        coverEl.style.backgroundPosition = 'center';
+      } else {
+        coverEl.style.background = 'linear-gradient(135deg, #5b8def, #4664c7)';
+      }
+      document.getElementById('workTitle').textContent = work.title;
+      document.getElementById('statusTag').textContent = work.status.charAt(0).toUpperCase() + work.status.slice(1);
+      document.getElementById('statusTag').className = `tag status-${work.status === 'completed' ? 'completed' : work.status === 'draft' ? 'draft' : 'ongoing'}`;
+      document.getElementById('genreTag').textContent = work.genre || 'Original';
+      document.getElementById('authorLine').textContent = `by ${work.author || 'You'}`;
+      document.getElementById('workDescription').textContent = work.description || 'No description provided.';
+      document.getElementById('statusValue').textContent = work.status.charAt(0).toUpperCase() + work.status.slice(1);
+      const normalizedChapters = chapters.map(ch => ({
+        ...ch,
+        status: (ch.status || 'published').toLowerCase()
+      }));
+
+      const publishedChapters = normalizedChapters.filter(ch => ch.status === 'published');
+
+      // Renumber published chapters sequentially starting from 1, but preserve intended order
+      publishedChapters.sort((a, b) => {
+        const aNum = a.number || 999;
+        const bNum = b.number || 999;
+        if (aNum !== bNum) return aNum - bNum;
+        return (a.createdAt || 0) - (b.createdAt || 0);
+      });
+      publishedChapters.forEach((ch, idx) => {
+        ch.number = idx + 1;
+        // Update in the main chapters array
+        const mainIdx = chapters.findIndex(c => c.id === ch.id);
+        if (mainIdx >= 0) chapters[mainIdx].number = idx + 1;
+      });
+
+      // Persist the corrected numbers
+      const store = JSON.parse(localStorage.getItem('novelshare_chapters') || '{}');
+      if (store[work.id]) {
+        store[work.id] = chapters;
+        localStorage.setItem('novelshare_chapters', JSON.stringify(store));
+      }
+
+      const libEntry = getLibraryEntry(work.id);
+      const chapterCount = publishedChapters.length;
+      const effectiveChapters = chapterCount > 0 ? chapterCount : (work.chapters || 0);
+      const progressLabel = (() => {
+        if (!libEntry) return '—';
+        const current = Number.isFinite(libEntry.currentChapter) ? libEntry.currentChapter : 0;
+        const total = Number.isFinite(libEntry.totalChapters) ? libEntry.totalChapters : (chapterCount || libEntry.chapters || 0);
+        if (!total) return `${current} read`;
+        return `Chapter ${current}/${total}`;
+      })();
+      document.getElementById('chaptersValue').textContent = chapterCount;
+      document.getElementById('readsValue').textContent = progressLabel;
+      document.getElementById('updatedValue').textContent = formatDate(work.updatedAt);
+
+      document.getElementById('createChapterBtn').addEventListener('click', () => window.location.href = `add-chapter.html?id=${encodeURIComponent(work.id)}`);
+      document.getElementById('editWorkBtn').addEventListener('click', () => window.location.href = `edit-novel.html?id=${encodeURIComponent(work.id)}`);
+      document.getElementById('shareWorkBtn').addEventListener('click', () => {
+        if (navigator.share) {
+          navigator.share({ title: work.title, url: window.location.href });
+        } else {
+          navigator.clipboard.writeText(window.location.href);
+          showToast('Link copied to clipboard');
+        }
+      });
+
+      // Filter chapters by status
+      const drafts = normalizedChapters
+        .filter(ch => ch.status === 'draft')
+        .map(ch => ({
+          id: ch.id,
+          number: null,
+          title: ch.title || 'Untitled',
+          updated: formatDate(ch.createdAt || Date.now())
+        }));
+      const published = publishedChapters
+        .map((ch, idx) => ({
+          id: ch.id,
+          number: ch.number || ch.chapter_number || idx + 1,
+          title: ch.title || 'Untitled',
+          updated: formatDate(ch.createdAt || Date.now())
+        }));
+      const trash = normalizedChapters
+        .filter(ch => ch.status === 'trash')
+        .map(ch => ({
+          id: ch.id,
+          number: null,
+          title: ch.title || 'Untitled',
+          updated: formatDate(ch.createdAt || Date.now())
+        }));
+      const buildList = (el, items, emptyLabel, showNumber, listType) => {
+        if (!el) return;
+        if (!items.length) {
+          el.innerHTML = `<div class="list-item"><p style="margin:0; color:var(--text-muted);">${emptyLabel}</p></div>`;
+          return;
+        }
+        el.innerHTML = items
+          .map(item => `
+            <div class="list-item chapter-row" data-chapter-id="${item.id || ''}">
+              <div class="chapter-text">
+                <h4>${showNumber && item.number ? `Chapter ${item.number}: ` : ''}${item.title}</h4>
+                <p>${item.updated}</p>
+              </div>
+              <div class="chapter-actions">
+                <button class="chapter-delete" data-chapter-id="${item.id || ''}">Delete</button>
+              </div>
+            </div>
+          `)
+          .join('');
+      };
+      buildList(document.getElementById('draftList'), drafts, 'No drafts yet', false, 'draft');
+      buildList(document.getElementById('publishedList'), published, 'No published chapters yet', true, 'published');
+      buildList(document.getElementById('trashList'), trash, 'Trash is empty', false, 'trash');
+
+      document.querySelectorAll('.chapter-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+          if (e.target && e.target.classList.contains('chapter-delete')) return;
+          const cid = row.dataset.chapterId;
+          const url = cid ? `edit-chapter.html?workId=${encodeURIComponent(work.id)}&chapterId=${encodeURIComponent(cid)}` : `edit-chapter.html?workId=${encodeURIComponent(work.id)}`;
+          window.location.href = url;
+        });
+        row.style.cursor = 'pointer';
+      });
+
+      // delete handlers
+      document.querySelectorAll('.chapter-delete').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const cid = btn.dataset.chapterId;
+          if (!cid) return;
+          if (!btn.classList.contains('confirm')) {
+            btn.classList.add('confirm');
+            btn.textContent = 'Confirm';
+            setTimeout(() => {
+              btn.classList.remove('confirm');
+              btn.textContent = 'Delete';
+            }, 2500);
+            return;
+          }
+          try {
+            // remove from local storage
+            const store = (() => { try { return JSON.parse(localStorage.getItem(chapterStoreKey) || '{}'); } catch { return {}; } })();
+            const list = Array.isArray(store[work.id]) ? store[work.id] : [];
+            store[work.id] = list.filter(ch => ch.id !== cid);
+            localStorage.setItem(chapterStoreKey, JSON.stringify(store));
+
+            // Supabase delete
+            if (typeof SupabaseDB !== 'undefined' && SupabaseDB.deleteChapter) {
+              try { await SupabaseDB.deleteChapter(work.id, cid); } catch (err) { console.warn('Supabase deleteChapter failed:', err); }
+            }
+
+            showToast('Chapter deleted');
+            setTimeout(() => window.location.reload(), 300);
+          } catch (err) {
+            console.error(err);
+            showToast('Could not delete chapter');
+          }
+        });
+      });
+
+      // Pull latest chapters from Supabase and merge with local drafts/trash
+      async function refreshFromSupabase() {
+        if (typeof SupabaseDB === 'undefined' || !SupabaseDB.getChapters) return normalizedChapters;
+        try {
+          const supa = await SupabaseDB.getChapters(work.id);
+          if (Array.isArray(supa) && supa.length) {
+            const refreshed = supa.map(ch => ({
+              id: ch.id,
+              title: ch.title || 'Untitled',
+              content: ch.content || '',
+              // Keep server status so drafts/trash stay in the right tab
+              status: (ch.status || 'published').toLowerCase(),
+              number: (ch.status || '').toLowerCase() === 'published' ? (ch.chapter_number || ch.number || ch.order || null) : null,
+              createdAt: ch.created_at || ch.updated_at || Date.now()
+            }));
+            const store = (() => { try { return JSON.parse(localStorage.getItem(chapterStoreKey) || '{}'); } catch { return {}; } })();
+            const localList = Array.isArray(store[work.id]) ? store[work.id] : [];
+            const merged = [...refreshed];
+            localList.forEach(ch => {
+              if (!merged.find(m => m.id === ch.id)) merged.push({ ...ch, status: (ch.status || 'draft').toLowerCase() });
+            });
+            store[work.id] = merged;
+            localStorage.setItem(chapterStoreKey, JSON.stringify(store));
+            return merged;
+          }
+        } catch (err) {
+          console.warn('Supabase refresh failed:', err);
+        }
+        return normalizedChapters;
+      }
+
+      // publish draft handlers
+      // Draft publish flow removed per design request (drafts can be managed elsewhere)
+    }
+
+    function initTabs() {
+      const tabs = document.querySelectorAll('.tabs button');
+      const panels = document.querySelectorAll('.tab-panel');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          panels.forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      initTabs();
+      // Sync chapters if logged in
+      if (typeof SupabaseAuth !== 'undefined' && typeof SupabaseSync !== 'undefined') {
+        try {
+          const user = await SupabaseAuth.getCurrentUser();
+          if (user) {
+            await SupabaseSync.syncChapters();
+          }
+        } catch (err) {
+          console.warn('Chapter sync failed:', err);
+        }
+      }
+      const work = await fetchWork();
+      const chapters = await fetchChaptersForWork(work.id);
+      applyWork(work, chapters);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add New Novel | NovelShare</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="../assets/css/common.css" />
+  <style>
+    /* Layout */
+    .form-container {
+      max-width: 1100px;
+      margin: 64px auto 40px;
+      padding: 32px 24px 40px;
+    }
+    .form-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .page-header h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0 0 4px;
+    }
+    .page-header .subtext {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .draft-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+    .draft-status svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Form layout */
+    .novel-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    .cover-panel .label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 0 0 12px;
+    }
+    .cover-frame {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      background: #f8fafc;
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .cover-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-muted);
+    }
+    .cover-placeholder svg {
+      width: 58px;
+      height: 58px;
+      color: #9ca3af;
+    }
+    .file-btn {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #1f2937;
+      color: #fff;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9375rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .file-btn:hover { background: #111827; transform: translateY(-1px); }
+    .file-name {
+      margin-top: 8px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    .helper-text {
+      margin-top: 6px;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .form-fields label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    .form-fields input,
+    .form-fields select,
+    .form-fields textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fff;
+    }
+    .form-fields input:focus,
+    .form-fields select:focus,
+    .form-fields textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 111, 225, 0.1);
+    }
+    .form-fields input.invalid { border-color: #ef4444; }
+    .form-fields .field {
+      margin-bottom: 18px;
+    }
+    .form-fields textarea {
+      min-height: 220px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    /* Buttons */
+    .form-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .form-buttons button {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      border: none;
+    }
+    .cancel-btn {
+      background: #f5f5f5;
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+    }
+    .cancel-btn:hover { background: #eee; }
+    .draft-btn {
+      background: #fff;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .draft-btn:hover { background: #f0f4ff; }
+    .add-btn {
+      background: var(--primary);
+      color: #fff;
+    }
+    .add-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+    /* Notification & Profile dropdowns (matching add-chapter) */
+    .notification-wrapper { position: relative; }
+    .bell-btn { position: relative; }
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 18px;
+      height: 18px;
+      background: #ef4444;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .notification-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 320px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .notification-dropdown.open { display: block; }
+    .notification-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .notification-header h4 {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .notification-header button {
+      font-size: 0.8125rem;
+      color: var(--primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .notification-list { max-height: 300px; overflow-y: auto; }
+    .notification-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .notification-item:hover { background: #f8f9fa; }
+    .notification-item.unread { background: #f0f7ff; }
+    .notification-item .notif-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+    .notification-item .notif-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .profile-wrapper { position: relative; }
+    .profile { cursor: pointer; }
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 200px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .profile-dropdown.open { display: block; }
+    .profile-dropdown-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+    }
+    .profile-dropdown-header .avatar-lg {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin: 0 auto 8px;
+    }
+    .profile-dropdown-header .name { font-weight: 600; color: var(--text-dark); }
+    .profile-dropdown-header .email { font-size: 0.8125rem; color: var(--text-muted); }
+    .profile-dropdown-menu { padding: 8px 0; }
+    .profile-dropdown-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      color: var(--text-dark);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background 0.2s;
+    }
+    .profile-dropdown-menu a:hover { background: #f8f9fa; }
+    .profile-dropdown-menu a svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+    }
+    .profile-dropdown-menu .logout {
+      color: #dc2626;
+      border-top: 1px solid var(--border-color);
+      margin-top: 8px;
+      padding-top: 16px;
+    }
+    .profile-dropdown-menu .logout svg { color: #dc2626; }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+    }
+    .modal-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .modal-icon.warning { background: #fef3c7; color: #d97706; }
+    .modal-icon.success { background: #d1fae5; color: #059669; }
+    .modal-icon svg { width: 28px; height: 28px; }
+    .modal h3 { font-size: 1.25rem; font-weight: 700; margin: 0 0 8px; }
+    .modal p { font-size: 0.9375rem; color: var(--text-muted); margin: 0 0 24px; }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .modal-actions button {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .modal-cancel {
+      background: #f5f5f5;
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+    }
+    .modal-confirm {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+    }
+
+    @media (max-width: 900px) {
+      .novel-layout { grid-template-columns: 1fr; }
+      .cover-panel { order: -1; }
+    }
+    @media (max-width: 620px) {
+      .form-container { padding: 0 16px; margin: 24px auto; }
+      .form-card { padding: 20px; }
+      .form-buttons { flex-direction: column; }
+      .form-buttons button { width: 100%; }
+      .top-bar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <a href="home.html" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">NovelShare</span>
+          <span class="logo-tagline">READ • WRITE • SHARE</span>
+        </div>
+      </a>
+
+      <nav class="nav-pills">
+        <a class="pill" href="library.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+            </svg>
+          </span>
+          Library
+        </a>
+        <a class="pill" href="browse.html">
+          <span class="pill-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M11 5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm6.7 11.3L21 19.6" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Browse
+        </a>
+      </nav>
+
+      <div class="profile-actions">
+        <div class="notification-wrapper">
+          <button class="bell-btn" id="notificationBtn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5.5A4.5 4.5 0 0 0 7.5 10v3.4l-.8 2.4h10.6l-.8-2.4V10A4.5 4.5 0 0 0 12 5.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M10 18.5a2 2 0 0 0 4 0" stroke-width="1.8" stroke="currentColor" fill="none"/>
+            </svg>
+            <span class="notification-badge" id="notifBadge">3</span>
+          </button>
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-header">
+              <h4>Notifications</h4>
+              <button id="markAllRead">Mark all read</button>
+            </div>
+            <div class="notification-list">
+              <div class="notification-item unread" data-id="1">
+                <div class="notif-title">New comment on "Twin Sisters"</div>
+                <div class="notif-time">2 minutes ago</div>
+              </div>
+              <div class="notification-item unread" data-id="2">
+                <div class="notif-title">Your chapter was published</div>
+                <div class="notif-time">1 hour ago</div>
+              </div>
+              <div class="notification-item unread" data-id="3">
+                <div class="notif-title">New follower: JohnDoe</div>
+                <div class="notif-time">3 hours ago</div>
+              </div>
+              <div class="notification-item" data-id="4">
+                <div class="notif-title">Weekly stats available</div>
+                <div class="notif-time">1 day ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-wrapper">
+          <div class="profile" id="profileBtn">
+            <div class="avatar">U</div>
+            <span class="username">user</span>
+          </div>
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar-lg">U</div>
+              <div class="name">User Name</div>
+              <div class="email">user@example.com</div>
+            </div>
+            <div class="profile-dropdown-menu">
+              <a href="profile.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                </svg>
+                My Profile
+              </a>
+              <a href="author-dashboard.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                My Works
+              </a>
+              <a href="profile.html#settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                Settings
+              </a>
+              <a href="login.html" class="logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Log Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="form-container">
+      <div class="page-header">
+        <div>
+          <h2>Add New Novel</h2>
+          <p class="subtext">Create and publish your story for readers to discover</p>
+        </div>
+        <div class="draft-status" id="draftStatus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          <span>Draft saves locally</span>
+        </div>
+      </div>
+
+      <form id="addNovelForm" class="form-card">
+        <div class="novel-layout">
+          <div class="cover-panel">
+            <p class="label">Cover Image</p>
+            <div class="cover-frame" id="coverFrame">
+              <img id="coverPreview" alt="Cover preview" />
+              <div class="cover-placeholder" id="coverPlaceholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <path d="M21 15l-5-5L5 21"/>
+                </svg>
+                <span>Upload a cover</span>
+              </div>
+            </div>
+            <label class="file-btn">
+              <input type="file" id="coverInput" accept="image/*" hidden />
+              Choose File
+            </label>
+            <div class="file-name" id="fileName">No file chosen</div>
+            <p class="helper-text">Recommended: 600x900 JPG or PNG</p>
+          </div>
+
+          <div class="form-fields">
+            <div class="field">
+              <label for="novel-title">Novel Title <span style="color: #ef4444;">*</span></label>
+              <input type="text" id="novel-title" placeholder="Enter your novel title" required />
+            </div>
+
+            <div class="field">
+              <label for="genre">Genre</label>
+              <select id="genre">
+                <option value="">Select a genre</option>
+                <option>Fantasy</option>
+                <option>Romance</option>
+                <option>Action</option>
+                <option>Sci-Fi</option>
+                <option>Mystery</option>
+                <option>Horror</option>
+                <option>Adventure</option>
+                <option>Urban</option>
+                <option>Historical</option>
+                <option>Comedy</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="status">Status</label>
+              <select id="status">
+                <option value="Ongoing">Ongoing</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="description">Story Description</label>
+              <textarea id="description" placeholder="Write a brief description of your novel"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
+          <button type="button" class="draft-btn" id="draftBtn">Save as Draft</button>
+          <button type="submit" class="add-btn">Publish Novel</button>
+        </div>
+      </form>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2025 Novel Share. All Rights Reserved.</p>
+      <div class="footer-links">
+        <a href="javascript:void(0)" onclick="showToast('Contact page coming soon')">Contact Us</a>
+        <a href="javascript:void(0)" onclick="showToast('Privacy Policy coming soon')">Privacy Policy</a>
+        <a href="javascript:void(0)" onclick="showToast('Terms of Service coming soon')">Terms of Service</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Unsaved Changes Modal -->
+  <div class="modal-overlay" id="unsavedModal">
+    <div class="modal">
+      <div class="modal-icon warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        </svg>
+      </div>
+      <h3>Unsaved Changes</h3>
+      <p>You have unsaved details. Save your draft before leaving?</p>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="discardChanges">Discard</button>
+        <button class="modal-confirm" id="saveDraftAndLeave">Save Draft</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal">
+      <div class="modal-icon success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+      <h3 id="successTitle">Novel Published!</h3>
+      <p id="successMessage">Your novel is now live and visible to readers.</p>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="addAnother">Add Another</button>
+        <button class="modal-confirm" id="viewNovel">Go to Library</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase SDK + app scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script>
+    const form = document.getElementById('addNovelForm');
+    const titleInput = document.getElementById('novel-title');
+    const genreSelect = document.getElementById('genre');
+    const statusSelect = document.getElementById('status');
+    const descTextarea = document.getElementById('description');
+    const coverInput = document.getElementById('coverInput');
+    const coverPreview = document.getElementById('coverPreview');
+    const coverPlaceholder = document.getElementById('coverPlaceholder');
+    const fileName = document.getElementById('fileName');
+    const draftStatus = document.getElementById('draftStatus');
+
+    let hasUnsavedChanges = false;
+    let autoSaveTimeout = null;
+    let coverData = '';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initDropdowns();
+      loadDraft();
+    });
+
+    function markUnsaved() {
+      hasUnsavedChanges = true;
+      draftStatus.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        <span>Saving draft...</span>
+      `;
+      clearTimeout(autoSaveTimeout);
+      autoSaveTimeout = setTimeout(() => {
+        saveDraftToStorage();
+        draftStatus.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          <span>Draft saved</span>
+        `;
+      }, 900);
+    }
+
+    [titleInput, genreSelect, statusSelect, descTextarea].forEach(el => {
+      el.addEventListener('input', markUnsaved);
+      el.addEventListener('change', markUnsaved);
+    });
+
+    coverInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) {
+        coverData = '';
+        coverPreview.style.display = 'none';
+        coverPlaceholder.style.display = 'flex';
+        fileName.textContent = 'No file chosen';
+        return;
+      }
+      fileName.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        coverData = event.target.result || '';
+        coverPreview.src = coverData;
+        coverPreview.style.display = 'block';
+        coverPlaceholder.style.display = 'none';
+        markUnsaved();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function saveDraftToStorage() {
+      const draft = {
+        title: titleInput.value,
+        genre: genreSelect.value,
+        status: statusSelect.value,
+        description: descTextarea.value,
+        cover: coverData,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem('novelshare_novel_draft', JSON.stringify(draft));
+    }
+
+    function loadDraft() {
+      const savedDraft = localStorage.getItem('novelshare_novel_draft');
+      if (!savedDraft) return;
+      try {
+        const draft = JSON.parse(savedDraft);
+        titleInput.value = draft.title || '';
+        genreSelect.value = draft.genre || '';
+        statusSelect.value = draft.status || 'Ongoing';
+        descTextarea.value = draft.description || '';
+        if (draft.cover) {
+          coverData = draft.cover;
+          coverPreview.src = draft.cover;
+          coverPreview.style.display = 'block';
+          coverPlaceholder.style.display = 'none';
+          fileName.textContent = 'Cover loaded from draft';
+        }
+        draftStatus.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          <span>Draft restored</span>
+        `;
+      } catch (err) {
+        console.error('Failed to load draft', err);
+      }
+    }
+
+    function clearDraft() {
+      localStorage.removeItem('novelshare_novel_draft');
+      hasUnsavedChanges = false;
+    }
+
+    async function upsertMyWork(statusLabel) {
+      const title = titleInput.value.trim();
+      if (!title) {
+        showToast('Add a title to save to My Works');
+        return false;
+      }
+
+      const works = JSON.parse(localStorage.getItem('novelshare_my_works') || '[]');
+      const statusValue = statusLabel || statusSelect.value || 'Ongoing';
+      const profile = (() => {
+        try { return JSON.parse(localStorage.getItem('novelshare_profile') || '{}'); }
+        catch { return {}; }
+      })();
+      const authorName = profile.display_name || profile.username || profile.name || profile.email || 'Unknown';
+
+      let payload = {
+        title,
+        status: statusValue,
+        chapters: 0,
+        reads: 0,
+        author: authorName,
+        cover: coverData,
+        genre: genreSelect.value || 'Uncategorized',
+        description: descTextarea.value.trim()
+      };
+
+      // Save to Supabase when logged in
+      if (typeof SupabaseAuth !== 'undefined' && typeof SupabaseDB !== 'undefined' && SupabaseDB.upsertNovel) {
+        try {
+          const user = await SupabaseAuth.getCurrentUser();
+          if (user) {
+            const supa = await SupabaseDB.upsertNovel({
+              id: payload.id,
+              title: payload.title,
+              description: payload.description,
+              cover: payload.cover,
+              genre: payload.genre,
+              status: payload.status,
+              author_id: user.id,
+              author: authorName || user.email || 'Unknown'
+            });
+            if (supa?.id) {
+              payload = { ...payload, id: supa.id, authorId: user.id };
+            }
+          }
+        } catch (err) {
+          console.warn('Supabase upsert failed, keeping local copy:', err);
+        }
+      }
+
+      if (!payload.id) {
+        payload.id = `work-${Date.now()}`;
+      }
+
+      const existingIndex = works.findIndex(w => (w.title || '').toLowerCase() === payload.title.toLowerCase());
+      if (existingIndex >= 0) {
+        works[existingIndex] = { ...works[existingIndex], ...payload };
+      } else {
+        works.unshift(payload);
+      }
+
+      localStorage.setItem('novelshare_my_works', JSON.stringify(works));
+      return true;
+    }
+
+    async function savePublishedNovel() {
+      await upsertMyWork(statusSelect.value || 'Ongoing');
+    }
+
+    document.getElementById('draftBtn').addEventListener('click', async () => {
+      saveDraftToStorage();
+      const saved = await upsertMyWork('Draft');
+      if (saved) {
+        hasUnsavedChanges = false;
+        draftStatus.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          <span>Draft saved</span>
+        `;
+        showToast('Draft saved');
+      }
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      if (hasUnsavedChanges && (titleInput.value || descTextarea.value || genreSelect.value || coverData)) {
+        document.getElementById('unsavedModal').classList.add('open');
+      } else {
+        history.back();
+      }
+    });
+
+    document.getElementById('discardChanges').addEventListener('click', () => {
+      document.getElementById('unsavedModal').classList.remove('open');
+      clearDraft();
+      history.back();
+    });
+
+    document.getElementById('saveDraftAndLeave').addEventListener('click', async () => {
+      saveDraftToStorage();
+      await upsertMyWork('Draft');
+      document.getElementById('unsavedModal').classList.remove('open');
+      setTimeout(() => history.back(), 400);
+    });
+
+    window.addEventListener('beforeunload', (e) => {
+      if (hasUnsavedChanges && (titleInput.value || descTextarea.value || genreSelect.value || coverData)) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!titleInput.value.trim()) {
+        titleInput.classList.add('invalid');
+        titleInput.focus();
+        showToast('Please enter a novel title');
+        return;
+      }
+      titleInput.classList.remove('invalid');
+
+      if (!descTextarea.value.trim()) {
+        showToast('Please add a story description');
+        descTextarea.focus();
+        return;
+      }
+
+      clearDraft();
+      await savePublishedNovel();
+      document.getElementById('successModal').classList.add('open');
+      document.getElementById('successTitle').textContent = 'Novel Published!';
+      document.getElementById('successMessage').textContent = 'Your novel is now live and visible to readers.';
+    });
+
+    document.getElementById('addAnother').addEventListener('click', () => {
+      document.getElementById('successModal').classList.remove('open');
+      form.reset();
+      coverPreview.style.display = 'none';
+      coverPlaceholder.style.display = 'flex';
+      fileName.textContent = 'No file chosen';
+      coverData = '';
+      draftStatus.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        <span>Draft saves locally</span>
+      `;
+      hasUnsavedChanges = false;
+      titleInput.focus();
+    });
+
+    document.getElementById('viewNovel').addEventListener('click', () => {
+      document.getElementById('successModal').classList.remove('open');
+      window.location.href = 'library.html';
+    });
+
+    function initDropdowns() {
+      const notifBtn = document.getElementById('notificationBtn');
+      const notifDropdown = document.getElementById('notificationDropdown');
+      const profileBtn = document.getElementById('profileBtn');
+      const profileDropdown = document.getElementById('profileDropdown');
+
+      notifBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notifDropdown.classList.toggle('open');
+        profileDropdown.classList.remove('open');
+      });
+
+      profileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('open');
+        notifDropdown.classList.remove('open');
+      });
+
+      document.addEventListener('click', () => {
+        notifDropdown.classList.remove('open');
+        profileDropdown.classList.remove('open');
+      });
+
+      notifDropdown.addEventListener('click', (e) => e.stopPropagation());
+      profileDropdown.addEventListener('click', (e) => e.stopPropagation());
+
+      document.getElementById('markAllRead').addEventListener('click', () => {
+        document.querySelectorAll('.notification-item.unread').forEach(item => {
+          item.classList.remove('unread');
+        });
+        document.getElementById('notifBadge').style.display = 'none';
+        showToast('All notifications marked as read');
+      });
+
+      document.querySelectorAll('.notification-item').forEach(item => {
+        item.addEventListener('click', () => {
+          item.classList.remove('unread');
+          updateNotifBadge();
+        });
+      });
+    }
+
+    function updateNotifBadge() {
+      const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+      const badge = document.getElementById('notifBadge');
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('open');
+        }
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.open, .notification-dropdown.open, .profile-dropdown.open').forEach(el => {
+          el.classList.remove('open');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
