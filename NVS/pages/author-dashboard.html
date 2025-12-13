@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -8,8 +9,14 @@
   <link rel="stylesheet" href="../assets/css/common.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { background: #f7f9fc; }
-    .page { padding: 0 var(--page-pad) 48px; }
+    body {
+      background: #f7f9fc;
+    }
+
+    .page {
+      padding: 0 var(--page-pad) 48px;
+    }
+
     .dashboard-hero {
       margin-top: 12px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -24,6 +31,7 @@
       overflow: hidden;
       box-shadow: 0 12px 36px rgba(103, 126, 234, 0.25);
     }
+
     .dashboard-hero::before {
       content: '';
       position: absolute;
@@ -35,6 +43,7 @@
       border-radius: 50%;
       pointer-events: none;
     }
+
     .dashboard-hero::after {
       content: '';
       position: absolute;
@@ -46,65 +55,128 @@
       border-radius: 50%;
       pointer-events: none;
     }
-    .hero-main { position: relative; z-index: 1; }
-    .hero-title { font-size: 1.5rem; margin: 0 0 6px; }
-    .hero-sub { margin: 0; opacity: 0.9; }
-    .hero-actions { position: relative; z-index: 1; display: flex; gap: 10px; flex-wrap: wrap; }
-    .primary-btn, .ghost-btn {
-      border: none; cursor: pointer; border-radius: 12px;
-      padding: 12px 16px; font-weight: 700; font-size: 0.95rem;
-      display: inline-flex; align-items: center; gap: 8px; transition: transform .2s ease, box-shadow .2s ease;
+
+    .hero-main {
+      position: relative;
+      z-index: 1;
     }
+
+    .hero-title {
+      font-size: 1.5rem;
+      margin: 0 0 6px;
+    }
+
+    .hero-sub {
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .primary-btn,
+    .ghost-btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
     .primary-btn {
       background: #fff;
       color: #1f3c88;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      border: 1px solid rgba(255,255,255,0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.4);
     }
-    .primary-btn:hover { transform: translateY(-1px); }
+
+    .primary-btn:hover {
+      transform: translateY(-1px);
+    }
+
     .ghost-btn {
-      background: rgba(255,255,255,0.12);
+      background: rgba(255, 255, 255, 0.12);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.45);
+      border: 1px solid rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(6px);
     }
-    .ghost-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.18); }
+
+    .ghost-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.18);
+    }
+
     .stats-grid {
       margin-top: 20px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 16px;
     }
+
     .stat-card {
       background: #fff;
       border-radius: 16px;
       padding: 16px;
-      border: 1px solid rgba(0,0,0,0.05);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
     }
-    .stat-label { color: var(--text-muted); font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; }
-    .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--text-primary); }
-    .stat-sub { color: var(--text-muted); font-size: 0.85rem; }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .stat-sub {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
     .layout {
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 16px;
       margin-top: 18px;
     }
+
     .panel {
       background: #fff;
       border-radius: 16px;
-      border: 1px solid rgba(0,0,0,0.05);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
       padding: 18px;
     }
+
     .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
     }
-    .panel-actions { display: flex; align-items: center; gap: 12px; }
+
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
     .panel-action-btn {
       background: none;
       border: none;
@@ -112,14 +184,43 @@
       font-weight: 700;
       cursor: pointer;
       padding: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .panel-action-btn.danger { color: #e11d48; }
-    .panel-action-btn[disabled] { opacity: 0.45; cursor: not-allowed; }
-    .panel-title { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
-    .panel-action { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
-    .works-list { display: grid; gap: 10px; }
+
+    .panel-action-btn.danger {
+      color: #e11d48;
+    }
+
+    .panel-action-btn[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .panel-action {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .works-list {
+      display: grid;
+      gap: 10px;
+    }
+
     .work-row {
-      border: 1px solid rgba(0,0,0,0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
       border-radius: 12px;
       padding: 12px;
       display: grid;
@@ -127,12 +228,42 @@
       gap: 10px;
       align-items: center;
     }
-    .work-row.select-mode { background: #f8fbff; border-color: #dbeafe; }
-    .work-main { display: grid; gap: 4px; }
-    .work-title { margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
-    .work-meta { color: var(--text-muted); font-size: 0.9rem; }
-    .select-box { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-secondary); }
-    .select-box input { width: 16px; height: 16px; }
+
+    .work-row.select-mode {
+      background: #f8fbff;
+      border-color: #dbeafe;
+    }
+
+    .work-main {
+      display: grid;
+      gap: 4px;
+    }
+
+    .work-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .work-meta {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .select-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .select-box input {
+      width: 16px;
+      height: 16px;
+    }
+
     /* Modal */
     .modal-overlay {
       position: fixed;
@@ -144,18 +275,36 @@
       z-index: 1000;
       padding: 16px;
     }
-    .modal-overlay.open { display: flex; }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
     .modal-card {
       background: #fff;
       border-radius: 14px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
       max-width: 360px;
       width: 100%;
       padding: 20px 22px;
     }
-    .modal-card h3 { margin: 0 0 10px; font-size: 1.05rem; }
-    .modal-card p { margin: 0 0 18px; color: var(--text-muted); }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+    .modal-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+
+    .modal-card p {
+      margin: 0 0 18px;
+      color: var(--text-muted);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
     .btn-ghost {
       background: #f3f4f6;
       border: 1px solid var(--border);
@@ -165,6 +314,7 @@
       cursor: pointer;
       color: var(--text-secondary);
     }
+
     .btn-danger {
       background: #e11d48;
       border: 1px solid #e11d48;
@@ -174,6 +324,7 @@
       font-weight: 700;
       cursor: pointer;
     }
+
     /* Scoped status pills so nav pills stay untouched */
     .status-pill {
       padding: 6px 10px;
@@ -187,10 +338,27 @@
       align-items: center;
       width: fit-content;
     }
-    .status-pill.ongoing { background: rgba(16,185,129,0.12); color: #0f9d58; }
-    .status-pill.completed { background: rgba(99,102,241,0.12); color: #4338ca; }
-    .status-pill.draft { background: rgba(249,115,22,0.15); color: #b45309; }
-    .work-actions { display: flex; gap: 8px; }
+
+    .status-pill.ongoing {
+      background: rgba(16, 185, 129, 0.12);
+      color: #0f9d58;
+    }
+
+    .status-pill.completed {
+      background: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+    }
+
+    .status-pill.draft {
+      background: rgba(249, 115, 22, 0.15);
+      color: #b45309;
+    }
+
+    .work-actions {
+      display: flex;
+      gap: 8px;
+    }
+
     .link-btn {
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -200,23 +368,50 @@
       font-weight: 700;
       color: var(--text-primary);
     }
-    .link-btn.primary { background: var(--primary); color: #fff; border-color: transparent; }
-    .feed { display: grid; gap: 10px; }
+
+    .link-btn.primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .feed {
+      display: grid;
+      gap: 10px;
+    }
+
     .feed-item {
-      border: 1px solid rgba(0,0,0,0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
       border-radius: 10px;
       padding: 10px 12px;
       display: grid;
       gap: 4px;
     }
-    .feed-title { font-weight: 700; color: var(--text-primary); margin: 0; }
-    .feed-sub { color: var(--text-muted); font-size: 0.9rem; }
+
+    .feed-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .feed-sub {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
     @media (max-width: 1024px) {
-      .layout { grid-template-columns: 1fr; }
-      .dashboard-hero { flex-direction: column; align-items: flex-start; }
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-hero {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="page">
     <!-- Header -->
@@ -224,7 +419,9 @@
       <a class="logo" href="home.html" aria-label="NovelShare Home">
         <div class="logo-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+            <path
+              d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z"
+              fill="currentColor" />
           </svg>
         </div>
         <div class="logo-text">
@@ -237,8 +434,8 @@
         <a class="pill" href="library.html">
           <span class="pill-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" />
             </svg>
           </span>
           Library
@@ -246,8 +443,8 @@
         <a class="pill" href="browse.html">
           <span class="pill-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.35-4.35"/>
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
           Browse
@@ -257,8 +454,8 @@
       <div class="profile-actions">
         <button class="bell-btn" aria-label="Notifications">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
         </button>
         <div class="profile-wrapper">
@@ -275,20 +472,20 @@
             <div class="profile-dropdown-menu">
               <a href="profile.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="8" r="4"/>
-                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
                 </svg>
                 My Profile
               </a>
               <a href="author-dashboard.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
                 My Works
               </a>
               <a href="login.html" class="logout">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                 </svg>
                 Log Out
               </a>
@@ -330,9 +527,17 @@
         <div class="panel-header">
           <span class="panel-title">Your Works</span>
           <div class="panel-actions">
-            <button class="panel-action-btn" id="editModeBtn" type="button"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-2px;"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Edit</button>
-            <a class="panel-action" href="add-novel.html"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-2px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create new</a>
-            <button class="panel-action-btn danger" id="deleteSelectedBtn" type="button" style="display:none;">Delete selected</button>
+            <button class="panel-action-btn" id="editModeBtn" type="button"><svg viewBox="0 0 24 24" width="14"
+                height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+              </svg>Edit</button>
+            <a class="panel-action" id="createNovelBtn" href="add-novel.html"><svg viewBox="0 0 24 24" width="14"
+                height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>Create new</a>
+            <button class="panel-action-btn danger" id="deleteSelectedBtn" type="button" style="display:none;">Delete
+              selected</button>
           </div>
         </div>
         <div id="worksList" class="works-list"></div>
@@ -388,7 +593,7 @@
     const activityEmpty = document.getElementById('activityEmpty');
     let currentUserId = null;
     const DELETED_KEY = 'novelshare_deleted_ids';
-    const EDIT_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-2px;"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
+    const EDIT_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
 
     function getDeletedIds() {
       try { return new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || '[]')); }
@@ -491,10 +696,17 @@
     function updateSelectionControls() {
       const editBtn = document.getElementById('editModeBtn');
       const deleteBtn = document.getElementById('deleteSelectedBtn');
+      const createBtn = document.getElementById('createNovelBtn');
+
       if (!editBtn || !deleteBtn) return;
+
       editBtn.innerHTML = selectionMode ? 'Done' : `${EDIT_ICON}Edit`;
       deleteBtn.style.display = selectionMode ? 'inline-flex' : 'none';
       deleteBtn.disabled = selectedIds.size === 0;
+
+      if (createBtn) {
+        createBtn.style.display = selectionMode ? 'none' : 'inline-flex';
+      }
     }
 
     function toggleSelectionMode() {
@@ -626,7 +838,7 @@
       try {
         const cached = localStorage.getItem('novelshare_profile');
         if (cached) profileData = JSON.parse(cached);
-      } catch {}
+      } catch { }
 
       let user = null;
       try {
@@ -640,10 +852,10 @@
                 username: dbProfile?.username || dbProfile?.display_name || 'author',
                 email: dbProfile?.email || user.email || ''
               };
-            } catch {}
+            } catch { }
           }
         }
-      } catch {}
+      } catch { }
       currentUserId = user?.id || null;
 
       const name = profileData?.name || 'Author';
@@ -665,12 +877,9 @@
     }
 
     // Refresh chapter counts when page becomes visible (after navigating back from editing)
-    document.addEventListener('visibilitychange', async () => {
+    document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
-        const works = JSON.parse(localStorage.getItem('novelshare_my_works') || '[]');
-        const refreshed = await refreshAllChapterCounts(works);
-        localStorage.setItem('novelshare_my_works', JSON.stringify(refreshed));
-        renderWorks(refreshed);
+        loadDashboard();
       }
     });
 
@@ -713,4 +922,5 @@
     document.addEventListener('DOMContentLoaded', loadDashboard);
   </script>
 </body>
+
 </html>

@@ -440,6 +440,7 @@
             line-height: 1.5;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -1749,12 +1750,21 @@
                         closeModal();
 
                         if (result.success) {
+
                             // Track deleted ID in localStorage
                             try {
                                 const deletedIds = JSON.parse(localStorage.getItem(DELETED_KEY) || '[]');
                                 if (!deletedIds.includes(novelId)) {
                                     deletedIds.push(novelId);
                                     localStorage.setItem(DELETED_KEY, JSON.stringify(deletedIds));
+                                }
+
+                                // ALSO Remove from novelshare_my_works if it exists there (to prevent resurrection)
+                                const myWorks = JSON.parse(localStorage.getItem('novelshare_my_works') || '[]');
+                                const initialLength = myWorks.length;
+                                const cleanedWorks = myWorks.filter(w => w.id !== novelId && w.id != novelId); // Loose eq just in case
+                                if (cleanedWorks.length < initialLength) {
+                                    localStorage.setItem('novelshare_my_works', JSON.stringify(cleanedWorks));
                                 }
                             } catch (err) {
                                 console.warn('Failed to track deleted ID:', err);

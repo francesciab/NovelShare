@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>My Profile | NovelShare</title>
   <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="../assets/css/common.css" />
   <style>
     /* Profile Page Styles */
@@ -15,6 +17,7 @@
       width: 100%;
       transition: opacity 0.2s ease;
     }
+
     .profile-content.loading {
       opacity: 0;
       pointer-events: none;
@@ -638,14 +641,14 @@
       background: #fff;
       border-radius: 50%;
       transition: all var(--transition-normal);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    .toggle-switch input:checked + .toggle-slider {
+    .toggle-switch input:checked+.toggle-slider {
       background: var(--primary);
     }
 
-    .toggle-switch input:checked + .toggle-slider::before {
+    .toggle-switch input:checked+.toggle-slider::before {
       transform: translateX(22px);
     }
 
@@ -1073,6 +1076,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="page">
     <!-- Header -->
@@ -1080,7 +1084,9 @@
       <a href="home.html" class="logo">
         <div class="logo-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z" fill="currentColor"/>
+            <path
+              d="M32 12c-4.8-3.3-10.4-4.4-16-4.4a6.6 6.6 0 0 0-6.6 6.6v28.2c0 1.1.9 2 2 2H18c4.7 0 9.3 1.5 13.2 4.2 3.9-2.7 8.5-4.2 13.2-4.2h6.6c1.1 0 2-.9 2-2V14.2A6.6 6.6 0 0 0 48 7.6C42.4 7.6 36.8 8.7 32 12Zm0 6.9c4.3-2.6 9.2-3.9 14.2-3.9 1.1 0 2 .9 2 2v24.1h-4.6c-4.5 0-8.9 1.1-12.8 3.2v-25.4Zm-4 25.4c-3.9-2.1-8.3-3.2-12.8-3.2H10.6V17c0-1.1.9-2 2-2 5 0 9.9 1.3 14.2 3.9v25.4Z"
+              fill="currentColor" />
           </svg>
         </div>
         <div class="logo-text">
@@ -1093,8 +1099,8 @@
         <a class="pill" href="library.html">
           <span class="pill-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/>
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" />
             </svg>
           </span>
           Library
@@ -1102,7 +1108,8 @@
         <a class="pill" href="browse.html">
           <span class="pill-icon">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M11 5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm6.7 11.3L21 19.6" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round"/>
+              <path d="M11 5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm6.7 11.3L21 19.6" stroke-width="2" fill="none"
+                stroke="currentColor" stroke-linecap="round" />
             </svg>
           </span>
           Browse
@@ -1113,8 +1120,10 @@
         <div class="notification-wrapper">
           <button class="bell-btn" id="notificationBtn" aria-label="Notifications">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" />
             </svg>
             <span class="notification-badge" id="notifBadge">3</span>
           </button>
@@ -1154,27 +1163,28 @@
             <div class="profile-dropdown-menu">
               <a href="profile.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="8" r="4"/>
-                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
                 </svg>
                 My Profile
               </a>
               <a href="library.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
                 My Works
               </a>
               <a href="#" onclick="switchTab('settings'); return false;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="3"/>
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                 </svg>
                 Settings
               </a>
               <a href="login.html" class="logout">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                 </svg>
                 Log Out
               </a>
@@ -1191,8 +1201,8 @@
         <div class="profile-cover">
           <button class="profile-cover-edit">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
             </svg>
             Edit Cover
           </button>
@@ -1203,8 +1213,8 @@
             <div class="profile-avatar-large" id="profileAvatarLarge">J</div>
             <button class="profile-avatar-edit" title="Change avatar">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <circle cx="12" cy="13" r="4"/>
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
               </svg>
             </button>
           </div>
@@ -1221,17 +1231,17 @@
           <div class="profile-actions-row">
             <button class="btn-edit-profile" id="editProfileBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
               </svg>
               Edit Profile
             </button>
             <button class="btn-share-profile">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="18" cy="5" r="3"/>
-                <circle cx="6" cy="12" r="3"/>
-                <circle cx="18" cy="19" r="3"/>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
               </svg>
               Share
             </button>
@@ -1255,34 +1265,34 @@
               <h3>Personal Info</h3>
               <div class="about-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
                 </svg>
                 <span class="about-item-label">Name</span>
                 <span class="about-item-value" id="aboutName">...</span>
               </div>
               <div class="about-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
                 </svg>
                 <span class="about-item-label">Email</span>
                 <span class="about-item-value" id="aboutEmail">jane@example.com</span>
               </div>
               <div class="about-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/>
-                  <line x1="3" y1="10" x2="21" y2="10"/>
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
                 <span class="about-item-label">Joined</span>
                 <span class="about-item-value" id="aboutJoined">January 2024</span>
               </div>
               <div class="about-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
                 </svg>
                 <span class="about-item-label">Location</span>
                 <span class="about-item-value" id="aboutLocation">New York, USA</span>
@@ -1503,8 +1513,8 @@
         <h2>Edit Profile</h2>
         <button class="modal-close" id="closeModal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -1904,12 +1914,24 @@
       }
     }
 
+    // Helper to get deleted IDs
+    function getDeletedIds() {
+      try {
+        return new Set(JSON.parse(localStorage.getItem('novelshare_deleted_ids') || '[]'));
+      } catch {
+        return new Set();
+      }
+    }
+
     function renderMyWorks() {
       const grid = document.querySelector('#tab-works .works-grid');
       if (!grid) return;
 
       const localWorks = getMyWorks();
-      let works = localWorks;
+      const deletedIds = getDeletedIds();
+
+      // Filter local works immediately
+      let works = localWorks.filter(w => !deletedIds.has(w.id));
 
       // Also fetch from cloud if available
       (async () => {
@@ -1917,12 +1939,15 @@
           const user = await SupabaseAuth.getCurrentUser();
           if (user && typeof SupabaseDB !== 'undefined' && SupabaseDB.getNovelsByAuthor) {
             const cloudWorks = await SupabaseDB.getNovelsByAuthor(user.id);
-            // Merge: prefer local for drafts, but include all
-            const merged = [...cloudWorks];
-            localWorks.forEach(local => {
+            // Merge: prefer local for drafts, but include all. Filter deleted.
+            const merged = [...cloudWorks].filter(w => !deletedIds.has(w.id));
+
+            works.forEach(local => {
+              // If local version exists and NOT deleted (already filtered above), add if not in cloud
               const exists = merged.find(c => c.id === local.id);
               if (!exists) merged.push(local);
             });
+
             works = merged;
             // Re-render with merged
             renderWorksGrid(works);
@@ -2033,4 +2058,5 @@
     window.addEventListener('hashchange', openTabFromLocation);
   </script>
 </body>
+
 </html>
