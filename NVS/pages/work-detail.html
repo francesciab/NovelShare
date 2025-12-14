@@ -108,8 +108,8 @@
     }
 
     .cta-btn {
-      padding: 12px 16px;
-      border-radius: 10px;
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
       font-weight: 700;
       border: 1px solid var(--border);
       background: #fff;
@@ -117,12 +117,19 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
     }
 
     .cta-btn.primary {
-      background: var(--primary);
+      background: var(--primary-gradient);
       color: #fff;
       border-color: transparent;
+      box-shadow: 0 6px 14px rgba(13, 123, 255, 0.18);
+    }
+
+    .cta-btn.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(13, 123, 255, 0.28);
     }
 
     .info-grid {

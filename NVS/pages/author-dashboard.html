@@ -361,18 +361,25 @@
 
     .link-btn {
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
       background: #fff;
       cursor: pointer;
       font-weight: 700;
       color: var(--text-primary);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
     }
 
     .link-btn.primary {
-      background: var(--primary);
+      background: var(--primary-gradient);
       color: #fff;
       border-color: transparent;
+      box-shadow: 0 6px 14px rgba(13, 123, 255, 0.18);
+    }
+
+    .link-btn.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(13, 123, 255, 0.28);
     }
 
     .feed {
